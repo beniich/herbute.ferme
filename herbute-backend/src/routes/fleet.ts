@@ -14,7 +14,7 @@ router.use(authenticate);
 router.get('/vehicles', async (req, res, next) => {
   try {
     // TODO: Vehicle.find({ farmId: req.user!.farmId })
-    res.json({ vehicles: [], farmId: req.user!.farmId });
+    res.json({ vehicles: [], farmId: (req.user as any)?.farmId });
   } catch (err) { next(err); }
 });
 

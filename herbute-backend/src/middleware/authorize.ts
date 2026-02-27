@@ -45,11 +45,11 @@ export const requirePlan = (...plans: SubscriptionPlan[]): AuthMiddleware => {
       return;
     }
 
-    if (!plans.includes(req.user.plan as SubscriptionPlan)) {
+    if (!plans.includes((req.user as any).plan as SubscriptionPlan)) {
       res.status(403).json({
-        error:         'FonctionnalitÃ© non disponible pour votre plan',
+        error:         'Fonctionnalité non disponible pour votre plan',
         code:          'FORBIDDEN_PLAN',
-        currentPlan:   req.user.plan,
+        currentPlan:   (req.user as any).plan,
         requiredPlans: plans,
       });
       return;
@@ -77,7 +77,7 @@ export const requireFarmAccess: AuthMiddleware = (req, res, next) => {
     return next();
   }
 
-  if (requestedFarmId && req.user.farmId !== requestedFarmId) {
+  if (requestedFarmId && (req.user as any).farmId !== requestedFarmId) {
     res.status(403).json({
       error: 'AccÃ¨s refusÃ© â€” ferme non autorisÃ©e',
       code:  'FORBIDDEN_FARM',

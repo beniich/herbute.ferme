@@ -2,7 +2,7 @@
 
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { useAuth } from '@/providers/AuthProvider';
-import { BarChart3, CalendarDays, ChevronDown, FileText, LayoutDashboard, ListTodo, LogOut, Map, Menu, MessagesSquare, Settings as SettingsIcon, Shield, Truck, Users, X } from 'lucide-react';
+import { BarChart3, CalendarDays, ChevronDown, FileText, LayoutDashboard, ListTodo, LogOut, Map, Menu, MessagesSquare, Settings as SettingsIcon, Shield, ShieldAlert, Truck, Users, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -55,7 +55,7 @@ export default function Header() {
                         <CalendarDays className="w-5 h-5" />
                     </Link>
                     <Link href="/tasks" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title="Helpdesk / GLPI Tasks">
-                        <ListTodo className="w-5 h-5 text-primary" />
+                        <Shield className="w-5 h-5 text-blue-500" />
                     </Link>
                     <Link href="/map" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title={t('map')}>
                         <Map className="w-5 h-5" />
@@ -208,9 +208,9 @@ export default function Header() {
                                 <Link href="/complaints/list" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('complaints')}</Link>
                                 <Link href="/teams" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('teams')}</Link>
                                 <Link href="/planning" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('planning')}</Link>
-                                <Link href="/tasks" className="block px-4 py-2 rounded-lg bg-primary/10 text-primary font-bold transition-colors" onClick={() => setIsMenuOpen(false)}>
+                                <Link href="/tasks" className="block px-4 py-2 rounded-lg bg-blue-50/50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold transition-colors" onClick={() => setIsMenuOpen(false)}>
                                     <div className="flex items-center gap-2">
-                                        <ListTodo className="w-4 h-4" />
+                                        <Shield className="w-4 h-4" />
                                         <span>Helpdesk GLPI</span>
                                     </div>
                                 </Link>

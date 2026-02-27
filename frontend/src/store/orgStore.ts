@@ -32,15 +32,12 @@ export const useOrgStore = create<OrgState>()(
             fetchOrganizations: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    const memberships = await organizationsApi.getMyOrganizations() as Membership[];
-                    const organizations = memberships.map((m) => {
-                        if (typeof m.organizationId === 'string') return null;
-                        return m.organizationId;
-                    }).filter(Boolean) as Organization[];
+                    const response = await organizationsApi.getMyOrganizations();
+                    // L'API renvoie { success: true, organizations: [...] }
+                    const organizations = (response.organizations || []) as Organization[];
 
                     set({
                         organizations,
-                        memberships,
                         isLoading: false
                     });
 

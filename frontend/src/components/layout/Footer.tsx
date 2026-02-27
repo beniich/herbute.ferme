@@ -1,7 +1,7 @@
 'use client';
 
 import { Linkedin, Mail, MapPin, Twitter } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
@@ -23,13 +23,13 @@ export function Footer() {
             { label: 'Help Center', href: '/help' },
             { label: 'Contact', href: '/contact' },
             { label: 'Status', href: '/status' },
-            { label: 'Privacy Policy', href: '/privacy' },
+            { label: 'Privacy Policy', href: '/legal/privacy' },
         ],
         legal: [
-            { label: 'Terms of Service', href: '/terms' },
-            { label: 'Privacy Policy', href: '/privacy' },
-            { label: 'Cookie Policy', href: '/cookies' },
-            { label: 'GDPR', href: '/gdpr' },
+            { label: 'Terms of Service', href: '/legal/terms' },
+            { label: 'Privacy Policy', href: '/legal/privacy' },
+            { label: 'Cookie Policy', href: '/legal/cookies' },
+            { label: 'GDPR', href: '/legal/gdpr' },
         ],
     };
 
@@ -84,7 +84,7 @@ export function Footer() {
                             {footerLinks.product.map((link) => (
                                 <li key={link.href}>
                                     <Link
-                                        href={link.href}
+                                        href={link.href as any}
                                         className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
                                     >
                                         {link.label}
@@ -103,7 +103,7 @@ export function Footer() {
                             {footerLinks.company.map((link) => (
                                 <li key={link.href}>
                                     <Link
-                                        href={link.href}
+                                        href={link.href as any}
                                         className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
                                     >
                                         {link.label}
@@ -122,7 +122,7 @@ export function Footer() {
                             {footerLinks.support.map((link) => (
                                 <li key={link.href}>
                                     <Link
-                                        href={link.href}
+                                        href={link.href as any}
                                         className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
                                     >
                                         {link.label}
@@ -141,7 +141,7 @@ export function Footer() {
                             {footerLinks.legal.map((link) => (
                                 <li key={link.href}>
                                     <Link
-                                        href={link.href}
+                                        href={link.href as any}
                                         className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
                                     >
                                         {link.label}
@@ -178,7 +178,7 @@ export function Footer() {
 
                         {/* Language & Theme Selector */}
                         <div className="flex items-center gap-2 text-sm">
-                            <select className="px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <select title="Language selector" aria-label="Select language" className="px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary">
                                 <option value="en">English</option>
                                 <option value="fr">Français</option>
                                 <option value="ar">العربية</option>

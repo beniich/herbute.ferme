@@ -6,8 +6,21 @@ import { authEventBus } from './auth-event-bus';
  * lib/api.ts — Client Axios Unique (Version Finale Stabilisée)
  */
 
-const API_BASE_URL = 'http://localhost:2065'; 
+const getApiUrl = () => {
+  if (typeof window !== 'undefined') {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const envUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    // Si on navigue depuis un autre PC (réseau local ou internet) mais que le .env est fixé sur localhost
+    if (!isLocalhost && (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1'))) {
+      const port = envUrl ? new URL(envUrl).port : '2065';
+      return `${window.location.protocol}//${window.location.hostname}:${port || '2065'}`;
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:2065';
+};
 
+const API_BASE_URL = getApiUrl();
 class ApiClient {
   private client: AxiosInstance;
 
@@ -25,6 +38,17 @@ class ApiClient {
   }
 
   private setupInterceptors() {
+    // Intercepteur de requête : injection de l'Organisation ID
+    this.client.interceptors.request.use((config) => {
+      if (typeof window !== 'undefined') {
+        const orgId = localStorage.getItem('active_organization_id');
+        if (orgId) {
+          config.headers['x-organization-id'] = orgId;
+        }
+      }
+      return config;
+    });
+
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
@@ -55,11 +79,12 @@ export const authApi = {
   me: () => apiClient.get(HERBUTE_ROUTES.auth.me),
   refresh: () => apiClient.post(HERBUTE_ROUTES.auth.refresh),
   googleLogin: (credential: string) => apiClient.post('/api/auth/google', { credential }),
+  mockUpgradePlan: () => apiClient.post('/api/billing/mock-checkout'),
 };
 
 export const organizationsApi = {
   getOrganizations: () => apiClient.get('/api/organizations'),
-  getMyOrganizations: () => apiClient.get('/api/organizations/mine'),
+  getMyOrganizations: () => apiClient.get('/api/organizations'),
   getOrganization: (id: string) => apiClient.get(`/api/organizations/${id}`),
   createOrganization: (data: any) => apiClient.post('/api/organizations', data),
   updateOrganization: (id: string, data: any) => apiClient.put(`/api/organizations/${id}`, data),

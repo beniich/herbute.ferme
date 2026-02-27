@@ -22,7 +22,7 @@ const checkUser = async () => {
         } else {
             console.log('âœ… User found:', user.email);
             console.log('   Role:', user.role);
-            console.log('   Password Hash:', user.password ? 'Exists' : 'Missing');
+            console.log('   Password Hash:', (user as any).passwordHash ? 'Exists' : 'Missing');
         }
 
         process.exit(0);

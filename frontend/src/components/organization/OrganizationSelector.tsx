@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useOrgStore } from '@/store/orgStore';
 import {
     LayoutGrid,
@@ -22,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export const OrganizationSelector: React.FC = () => {
+    const router = useRouter();
     const {
         organizations,
         activeOrganization,
@@ -64,7 +66,7 @@ export const OrganizationSelector: React.FC = () => {
                             <Building2 className="h-5 w-5" />
                         )}
                     </div>
-                    <div className="flex flex-col items-start hidden sm:flex">
+                    <div className="hidden sm:flex flex-col items-start">
                         <span className="text-sm font-semibold truncate max-w-[120px]">
                             {activeOrganization?.name || 'Sélectionner...'}
                         </span>
@@ -103,11 +105,11 @@ export const OrganizationSelector: React.FC = () => {
                 ))}
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-primary focus:text-primary">
+                <DropdownMenuItem onClick={() => router.push('/org-select')} className="cursor-pointer text-primary focus:text-primary">
                     <Plus className="h-4 w-4 mr-2" />
                     Nouvelle organisation
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem onClick={() => router.push('/org-select')} className="cursor-pointer">
                     <LayoutGrid className="h-4 w-4 mr-2" />
                     Gérer les organisations
                 </DropdownMenuItem>

@@ -24,11 +24,11 @@ export const generateTokenPair = (user: UserTokenData): TokenPair => {
   };
 
   const accessToken = jwt.sign(payload, jwtConfig.privateKey, {
-    algorithm: jwtConfig.algorithm,
-    expiresIn: jwtConfig.accessTokenTtl,
+    algorithm: jwtConfig.algorithm as jwt.Algorithm,
+    expiresIn: jwtConfig.accessTokenTtl as jwt.SignOptions['expiresIn'],
     issuer:    jwtConfig.issuer,
     audience:  jwtConfig.audience,
-  });
+  } as jwt.SignOptions);
 
   // Le refresh token est un token opaque (UUID hashÃ©) â€” pas un JWT
   // StockÃ© en DB â†’ rÃ©vocable individuellement sans blacklist Redis

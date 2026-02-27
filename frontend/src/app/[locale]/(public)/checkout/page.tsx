@@ -1,7 +1,9 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { authApi } from '@/lib/api';
+import { toast } from 'react-hot-toast';
 import {
     CreditCard,
     MapPin,
@@ -14,6 +16,23 @@ import {
 } from 'lucide-react';
 
 export default function CheckoutPage() {
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleCheckout = async () => {
+        try {
+            setLoading(true);
+            await authApi.mockUpgradePlan();
+            toast.success('Paiement validé. Vous êtes maintenant en formule Enterprise !');
+            router.push('/checkout/success');
+        } catch (error) {
+            console.error('Erreur lors du paiement:', error);
+            toast.error('Une erreur est survenue lors du paiement.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -115,7 +134,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Country</label>
-                                    <select className="w-full h-12 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none">
+                                    <select aria-label="Country" className="w-full h-12 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none">
                                         <option>United States</option>
                                         <option>United Kingdom</option>
                                         <option>Canada</option>
@@ -177,13 +196,14 @@ export default function CheckoutPage() {
                                     <button className="absolute right-2 top-1/2 -translate-y-1/2 text-primary font-bold text-xs uppercase hover:underline">Apply</button>
                                 </div>
                                 {/* Primary CTA */}
-                                <Link
-                                    href="/en/checkout/success"
-                                    className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-lg font-bold text-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group"
+                                <button
+                                    onClick={handleCheckout}
+                                    disabled={loading}
+                                    className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-lg font-bold text-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
                                 >
-                                    Complete Purchase
+                                    {loading ? 'Processing...' : 'Complete Purchase'}
                                     <Lock className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                </Link>
+                                </button>
                                 <p className="text-[10px] text-center text-slate-400 dark:text-slate-500 mt-4 leading-relaxed">
                                     By clicking &quot;Complete Purchase&quot;, you agree to our <a className="underline" href="#">Terms of Service</a> and <a className="underline" href="#">Privacy Policy</a>. Recurring billing applies.
                                 </p>

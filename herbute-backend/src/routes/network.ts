@@ -1,6 +1,6 @@
 ﻿import express, { Response } from 'express';
-import { auth } from '../middleware/auth';
-import { requireOrganization } from '../middleware/organization';
+import { auth } from '../middleware/security.js';
+import { requireOrganization } from '../middleware/organization.js';
 import NetworkDevice from '../models/NetworkDevice';
 import { AuthenticatedRequest } from '../types/request.js';
 import { asyncHandler } from '../middleware/errorHandler.js';

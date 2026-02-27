@@ -1,5 +1,6 @@
 ﻿
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import { User } from '../models/user.model.js';
 import { config } from 'dotenv';
 import path from 'path';
@@ -17,21 +18,27 @@ const testLogin = async () => {
         const email = 'admin@reclamtrack.com';
         const password = 'Admin123!';
 
-        const user = await User.findOne({ email });
+        // Select passwordHash explicitly since it has `select: false`
+        const user = await User.findOne({ email }).select('+passwordHash');
         if (!user) {
-            console.log('âŒ User NOT found');
+            console.log('❌ User NOT found');
             process.exit(1);
         }
 
-        console.log('âœ… User found:', user.email);
+        console.log('✅ User found:', user.email);
 
-        const isMatch = await user.comparePassword(password);
+        const storedHash = (user as any).passwordHash;
+        if (!storedHash) {
+            console.log('❌ Password hash missing from DB record');
+            process.exit(1);
+        }
+
+        const isMatch = await bcrypt.compare(password, storedHash);
         if (isMatch) {
-            console.log('âœ… Password Match: SUCCESS');
+            console.log('✅ Password Match: SUCCESS');
         } else {
-            console.log('âŒ Password Match: FAILED');
-            // Log hash to see if it looks right (starts with $2a$ or $2b$)
-            console.log('Stored Hash:', user.password);
+            console.log('❌ Password Match: FAILED');
+            console.log('Stored Hash:', storedHash);
         }
 
         process.exit(0);

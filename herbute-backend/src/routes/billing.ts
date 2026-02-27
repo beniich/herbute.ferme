@@ -14,6 +14,7 @@ import { authenticate } from '../middleware/security.js';
 import { globalLimiter } from '../middleware/rateLimiters.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
+import { User } from '../models/user.model.js';
 import { AppError, NotFoundAppError } from '../utils/AppError.js';
 import { Subscription, PLAN_FEATURES, PLAN_MAX_USERS } from '../models/Subscription.js';
 import logger from '../utils/logger.js';
@@ -153,6 +154,45 @@ router.get(
     }
     return sendSuccess(res, subscription, 200, req.id);
   }),
+);
+
+/* ── POST /api/billing/mock-checkout ────────────────────────── */
+// Route to manually upgrade the organization to Enterprise plan without real Stripe payments
+router.post(
+  '/mock-checkout',
+  authenticate,
+  asyncHandler(async (req: any, res: Response) => {
+    const orgId = req.user!.organizationId || req.user!.orgId;
+
+    if (!orgId) {
+      throw new AppError('No organization found for this user', 400, 'NO_ORG');
+    }
+
+    const plan = 'enterprise';
+
+    // 1. Update the Subscription collection
+    await Subscription.findOneAndUpdate(
+      { orgId },
+      {
+        orgId,
+        plan,
+        status: 'active',
+        stripeSubscriptionId: 'mock_sub_12345',
+        stripePriceId: 'mock_price_12345',
+        stripeCustomerId: 'mock_cus_12345',
+        maxUsers: PLAN_MAX_USERS[plan],
+        features: PLAN_FEATURES[plan],
+        currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+        cancelAtPeriodEnd: false,
+      },
+      { upsert: true, new: true }
+    );
+
+    // 2. Update User Plan
+    await User.findByIdAndUpdate(req.user!.id || req.user!._id, { plan: 'entreprise' });
+
+    return sendSuccess(res, { message: 'Plan upgraded to Enterprise (Mock mode)', plan: 'enterprise' }, 200, req.id);
+  })
 );
 
 export default router;

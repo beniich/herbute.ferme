@@ -12,16 +12,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/tokens';
-import type { JwtPayload } from '@reclamtrack/shared';
-
-// Ã‰tendre le type Request d'Express pour inclure user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayload;
-    }
-  }
-}
+// The Express.Request global augmentation (user?) is declared in middleware/security.ts
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Extraction du token depuis la requÃªte

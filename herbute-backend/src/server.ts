@@ -32,10 +32,10 @@ import itTicketRoutes from './routes/it-tickets.js';
 import itAssetRoutes from './routes/it-assets.js';
 import teamRoutes from './routes/teams.js';
 import organizationRoutes from './routes/organizations.js';
-import userRoutes from './routes/users.js';
+import userRoutes from './routes/admin.js';
 import auditRoutes from './routes/audit.js';
 import apiKeyRoutes from './routes/api-keys.js';
-import notificationRoutes from './routes/notifications.js';
+// notifications route not yet implemented — removed to fix TS2307
 import analyticsRoutes from './routes/analytics.js';
 import dashboardRoutes from './routes/dashboard.js';
 
@@ -99,7 +99,7 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/audit-logs', auditRoutes);
 app.use('/api/admin/security/api-keys', apiKeyRoutes);
-app.use('/api/notifications', notificationRoutes);
+// app.use('/api/notifications', notificationRoutes); // not yet implemented
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
@@ -118,9 +118,9 @@ const start = async () => {
   try {
     await connectDB();
 
-    const PORT = process.env.PORT || 2065;
-    httpServer.listen(PORT, () => {
-      logger.info(`ðŸŒ¿ API Herbute Ã©coute sur le port ${PORT}`);
+    const PORT = parseInt(process.env.PORT || '2065', 10);
+    httpServer.listen(PORT, '0.0.0.0', () => {
+      logger.info(`✅ API Herbute écoute sur le port ${PORT} (0.0.0.0)`);
     });
   } catch (err) {
     logger.error('âŒ Ã‰chec dÃ©marrage serveur Herbute', err);

@@ -18,8 +18,10 @@ import crypto from 'crypto';
 import rateLimit from 'express-rate-limit';
 import { authenticate } from '../middleware/authenticate';
 import { generateTokenPair, hashRefreshToken } from '../utils/tokens';
-import { User } from '../models/user.model';
-import { RefreshToken } from '../models/refresh-token.model';
+import { User } from '../models/user.model.js';
+import { RefreshToken } from '../models/refresh-token.model.js';
+import { Organization } from '../models/Organization.js';
+import { Membership } from '../models/Membership.js';
 import { HERBUTE_ROUTES } from '@reclamtrack/shared';
 
 const router = Router();
@@ -121,15 +123,36 @@ router.post('/register', authLimiter, async (req: Request, res: Response, next: 
       role,
       farmName:         farmName?.trim(),
       plan:             'essai',
+      emailVerified:    true, // Bypass for local testing without mail service
       emailVerifyToken: verifyTokenHash,
       emailVerifyExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
     });
 
-    // TODO: Envoyer email de vÃ©rification avec verifyToken (token brut, pas le hash)
-    // await sendVerificationEmail(user.email, verifyToken);
+    // -------------------------------------------------------------
+    // CrÃ©ation automatique d'une Organisation (Bypass manquant)
+    // -------------------------------------------------------------
+    const org = await Organization.create({
+      name: farmName?.trim() || `Organisation de ${nom}`,
+      slug: `org-${user._id.toString()}-${Math.random().toString(36).substring(2, 7)}`,
+      ownerId: user._id,
+      subscription: {
+        plan: 'ESSAI',
+        status: 'ACTIVE'
+      }
+    });
+
+    await Membership.create({
+      userId: user._id,
+      organizationId: org._id,
+      roles: ['OWNER', 'ADMIN'],
+      status: 'ACTIVE'
+    });
+
+    user.organizationId = org._id;
+    await user.save();
 
     res.status(201).json({
-      message: 'Compte crÃ©Ã©. VÃ©rifiez votre email pour activer votre compte.',
+      message: 'Compte crÃ©Ã©.', // auto org
       userId:  user._id,
     });
   } catch (err) {
@@ -422,7 +445,7 @@ router.post('/reset-password', authLimiter, async (req: Request, res: Response, 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 router.get('/verify-email/:token', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const tokenHash = crypto.createHash('sha256').update(req.params.token as string).digest('hex');
     const user = await User.findOne({
       emailVerifyToken:   tokenHash,
       emailVerifyExpires: { $gt: new Date() },

@@ -12,9 +12,10 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [nom, setNom] = useState('');
+    const [prenom, setPrenom] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth(); // On utilisera login après inscription ou register si on l'ajoute
-    const locale = useLocale();
+    const { login } = useAuth();
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -23,8 +24,11 @@ export default function RegisterPage() {
         setError(null);
 
         try {
-            // Pour l'instant on garde la logique de login direct si c'est ce que faisait l'ancien hook
-            // Mais idéalement on utiliserait authApi.register
+            // 1. Inscription via API Frontend
+            const { authApi } = await import('@/lib/api');
+            await authApi.register({ email, password, nom, prenom });
+            
+            // 2. Connexion automatique après inscription réussie
             await login({ email, password }); 
             toast.success('Inscription réussie !');
         } catch (err: any) {
@@ -49,6 +53,37 @@ export default function RegisterPage() {
                 {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label htmlFor="nom" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                Nom
+                            </label>
+                            <input
+                                id="nom"
+                                type="text"
+                                required
+                                value={nom}
+                                onChange={(e) => setNom(e.target.value)}
+                                placeholder="Votre nom"
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="prenom" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                Prénom
+                            </label>
+                            <input
+                                id="prenom"
+                                type="text"
+                                required
+                                value={prenom}
+                                onChange={(e) => setPrenom(e.target.value)}
+                                placeholder="Votre prénom"
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white outline-none"
+                            />
+                        </div>
+                    </div>
+
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                             Email

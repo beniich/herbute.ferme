@@ -16,6 +16,7 @@ import {
   TokenInvalidAppError,
 } from '../utils/AppError.js';
 import { logger } from '../utils/logger.js';
+import { verifyAccessToken } from '../utils/tokens.js';
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Types
@@ -26,8 +27,11 @@ export interface JwtPayload {
   _id?: string;
   sub?: string;
   orgId?: string;
+  org?: string;
   role: string;
   email?: string;
+  plan?: string;
+  farmId?: string;
 }
 
 declare global {
@@ -44,25 +48,46 @@ declare global {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
- * Verifies the Bearer JWT in the Authorization header.
+ * Verifies the Bearer JWT in the Authorization header or HttpOnly cookie.
  * Attaches `req.user` on success.
- * Distinguishes expired tokens (AUTH_TOKEN_EXPIRED) from invalid ones (AUTH_TOKEN_INVALID).
  */
 export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
-  const authHeader = req.headers.authorization;
+  let token: string | undefined;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(new AppError('Token manquant ou format invalide', 401, 'AUTH_TOKEN_MISSING'));
+  // 1. Check Cookie
+  if (req.cookies?.access_token) {
+    token = req.cookies.access_token;
+  } 
+  // 2. Check Authorization Header
+  else {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
   }
 
-  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return next(new AppError('Token manquant', 401, 'AUTH_TOKEN_MISSING'));
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decoded = verifyAccessToken(token) as JwtPayload;
+    
+    // Normalize user ID (sub -> id)
+    if (decoded.sub && !decoded.id) {
+      decoded.id = decoded.sub;
+    }
+    
+    // Normalize Org ID (org -> orgId)
+    if (decoded.org && !decoded.orgId) {
+      decoded.orgId = decoded.org;
+    }
+
     req.user = decoded;
-    logger.debug(`[Auth] âœ… User ${decoded.id} authenticated`, { requestId: req.id });
+    logger.debug(`[Auth] ✅ User ${decoded.id || decoded.sub} authenticated`, { requestId: req.id });
     next();
-  } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
+  } catch (err: any) {
+    if (err.name === 'TokenExpiredError') {
       return next(new TokenExpiredAppError());
     }
     return next(new TokenInvalidAppError());

@@ -29,7 +29,7 @@ export default function middleware(request: NextRequest) {
 
     // Extraire la locale depuis l'URL
     const pathLocale = pathname.split('/')[1];
-    const locale = ['fr', 'en'].includes(pathLocale) ? pathLocale : 'fr';
+    const locale = ['fr', 'en'].includes(pathLocale) ? pathLocale : 'en';
 
     // Chemin sans locale pour la comparaison
     const pathWithoutLocale = pathname.replace(/^\/(fr|en)/, '') || '/';

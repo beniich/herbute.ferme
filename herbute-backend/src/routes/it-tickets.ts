@@ -1,6 +1,6 @@
 ﻿import express, { Response } from 'express';
-import { auth } from '../middleware/auth';
-import { requireOrganization } from '../middleware/organization';
+import { auth } from '../middleware/security.js';
+import { requireOrganization } from '../middleware/organization.js';
 import ITTicket from '../models/ITTicket.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 

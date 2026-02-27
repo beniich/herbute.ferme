@@ -1,5 +1,4 @@
-﻿import { Router } from 'express';
-import { authenticate as protect } from '../middleware/security.js';
+﻿import { authenticate as protect, requireOrganization } from '../middleware/security.js';
 import { Complaint } from '../models/Complaint.js';
 import { Team } from '../models/Team.js';
 import Animal from '../models/Animal.js';
@@ -11,7 +10,7 @@ import mongoose from 'mongoose';
 const router = Router();
 
 /* GET /api/dashboard */
-router.get('/', protect, async (req: any, res, next) => {
+router.get('/', [protect, requireOrganization], async (req: any, res, next) => {
     try {
         const organizationId = req.organizationId;
 
@@ -22,10 +21,10 @@ router.get('/', protect, async (req: any, res, next) => {
 
         const agroStats = {
             financials: latestKPI || {
-                totalRevenue: 1480000, // Fallback to demo values if no data
-                totalExpenses: 892000,
-                netProfit: 588000,
-                cashFlow: 284000
+                totalRevenue: 0,
+                totalExpenses: 0,
+                netProfit: 0,
+                cashFlow: 0
             },
             cheptel: {
                 total: animals.reduce((sum, a) => sum + a.count, 0),

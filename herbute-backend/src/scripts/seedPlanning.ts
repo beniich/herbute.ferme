@@ -26,14 +26,16 @@ const seedPlanning = async () => {
         await Staff.deleteMany({}); // Optional: clear staff to ensure clean slate
 
         // 1. Get or Create Users/Teams
-        let technician = await User.findOne({ role: 'technician' });
+        let technician = await User.findOne({ role: 'employe' });
         if (!technician) {
             console.log('Creating default technician...');
             technician = await User.create({
-                name: 'Technician Default',
+                nom: 'Technician',
+                prenom: 'Default',
                 email: 'tech@reclamtrack.com',
-                password: 'password123', // In a real app, hash this!
-                role: 'technician'
+                passwordHash: '$2b$10$examplehashfortesting1234567891', // Pre-hashed placeholder
+                role: 'employe',
+                plan: 'essai'
             });
         }
 
@@ -67,7 +69,7 @@ const seedPlanning = async () => {
         // Note: Realistically Staff and User should be linked or same collection. 
         // For now, Roster uses 'Staff' model, so let's create one.
         const staffMember = await Staff.create({
-            name: technician.name || 'Technician 1',
+            name: `${technician.nom} ${technician.prenom}` || 'Technician 1',
             role: 'Technician',
             email: technician.email,
             phone: '0600000000',

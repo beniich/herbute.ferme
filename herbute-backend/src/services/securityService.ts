@@ -24,7 +24,7 @@ export class SecurityService {
 
       for (const user of users) {
         // Check if password is bcrypt hashed (starts with $2a$, $2b$, or $2y$)
-        if (user.password && user.password.match(/^\$2[aby]\$/)) {
+        if ((user as any).passwordHash && (user as any).passwordHash.match(/^\$2[aby]\$/)) {
           audit.bcryptHashed++;
         }
 
