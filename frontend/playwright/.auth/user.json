@@ -1,0 +1,43 @@
+{
+  "cookies": [
+    {
+      "name": "NEXT_LOCALE",
+      "value": "fr",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "g_state",
+      "value": "{\"i_l\":0,\"i_ll\":1771161731733,\"i_b\":\"jQEDEF3SX6lDjy/nkpQ5Xr457YH/fVRsoeulwtFMjlw\",\"i_e\":{\"enable_itp_optimization\":0}}",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1786713731,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "auth_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTFhNzlmOTc2NDI3ZmVlYjM0ZWIyOCIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzcxMTYxNzMyLCJleHAiOjE3NzE3NjY1MzJ9.J7op43cmO8FzkyTHcCq6rQ46HkFZZ3GLc9V_f4Cbpvg"
+        },
+        {
+          "name": "reclamtrack-auth-storage",
+          "value": "{\"state\":{\"user\":{\"id\":\"6991a79f976427feeb34eb28\",\"email\":\"mario@reclamtrack.com\",\"role\":\"technician\"},\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTFhNzlmOTc2NDI3ZmVlYjM0ZWIyOCIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzcxMTYxNzMyLCJleHAiOjE3NzE3NjY1MzJ9.J7op43cmO8FzkyTHcCq6rQ46HkFZZ3GLc9V_f4Cbpvg\"},\"version\":0}"
+        },
+        {
+          "name": "ally-supports-cache",
+          "value": "{\"userAgent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36\",\"version\":\"1.4.1\",\"focusAreaImgTabindex\":false,\"focusAreaTabindex\":false,\"focusAreaWithoutHref\":false,\"focusAudioWithoutControls\":false,\"focusBrokenImageMap\":true,\"focusChildrenOfFocusableFlexbox\":false,\"focusFieldsetDisabled\":true,\"focusFieldset\":false,\"focusFlexboxContainer\":false,\"focusFormDisabled\":true,\"focusImgIsmap\":false,\"focusImgUsemapTabindex\":true,\"focusInHiddenIframe\":true,\"focusInvalidTabindex\":false,\"focusLabelTabindex\":true,\"focusObjectSvg\":true,\"focusObjectSvgHidden\":false,\"focusRedirectImgUsemap\":false,\"focusRedirectLegend\":\"\",\"focusScrollBody\":false,\"focusScrollContainerWithoutOverflow\":false,\"focusScrollContainer\":true,\"focusSummary\":true,\"focusSvgFocusableAttribute\":false,\"focusSvgTabindexAttribute\":true,\"focusSvgNegativeTabindexAttribute\":true,\"focusSvgUseTabindex\":true,\"focusSvgForeignobjectTabindex\":true,\"focusSvg\":false,\"focusTabindexTrailingCharacters\":true,\"focusTable\":false,\"focusVideoWithoutControls\":false,\"cssShadowPiercingDeepCombinator\":\"\",\"focusInZeroDimensionObject\":true,\"focusObjectSwf\":true,\"focusSvgInIframe\":false,\"tabsequenceAreaAtImgPosition\":false,\"time\":\"2026-02-15T13:22:15.508Z\"}"
+        }
+      ]
+    }
+  ]
+}

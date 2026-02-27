@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+    - generic [ref=e2]:
+        - generic [ref=e3]:
+            - generic [ref=e5]: shield_person
+            - heading "IMS Secure" [level=1] [ref=e6]
+            - paragraph [ref=e7]: Intervention Management System
+        - generic [ref=e8]:
+            - generic [ref=e11]:
+                - heading "Welcome Back" [level=2] [ref=e12]
+                - paragraph [ref=e13]: Authentication Required
+            - generic [ref=e14]:
+                - generic [ref=e17]:
+                    - button "Se connecter avec Google. S'ouvre dans un nouvel onglet." [ref=e19] [cursor=pointer]:
+                        - generic [ref=e21]:
+                            - img [ref=e24]
+                            - generic [ref=e31]: Se connecter avec Google
+                    - iframe
+                - generic [ref=e36]: Ou continuer avec
+                - generic [ref=e37]:
+                    - generic [ref=e38]:
+                        - generic [ref=e39]: Identifiant ou Email
+                        - generic [ref=e40]:
+                            - generic [ref=e41]: mail
+                            - textbox "Identifiant ou Email" [ref=e42]:
+                                - /placeholder: Entrez votre email
+                    - generic [ref=e43]:
+                        - generic [ref=e44]:
+                            - generic [ref=e45]: Mot de passe
+                            - link "Mot de passe oublié ?" [ref=e46] [cursor=pointer]:
+                                - /url: "#"
+                        - generic [ref=e47]:
+                            - generic [ref=e48]: lock
+                            - textbox "Mot de passe" [ref=e49]:
+                                - /placeholder: Entrez votre mot de passe
+                            - button "visibility" [ref=e50] [cursor=pointer]:
+                                - generic [ref=e51]: visibility
+                    - generic [ref=e52]:
+                        - checkbox "Rester connecté" [ref=e53]
+                        - generic [ref=e54]: Rester connecté
+                    - button "Se connecter login" [ref=e55] [cursor=pointer]:
+                        - generic [ref=e56]: Se connecter
+                        - generic [ref=e57]: login
+                - generic [ref=e58]:
+                    - generic [ref=e59]: encrypted
+                    - generic [ref=e60]: Connexion chiffrée de bout en bout
+        - generic [ref=e61]:
+            - link "Politique de sécurité" [ref=e62] [cursor=pointer]:
+                - /url: "#"
+            - link "Support" [ref=e63] [cursor=pointer]:
+                - /url: "#"
+            - link "Confidentialité" [ref=e64] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e65]:
+            - text: Pas encore de compte ?
+            - link "Créer un compte" [ref=e66] [cursor=pointer]:
+                - /url: /register
+        - paragraph [ref=e67]: © 2024 ReclamTrack Solutions. Tous droits réservés.
+    - region "Notifications alt+T"
+    - alert [ref=e68]
+```
