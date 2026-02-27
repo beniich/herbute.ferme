@@ -1,4 +1,4 @@
-import { Complaint, IComplaint } from '../models/Complaint.js';
+﻿import { Complaint, IComplaint } from '../models/Complaint.js';
 import { Types } from 'mongoose';
 import { autoAssignComplaint } from './schedulingService.js';
 import notificationService from './socketService.js';
@@ -229,7 +229,7 @@ export class ComplaintService {
             throw new Error('Only new complaints can be rejected');
         }
 
-        complaint.status = 'rejetée';
+        complaint.status = 'rejetÃ©e';
         complaint.rejectionReason = rejectionReason;
         await complaint.save();
 

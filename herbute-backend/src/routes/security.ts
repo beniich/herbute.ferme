@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file security.ts
  * @description Security Center routes for compliance, firewall, and vulnerability scanning.
  * @module backend/routes
@@ -21,7 +21,7 @@ router.use(authenticate, requireAdmin);
 router.get(
   '/status',
   asyncHandler(async (req, res) => {
-    // Placeholder logic — to be expanded with real scan data
+    // Placeholder logic â€” to be expanded with real scan data
     return sendSuccess(res, {
       score: 85,
       status: 'Protected',

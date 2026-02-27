@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+﻿import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IAssignment extends Document {
     complaintId: mongoose.Types.ObjectId;
     teamId: mongoose.Types.ObjectId;
     assignedAt: Date;
-    status: 'affecté' | 'en cours' | 'terminé';
+    status: 'affectÃ©' | 'en cours' | 'terminÃ©';
 }
 
 const AssignmentSchema: Schema = new Schema(
@@ -14,8 +14,8 @@ const AssignmentSchema: Schema = new Schema(
         assignedAt: { type: Date, default: Date.now },
         status: {
             type: String,
-            enum: ['affecté', 'en cours', 'terminé'],
-            default: 'affecté'
+            enum: ['affectÃ©', 'en cours', 'terminÃ©'],
+            default: 'affectÃ©'
         }
     },
     { timestamps: true }

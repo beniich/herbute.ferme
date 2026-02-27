@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root {
+  /* DARK MODE (Default) */
   --bg: #0b0f0a;
   --bg2: #0f140d;
   --bg3: #141a10;
@@ -31,9 +32,25 @@
   --font-display: 'Playfair Display', serif;
   --font-body: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --shadow: 0 12px 32px rgba(0,0,0,0.4);
 }
+
+body.light-mode {
+  --bg: #f8f9f6;
+  --bg2: #ffffff;
+  --bg3: #f0f2ed;
+  --panel: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.15);
+  --text: #1a1c18;
+  --text2: #4a4e46;
+  --text3: #8a8e84;
+  --cream: #1a1c18;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg)}
+html,body{height:100%;overflow:hidden;background:var(--bg);transition: background 0.3s ease, color 0.3s ease;}
 body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:column}
 
 /* TOPBAR */
@@ -50,21 +67,21 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   display:flex;align-items:center;justify-content:center;font-size:17px;
   box-shadow:0 4px 16px rgba(90,158,69,0.35);
 }
-.logo-text{font-family:var(--font-display);font-size:17px;color:var(--cream);letter-spacing:-0.3px}
-.logo-sub{font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
-.topbar-center{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--text3)}
+.logo-text{font-family:var(--font-display);font-size:20px;color:var(--cream);letter-spacing:-0.3px}
+.logo-sub{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+.topbar-center{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:12px;color:var(--text3)}
 .topbar-center span{color:var(--text2)}
 .topbar-right{display:flex;align-items:center;gap:12px}
-.topbar-date{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1px}
+.topbar-date{font-family:var(--font-mono);font-size:12px;color:var(--text3);letter-spacing:1px}
 .topbar-alert{
   position:relative;width:32px;height:32px;border-radius:8px;
   background:rgba(255,255,255,0.04);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
 }
 .topbar-alert::after{
   content:'4';position:absolute;top:-4px;right:-4px;
   width:16px;height:16px;border-radius:50%;background:var(--red);
-  font-family:var(--font-mono);font-size:9px;color:#fff;
+  font-family:var(--font-mono);font-size:10px;color:#fff;
   display:flex;align-items:center;justify-content:center;
 }
 .topbar-user{
@@ -74,11 +91,11 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 .topbar-avatar{
   width:26px;height:26px;border-radius:50%;
   background:linear-gradient(135deg,#2d4a20,#4a3020);
-  display:flex;align-items:center;justify-content:center;font-size:12px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
 }
-.topbar-uname{font-size:12px;color:var(--text2)}
+.topbar-uname{font-size:14px;color:var(--text2)}
 .topbar-btn{
-  padding:7px 16px;border-radius:8px;font-size:11px;font-family:var(--font-mono);
+  padding:7px 16px;border-radius:8px;font-size:13px;font-family:var(--font-mono);
   background:rgba(90,158,69,0.18);border:1px solid rgba(90,158,69,0.35);
   color:var(--green2);letter-spacing:1px;cursor:pointer;transition:all .2s;
 }
@@ -96,22 +113,22 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
 
-.nav-section{padding:16px 10px 6px;font-family:var(--font-mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--text3)}
+.nav-section{padding:16px 10px 6px;font-family:var(--font-mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3)}
 .nav-item{
   display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;
   margin:1px 6px;cursor:pointer;transition:all .2s;
-  font-size:12px;color:var(--text2);position:relative;border-left:2px solid transparent;
+  font-size:14px;color:var(--text2);position:relative;border-left:2px solid transparent;
 }
 .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text)}
 .nav-item.active{background:rgba(90,158,69,0.12);color:var(--text);border-left-color:var(--green)}
-.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0}
+.nav-item .ni{width:18px;text-align:center;font-size:16px;flex-shrink:0}
 .nav-item .badge{
   margin-left:auto;padding:1px 6px;border-radius:10px;
-  font-family:var(--font-mono);font-size:9px;background:rgba(192,57,43,0.2);color:var(--red);
+  font-family:var(--font-mono);font-size:11px;background:rgba(192,57,43,0.2);color:var(--red);
 }
 .nav-sub{margin-left:40px;margin-bottom:4px}
 .nav-sub-item{
-  padding:5px 10px;border-radius:6px;font-size:11px;color:var(--text3);cursor:pointer;transition:all .15s;
+  padding:5px 10px;border-radius:6px;font-size:13px;color:var(--text3);cursor:pointer;transition:all .15s;
 }
 .nav-sub-item:hover{color:var(--text2);background:rgba(255,255,255,0.03)}
 .nav-sub-item.active{color:var(--green2)}
@@ -122,8 +139,8 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:10px;
 }
 .farm-icon{font-size:20px}
-.farm-name{font-size:12px;color:var(--text);font-weight:600}
-.farm-type{font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:1px}
+.farm-name{font-size:14px;color:var(--text);font-weight:600}
+.farm-type{font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:1px}
 
 /* MAIN CONTENT */
 .main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--bg3) transparent}
@@ -136,7 +153,7 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   background:var(--bg);position:sticky;top:0;z-index:10;
 }
 .stab{
-  padding:8px 18px;border-radius:8px 8px 0 0;font-size:12px;font-family:var(--font-mono);
+  padding:8px 18px;border-radius:8px 8px 0 0;font-size:14px;font-family:var(--font-mono);
   letter-spacing:1px;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;
   color:var(--text3);
 }
@@ -150,9 +167,9 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 
 /* PAGE HEADER */
 .page-header{margin-bottom:24px}
-.page-label{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
-.page-title{font-family:var(--font-display);font-size:28px;color:var(--cream);margin-bottom:4px}
-.page-sub{font-size:12px;color:var(--text3);font-family:var(--font-mono)}
+.page-label{font-family:var(--font-mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.page-title{font-family:var(--font-display);font-size:32px;color:var(--cream);margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--text3);font-family:var(--font-mono)}
 
 /* KPI GRID */
 .kpi-grid{display:grid;gap:14px;margin-bottom:22px}
@@ -169,11 +186,11 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   background:var(--kpi-color,var(--green));border-radius:14px 14px 0 0;
 }
 .kpi-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
-.kpi-icon{font-size:20px;margin-bottom:10px}
-.kpi-label{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
-.kpi-value{font-family:var(--font-display);font-size:24px;color:var(--cream);font-weight:700;line-height:1;margin-bottom:6px}
-.kpi-unit{font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-left:4px}
-.kpi-trend{font-family:var(--font-mono);font-size:10px;margin-top:4px}
+.kpi-icon{font-size:24px;margin-bottom:10px}
+.kpi-label{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.kpi-value{font-family:var(--font-display);font-size:30px;color:var(--cream);font-weight:700;line-height:1;margin-bottom:6px}
+.kpi-unit{font-size:13px;color:var(--text3);font-family:var(--font-mono);margin-left:4px}
+.kpi-trend{font-family:var(--font-mono);font-size:12px;margin-top:4px}
 .up{color:var(--green2)} .down{color:var(--red)} .neutral{color:var(--text3)}
 
 /* CONTENT GRID */
@@ -195,21 +212,21 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   padding:16px 20px;border-bottom:1px solid var(--border);
 }
 .panel-title{
-  font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;
   color:var(--text2);display:flex;align-items:center;gap:8px;
 }
 .panel-title .dot{width:6px;height:6px;border-radius:50%;background:var(--p-color,var(--green))}
 .panel-body{padding:20px}
 .panel-action{
-  font-family:var(--font-mono);font-size:10px;color:var(--text3);cursor:pointer;
+  font-family:var(--font-mono);font-size:12px;color:var(--text3);cursor:pointer;
   letter-spacing:1px;transition:color .2s;
 }
 .panel-action:hover{color:var(--green2)}
 
 /* TABLE */
-.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table{width:100%;border-collapse:collapse;font-size:14px}
 .data-table th{
-  padding:8px 12px;text-align:left;font-family:var(--font-mono);font-size:8px;
+  padding:8px 12px;text-align:left;font-family:var(--font-mono);font-size:10px;
   letter-spacing:2px;text-transform:uppercase;color:var(--text3);
   border-bottom:1px solid var(--border);
 }
@@ -218,7 +235,7 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 .data-table td:first-child{color:var(--text);font-weight:500}
 .pill{
   display:inline-block;padding:2px 10px;border-radius:20px;font-family:var(--font-mono);
-  font-size:10px;font-weight:500;
+  font-size:12px;font-weight:500;
 }
 .pill-green{background:rgba(90,158,69,0.15);color:var(--green2)}
 .pill-gold{background:rgba(200,146,26,0.15);color:var(--gold2)}
@@ -232,14 +249,14 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
 .bar{width:100%;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1);min-height:2px;cursor:pointer}
 .bar:hover{filter:brightness(1.2)}
-.bar-label{font-family:var(--font-mono);font-size:8px;color:var(--text3);white-space:nowrap}
-.bar-val{font-family:var(--font-mono);font-size:9px;color:var(--text2)}
+.bar-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);white-space:nowrap}
+.bar-val{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
 
 /* MINI BAR */
 .mini-bar-row{margin-bottom:12px}
 .mini-bar-info{display:flex;justify-content:space-between;margin-bottom:4px}
-.mini-bar-name{font-size:11px;color:var(--text2)}
-.mini-bar-val{font-family:var(--font-mono);font-size:11px;color:var(--text)}
+.mini-bar-name{font-size:13px;color:var(--text2)}
+.mini-bar-val{font-family:var(--font-mono);font-size:13px;color:var(--text)}
 .mini-bar-track{height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
 .mini-bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
 
@@ -250,8 +267,8 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   text-align:center;
 }
-.donut-val{font-family:var(--font-display);font-size:18px;color:var(--cream);font-weight:700}
-.donut-sub{font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:1px}
+.donut-val{font-family:var(--font-display);font-size:22px;color:var(--cream);font-weight:700}
+.donut-sub{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:1px}
 
 /* ALERT LIST */
 .alert-item{
@@ -260,8 +277,8 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 }
 .alert-item:last-child{border-bottom:none}
 .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.alert-text{font-size:12px;color:var(--text2);flex:1}
-.alert-time{font-family:var(--font-mono);font-size:10px;color:var(--text3)}
+.alert-text{font-size:14px;color:var(--text2);flex:1}
+.alert-time{font-family:var(--font-mono);font-size:12px;color:var(--text3)}
 
 /* TIMELINE */
 .timeline-item{display:flex;gap:14px;padding-bottom:16px;position:relative}
@@ -269,8 +286,8 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 .timeline-item:last-child::before{display:none}
 .tl-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;margin-top:2px;border:2px solid var(--bg)}
 .tl-content{flex:1}
-.tl-title{font-size:12px;color:var(--text);font-weight:500;margin-bottom:2px}
-.tl-desc{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+.tl-title{font-size:14px;color:var(--text);font-weight:500;margin-bottom:2px}
+.tl-desc{font-size:13px;color:var(--text3);font-family:var(--font-mono)}
 
 /* WEATHER WIDGET */
 .weather-widget{
@@ -278,9 +295,9 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   border:1px solid rgba(42,100,180,0.2);border-radius:12px;padding:16px;
   display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;
 }
-.weather-main{font-family:var(--font-display);font-size:36px;color:var(--cream)}
+.weather-main{font-family:var(--font-display);font-size:42px;color:var(--cream)}
 .weather-icon{font-size:32px}
-.weather-detail{font-family:var(--font-mono);font-size:10px;color:var(--text3);line-height:2}
+.weather-detail{font-family:var(--font-mono);font-size:12px;color:var(--text3);line-height:2}
 
 /* PROGRESS RING */
 .progress-ring{
@@ -354,6 +371,109 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 /* TAB CONTENT */
 .tab-page{display:none}
 .tab-page.active{display:block}
+
+/* EXCEL VIEW */
+.excel-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.excel-table th {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: left;
+    color: var(--text2);
+    font-size: 11px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.excel-table tr:nth-child(even) {
+    background: rgba(0,0,0,0.02);
+}
+body.light-mode .excel-table tr:nth-child(even) {
+    background: rgba(0,0,0,0.015);
+}
+.excel-table td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    color: var(--text2);
+}
+.excel-table input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+}
+.excel-table input:focus {
+    background: rgba(90,158,69,0.08);
+    box-shadow: inset 0 0 0 1px var(--green);
+}
+.excel-table td:last-child {
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* FORM VIEW */
+.form-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 6px;
+}
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    outline: none;
+}
+.form-group input:focus {
+    border-color: var(--green);
+}
+
+/* THEME TOGGLE */
+.theme-toggle {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+body.light-mode .theme-toggle {
+    background: rgba(0,0,0,0.04);
+}
 </style>
 </head>
 <body>
@@ -372,6 +492,7 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   </div>
   <div class="topbar-right">
     <div class="topbar-date">Lun. 24 Fév. 2026</div>
+    <div class="theme-toggle" id="theme-toggle" title="Changer de mode">🌓</div>
     <div class="topbar-alert" title="4 alertes actives">🔔</div>
     <div class="topbar-user">
       <div class="topbar-avatar">🧑‍🌾</div>
@@ -388,6 +509,9 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
   <div class="nav-section">Tableau de Bord</div>
   <div class="nav-item active" onclick="navigate('dashboard',this,'Vue Générale')">
     <span class="ni">🏠</span> Vue Générale
+  </div>
+  <div class="nav-item" onclick="navigate('admin_mgmt',this,'Gestion Administrateur')">
+    <span class="ni">💼</span> Gestion Admin
   </div>
   <div class="nav-item" onclick="navigate('meteo',this,'Météo & Environnement')">
     <span class="ni">🌤️</span> Météo & Environnement
@@ -513,25 +637,25 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
       <div class="kpi-card" style="--kpi-color:var(--green)">
         <div class="kpi-icon">📈</div>
         <div class="kpi-label">Chiffre d'Affaires</div>
-        <div class="kpi-value">1,48<span class="kpi-unit">MDH</span></div>
+        <div id="agro-revenue" class="kpi-value">1,48<span class="kpi-unit">MDH</span></div>
         <div class="kpi-trend up">▲ 14.2% vs 2025</div>
       </div>
       <div class="kpi-card" style="--kpi-color:var(--red)">
         <div class="kpi-icon">📉</div>
         <div class="kpi-label">Charges Totales</div>
-        <div class="kpi-value">892<span class="kpi-unit">KDH</span></div>
+        <div id="agro-expenses" class="kpi-value">892<span class="kpi-unit">KDH</span></div>
         <div class="kpi-trend down">▲ 4.1% vs 2025</div>
       </div>
       <div class="kpi-card" style="--kpi-color:var(--gold)">
         <div class="kpi-icon">💎</div>
         <div class="kpi-label">Bénéfice Net</div>
-        <div class="kpi-value">588<span class="kpi-unit">KDH</span></div>
+        <div id="agro-profit" class="kpi-value">588<span class="kpi-unit">KDH</span></div>
         <div class="kpi-trend up">▲ 22.7%</div>
       </div>
       <div class="kpi-card" style="--kpi-color:var(--blue)">
         <div class="kpi-icon">🏦</div>
         <div class="kpi-label">Trésorerie</div>
-        <div class="kpi-value">284<span class="kpi-unit">KDH</span></div>
+        <div id="agro-cash" class="kpi-value">284<span class="kpi-unit">KDH</span></div>
         <div class="kpi-trend up">▲ 8.5%</div>
       </div>
     </div>
@@ -541,19 +665,19 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
       <div class="kpi-card" style="--kpi-color:var(--amber)">
         <div class="kpi-icon">🐄</div>
         <div class="kpi-label">Cheptel Total</div>
-        <div class="kpi-value">508<span class="kpi-unit">têtes</span></div>
+        <div id="agro-animals" class="kpi-value">508<span class="kpi-unit">têtes</span></div>
         <div class="kpi-trend up">▲ 3.2%</div>
       </div>
       <div class="kpi-card" style="--kpi-color:#e8943a">
         <div class="kpi-icon">🐓</div>
         <div class="kpi-label">Volaille</div>
-        <div class="kpi-value">12 400<span class="kpi-unit">unités</span></div>
+        <div id="agro-poultry" class="kpi-value">12 400<span class="kpi-unit">unités</span></div>
         <div class="kpi-trend down">▼ 1.2%</div>
       </div>
       <div class="kpi-card" style="--kpi-color:var(--green)">
         <div class="kpi-icon">🌾</div>
         <div class="kpi-label">Hectares Cultivés</div>
-        <div class="kpi-value">218<span class="kpi-unit">ha</span></div>
+        <div id="agro-ha" class="kpi-value">218<span class="kpi-unit">ha</span></div>
         <div class="kpi-trend neutral">= stable</div>
       </div>
       <div class="kpi-card" style="--kpi-color:var(--brown)">
@@ -1107,6 +1231,145 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 </div>
 
 <!-- GENERIC PAGES -->
+<!-- ═══════════════ GESTION ADMIN ═══════════════ -->
+<div class="page" id="page-admin_mgmt">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label">Administration & Gouvernance</div>
+      <h1 class="page-title">Centre de Gestion Maître</h1>
+      <div class="page-sub">Contrôle des données Excel · Injection directe · Intégration GLPI 11</div>
+    </div>
+
+    <div class="content-grid cg-31" style="gap:24px">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <!-- EXCEL VIEW -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><div class="dot" style="background:var(--green)"></div>Gestionnaire de Données (Style Excel)</div>
+            <div style="display:flex;gap:12px">
+              <button class="panel-action" onclick="alert('Enregistré !')">💾 Enregistrer</button>
+              <button class="panel-action" onclick="alert('Import Excel...')">📁 Importer</button>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:0">
+            <div class="excel-container" style="max-height:400px">
+              <table class="excel-table">
+                <thead>
+                  <tr>
+                    <th>ID</th><th>Secteur</th><th>Désignation</th><th>Quantité</th><th>Unité</th><th>Prix Unitaire</th><th>Total</th><th>Responsable</th>
+                  </tr>
+                </thead>
+                <tbody id="excel-body">
+                  <tr><td>001</td><td><input value="Élevage"></td><td><input value="Aliment Bovin"></td><td><input value="1200"></td><td>kg</td><td><input value="4.50"></td><td>5400.00</td><td>Benali</td></tr>
+                  <tr><td>002</td><td><input value="Culture"></td><td><input value="Engrais NPK"></td><td><input value="500"></td><td>kg</td><td><input value="8.20"></td><td>4100.00</td><td>Zaid</td></tr>
+                  <tr><td>003</td><td><input value="Ferme"></td><td><input value="Pièces Tracteur"></td><td><input value="4"></td><td>u</td><td><input value="1250"></td><td>5000.00</td><td>Karim</td></tr>
+                  <tr><td>004</td><td><input value="Forêt"></td><td><input value="Plants Cèdre"></td><td><input value="200"></td><td>u</td><td><input value="15.00"></td><td>3000.00</td><td>Benali</td></tr>
+                  <!-- Lignes vides pour l'effet Excel -->
+                  <tr><td>005</td><td><input></td><td><input></td><td><input></td><td></td><td><input></td><td>0.00</td><td></td></tr>
+                  <tr><td>006</td><td><input></td><td><input></td><td><input></td><td></td><td><input></td><td>0.00</td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM INJECTION -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><div class="dot" style="background:var(--blue)"></div>Saisie Directe (Injection de Données)</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-card">
+              <form id="injection-form" onsubmit="event.preventDefault(); alert('Données injectées avec succès !');">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                  <div class="form-group">
+                    <label>Secteur d'activité</label>
+                    <select>
+                      <option>Élevage & Volaille</option>
+                      <option>Cultures & Maraîchage</option>
+                      <option>Forêt & Domaine</option>
+                      <option>Équipements & Infrastructure</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Type d'opération</label>
+                    <select>
+                      <option>Dépense / Achat</option>
+                      <option>Recette / Vente</option>
+                      <option>Audit / Inventaire</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Description de l'entité</label>
+                  <input type="text" placeholder="Ex: Achat de 50 têtes d'ovins">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                  <div class="form-group">
+                    <label>Valeur Numérique</label>
+                    <input type="number" step="0.01">
+                  </div>
+                  <div class="form-group">
+                    <label>Date de l'opération</label>
+                    <input type="date">
+                  </div>
+                </div>
+                <button type="button" class="topbar-btn" style="width:100%;margin-top:10px">+ Injecter dans le système</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- GLPI INTEGRATION -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><div class="dot" style="background:var(--teal)"></div>GLPI 11 - Statut IT</div>
+            <div class="nav-item badge" style="background:var(--green);color:white">Connecté</div>
+          </div>
+          <div class="panel-body">
+            <div style="text-align:center;padding:10px 0">
+              <div style="font-size:32px;margin-bottom:10px">💻</div>
+              <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:15px">Synchronisation avec l'inventaire GLPI v11.0.2</div>
+              <button class="panel-action" onclick="this.innerHTML='🔄 Synchronisation...'; setTimeout(()=>this.innerHTML='✅ Rafraîchir GLPI', 1500)">🔄 Rafraîchir GLPI</button>
+            </div>
+            <div class="sdiv"></div>
+            <div class="compact-row">
+              <span class="cr-name">Tickets en cours</span>
+              <span id="glpi-tickets-count" class="cr-val">12</span>
+            </div>
+            <div class="compact-row">
+              <span class="cr-name">Actifs IT surveillés</span>
+              <span id="glpi-assets-count" class="cr-val">45</span>
+            </div>
+            <div class="compact-row">
+              <span class="cr-name">Dernière Sync</span>
+              <span id="glpi-last-sync" class="cr-sub">À l'instant</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><div class="dot" style="background:var(--gold)"></div>Rapport d'Audit Administrateur</div>
+          </div>
+          <div class="panel-body">
+            <div class="alert-item">
+              <div class="alert-dot" style="background:var(--green)"></div>
+              <div class="alert-text">Calculs de marge automatisés terminés.</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot" style="background:var(--blue)"></div>
+              <div class="alert-text">Projection financière Q3 mise à jour via Excel.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page" id="page-meteo"><div style="padding:24px"><div class="page-header"><div class="page-label" style="color:var(--blue)">Météo & Environnement</div><h1 class="page-title">Station Météo · Domaine Al Baraka</h1></div><div class="kpi-grid kpi-grid-4"><div class="kpi-card" style="--kpi-color:var(--gold)"><div class="kpi-icon">🌡️</div><div class="kpi-label">Température</div><div class="kpi-value">22<span class="kpi-unit">°C</span></div><div class="kpi-trend neutral">Min 14 / Max 26</div></div><div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-icon">💧</div><div class="kpi-label">Humidité</div><div class="kpi-value">48<span class="kpi-unit">%</span></div><div class="kpi-trend neutral">Normal</div></div><div class="kpi-card" style="--kpi-color:var(--teal)"><div class="kpi-icon">🌧️</div><div class="kpi-label">Pluviométrie Mois</div><div class="kpi-value">42<span class="kpi-unit">mm</span></div><div class="kpi-trend up">▲ Normal+</div></div><div class="kpi-card" style="--kpi-color:var(--gold2)"><div class="kpi-icon">💨</div><div class="kpi-label">Vent</div><div class="kpi-value">12<span class="kpi-unit">km/h NW</span></div><div class="kpi-trend neutral">Faible</div></div></div><div class="panel"><div class="panel-header"><div class="panel-title"><div class="dot" style="background:var(--blue)"></div>Prévisions 7 jours</div></div><div class="panel-body"><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;text-align:center">${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((d,i)=>`<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:8px">${d}</div><div style="font-size:22px;margin-bottom:8px">${['☀️','⛅','🌤️','🌦️','☀️','☀️','⛅'][i]}</div><div style="font-size:13px;color:var(--cream);font-family:var(--font-display)">${[22,20,21,18,24,26,23][i]}°</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px">${[14,13,14,12,15,16,14][i]}° min</div></div>`).join('')}</div></div></div></div></div>
 
 <div class="page" id="page-sante"><div style="padding:24px"><div class="page-header"><div class="page-label" style="color:var(--red)">Santé Animale</div><h1 class="page-title">Suivi Vétérinaire & Santé</h1></div><div class="kpi-grid kpi-grid-4"><div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-icon">💉</div><div class="kpi-label">Vaccinations à venir</div><div class="kpi-value">3<span class="kpi-unit">lots</span></div><div class="kpi-trend down">Urgent</div></div><div class="kpi-card" style="--kpi-color:var(--gold)"><div class="kpi-icon">🏥</div><div class="kpi-label">Animaux sous soins</div><div class="kpi-value">8<span class="kpi-unit">unités</span></div><div class="kpi-trend neutral">—</div></div><div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-icon">🧪</div><div class="kpi-label">Analyses récentes</div><div class="kpi-value">12<span class="kpi-unit">résultats</span></div><div class="kpi-trend up">✓ OK</div></div><div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-icon">💊</div><div class="kpi-label">Budget Véto</div><div class="kpi-value">54<span class="kpi-unit">KDH/an</span></div><div class="kpi-trend neutral">—</div></div></div><div class="panel"><div class="panel-header"><div class="panel-title"><div class="dot" style="background:var(--red)"></div>Historique Interventions</div></div><div class="panel-body" style="padding:0"><table class="data-table"><thead><tr><th>Date</th><th>Animal</th><th>Intervention</th><th>Vétérinaire</th><th>Coût</th><th>Résultat</th></tr></thead><tbody><tr><td>23/02</td><td>Vache #A-12</td><td>Traitement mammite</td><td>Dr. Khalid</td><td style="font-family:var(--font-mono)">480 DH</td><td><span class="pill pill-green">Guérison</span></td></tr><tr><td>20/02</td><td>Lot B4 Poulets</td><td>Diagnostic mortalité</td><td>Dr. Khalid</td><td style="font-family:var(--font-mono)">1 200 DH</td><td><span class="pill pill-gold">En cours</span></td></tr><tr><td>15/02</td><td>Troupeau Ovins</td><td>Déparasitage</td><td>Dr. Sara</td><td style="font-family:var(--font-mono)">2 800 DH</td><td><span class="pill pill-green">Terminé</span></td></tr><tr><td>10/02</td><td>Brebis #O-47</td><td>Suivi gestation</td><td>Dr. Sara</td><td style="font-family:var(--font-mono)">350 DH</td><td><span class="pill pill-teal">Suivi</span></td></tr><tr><td>05/02</td><td>28 bovins</td><td>Vaccination FMD</td><td>Dr. Khalid</td><td style="font-family:var(--font-mono)">5 600 DH</td><td><span class="pill pill-green">Complété</span></td></tr></tbody></table></div></div></div></div>
@@ -1119,6 +1382,267 @@ body{font-family:var(--font-body);color:var(--text);display:flex;flex-direction:
 
 </div><!-- end main -->
 </div><!-- end layout -->
+
+
+<!-- ═══════════════ CULTURES & TERRES ═══════════════ -->
+<div class="page" id="page-legumes">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--green2)">Cultures & Maraîchage</div>
+      <h1 class="page-title">Système de Production Végétale</h1>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="panel-action" onclick="refreshGLPI()">🔄 Synchroniser Capteurs GLPI</button>
+      </div>
+    </div>
+    
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-icon">🌱</div><div class="kpi-label">Santé Végétale</div><div class="kpi-value">94<span class="kpi-unit">% NDVI</span></div><div class="kpi-trend up">▲ Optimal</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-icon">💧</div><div class="kpi-label">Tension Hydrique</div><div class="kpi-value">22<span class="kpi-unit">cb</span></div><div class="kpi-trend neutral">Normal</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--gold)"><div class="kpi-icon">🧪</div><div class="kpi-label">Azote Sol (N)</div><div class="kpi-value">4.2<span class="kpi-unit">mg/kg</span></div><div class="kpi-trend down">▼ Requis</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--teal)"><div class="kpi-icon">🚜</div><div class="kpi-label">Disponibilité Matériel</div><div class="kpi-value">100<span class="kpi-unit">%</span></div><div class="kpi-trend neutral">✓ OK</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><div class="dot" style="background:var(--green)"></div>Plan de Rotation & Rendements</div></div>
+      <div class="panel-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>Variété</th><th>Parcelles</th><th>Cycle</th><th>Prévision (T)</th><th>Rendement moy.</th><th>Status GLPI Item</th></tr></thead>
+          <tbody>
+            <tr><td>Tomate Round</td><td>P1, P5</td><td>Mars - Juil</td><td>120 T</td><td>60 T/ha</td><td><span class="pill pill-green">Monitoré</span></td></tr>
+            <tr><td>Carotte Nantaise</td><td>P2</td><td>Fév - Mai</td><td>45 T</td><td>28 T/ha</td><td><span class="pill pill-green">Monitoré</span></td></tr>
+            <tr><td>Oignon Rouge</td><td>P8, P9</td><td>Jan - Juin</td><td>80 T</td><td>35 T/ha</td><td><span class="pill pill-gold">Sync Requis</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FORÊT & DOMAINE ═══════════════ -->
+<div class="page" id="page-foret">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--brown)">Patrimoine Forestier</div>
+      <h1 class="page-title">Gestion de la Forêt & Écosystème</h1>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="panel-action" onclick="refreshGLPI()">🔄 Import Inventaire Bois GLPI</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi-card" style="--kpi-color:var(--brown)"><div class="kpi-icon">🌲</div><div class="kpi-label">Stock Bois Sur Pied</div><div class="kpi-value">5 200<span class="kpi-unit">m³</span></div><div class="kpi-trend up">+2.5% an</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-icon">🌳</div><div class="kpi-label">Reforestation</div><div class="kpi-value">1 200<span class="kpi-unit">plants</span></div><div class="kpi-trend neutral">Saison 26</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-icon">🔥</div><div class="kpi-label">Risque Incendie</div><div class="kpi-value">FAIBLE</div><div class="kpi-trend neutral">Station #4</div></div>
+    </div>
+
+    <div class="content-grid cg-2">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Essences & Valorisation</div></div>
+        <div class="panel-body">
+          <div class="gauge-row"><div class="gauge-label">Cèdre de l'Atlas</div><div class="gauge-track"><div class="gauge-fill" style="width:60%;background:var(--brown)"></div></div><div class="gauge-val">3 200 m³</div></div>
+          <div class="gauge-row"><div class="gauge-label">Chêne Vert</div><div class="gauge-track"><div class="gauge-fill" style="width:25%;background:var(--green)"></div></div><div class="gauge-val">1 400 m³</div></div>
+          <div class="gauge-row"><div class="gauge-label">Eucalyptus</div><div class="gauge-track"><div class="gauge-fill" style="width:15%;background:var(--teal)"></div></div><div class="gauge-val">600 m³</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Protection & Gardiennage</div></div>
+        <div class="panel-body">
+          <div class="alert-item">
+            <div class="alert-dot" style="background:var(--green)"></div>
+            <div class="alert-text">Patrouille zone Nord effectuée (08:00)</div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-dot" style="background:var(--gold)"></div>
+            <div class="alert-text">Élagage parcelle F2 programmé pour J-4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-legumes">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--green2)">Légumes & Fruits</div>
+      <h1 class="page-title">Cultures Maraîchères</h1>
+    </div>
+    <div style="background:var(--panel);border:1px dashed var(--border);border-radius:14px;padding:60px;text-align:center;margin-top:20px">
+      <div style="font-size:48px;margin-bottom:16px">🥕</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--cream);margin-bottom:8px">Module en cours de développement</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">Ce module sera activé prochainement.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-pepiniere">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--teal)">Pépinière</div>
+      <h1 class="page-title">Gestion des Plants</h1>
+    </div>
+    <div style="background:var(--panel);border:1px dashed var(--border);border-radius:14px;padding:60px;text-align:center;margin-top:20px">
+      <div style="font-size:48px;margin-bottom:16px">🪴</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--cream);margin-bottom:8px">Module en cours de développement</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">Ce module sera activé prochainement.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-irrigation">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--blue)">Irrigation</div>
+      <h1 class="page-title">Ressources en Eau & Irrigation</h1>
+    </div>
+    <div style="background:var(--panel);border:1px dashed var(--border);border-radius:14px;padding:60px;text-align:center;margin-top:20px">
+      <div style="font-size:48px;margin-bottom:16px">💧</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--cream);margin-bottom:8px">Module en cours de développement</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">Ce module sera activé prochainement.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-equipement">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--amber)">Équipements & Flotte</div>
+      <h1 class="page-title">Parc Matériel & Tracteurs</h1>
+    </div>
+    <div style="background:var(--panel);border:1px dashed var(--border);border-radius:14px;padding:60px;text-align:center;margin-top:20px">
+      <div style="font-size:48px;margin-bottom:16px">🚜</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--cream);margin-bottom:8px">Module en cours de développement</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">Ce module sera activé prochainement.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ COMMERCIALISATION & VENTES ═══════════════ -->
+<div class="page" id="page-ventes">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--red)">Ventes & Marchés</div>
+      <h1 class="page-title">Centre de Commercialisation</h1>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="panel-action" onclick="refreshGLPI()">🔄 Sync Commandes GLPI</button>
+      </div>
+    </div>
+    
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-icon">📈</div><div class="kpi-label">CA Février</div><div class="kpi-value">1.48<span class="kpi-unit">MDH</span></div><div class="kpi-trend up">▲ 12%</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-icon">🛒</div><div class="kpi-label">Commandes Ouvertes</div><div class="kpi-value">28<span class="kpi-unit">unités</span></div><div class="kpi-trend neutral">En cours</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--gold)"><div class="kpi-icon">🌍</div><div class="kpi-label">Export / Local</div><div class="kpi-value">40/60<span class="kpi-unit">%</span></div><div class="kpi-trend neutral">Stable</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-icon">⏳</div><div class="kpi-label">Retard Livraison</div><div class="kpi-value">2<span class="kpi-unit">lots</span></div><div class="kpi-trend down">▼ Action req.</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Pipeline des Commandes Majeures</div></div>
+      <div class="panel-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>Client</th><th>Produit</th><th>Volume</th><th>Valeur</th><th>Date Livraison</th><th>État</th></tr></thead>
+          <tbody>
+            <tr><td>Coopérative Atlas</td><td>Lait Frais</td><td>15 000 L</td><td>248K DH</td><td>28/02/2026</td><td><span class="pill pill-green">Prêt</span></td></tr>
+            <tr><td>Export Europe Ltd</td><td>Menthe Bio</td><td>2 500 kg</td><td>126K DH</td><td>02/03/2026</td><td><span class="pill pill-blue">Conditionnement</span></td></tr>
+            <tr><td>Grossiste Casa</td><td>Poulets B4</td><td>4 000 u</td><td>184K DH</td><td>25/02/2026</td><td><span class="pill pill-gold">En chargement</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PROJET & ROI ═══════════════ -->
+<div class="page" id="page-investissement">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--purple)">Investissements & Projets</div>
+      <h1 class="page-title">Suivi des Projets & ROI</h1>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="panel-action" onclick="refreshGLPI()">🔄 Sync Projets GLPI IT</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi-card" style="--kpi-color:var(--purple)"><div class="kpi-icon">🏗️</div><div class="kpi-label">CAPEX Engagé</div><div class="kpi-value">1.1<span class="kpi-unit">MDH</span></div><div class="kpi-trend neutral">Budget 1.5M</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--teal)"><div class="kpi-icon">📊</div><div class="kpi-label">ROI Prévisionnel</div><div class="kpi-value">18.5<span class="kpi-unit">%</span></div><div class="kpi-trend up">▲ +2%</div></div>
+      <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-icon">⏱️</div><div class="kpi-label">Payback Moyen</div><div class="kpi-value">3.2<span class="kpi-unit">ans</span></div><div class="kpi-trend neutral">Optimisé</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">État d'Avancement des Projets Stratégiques</div></div>
+      <div class="panel-body">
+        <div style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--cream)">Modernisation Système Irrigation (Solaire)</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--green2)">85%</span></div>
+          <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden"><div style="width:85%;height:100%;background:var(--green)"></div></div>
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--cream)">Nouveau Hangar de Stockage Réfrigéré</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--gold2)">40%</span></div>
+          <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden"><div style="width:40%;height:100%;background:var(--gold)"></div></div>
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--cream)">Extension Vergers Oliviers (40ha)</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--blue)">100%</span></div>
+          <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PARAMS & CONFIG ═══════════════ -->
+<div class="page" id="page-parametres">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div class="page-label" style="color:var(--text3)">Configuration Système</div>
+      <h1 class="page-title">Paramètres du Domaine</h1>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="panel-action" onclick="refreshGLPI()">🔄 Check Santé Système GLPI</button>
+      </div>
+    </div>
+
+    <div class="content-grid cg-2">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Préférences Générales</div></div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label>Nom du Domaine</label>
+            <input type="text" value="Domaine Al Baraka">
+          </div>
+          <div class="form-group">
+            <label>Devise Principale</label>
+            <select><option>Dirham Marocain (DH)</option><option>Euro (€)</option></select>
+          </div>
+          <div class="form-group">
+            <label>Langue de l'Interface</label>
+            <select><option>Français</option><option>Arabe</option><option>Anglais</option></select>
+          </div>
+          <button class="topbar-btn" style="width:100%">Sauvegarder les réglages</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Intégrations & Sécurité</div></div>
+        <div class="panel-body">
+          <div class="compact-row">
+            <span class="cr-name">API GLPI 11 Connection</span>
+            <span class="pill pill-green">Actif</span>
+          </div>
+          <div class="compact-row">
+            <span class="cr-name">Sauvegardes Cloud (Daily)</span>
+            <span class="pill pill-green">OK</span>
+          </div>
+          <div class="compact-row">
+            <span class="cr-name">Niveau d'Accès Admin</span>
+            <span class="cr-val">Maître (Root)</span>
+          </div>
+          <div class="sdiv"></div>
+          <div style="font-size:12px;color:var(--text3);font-family:var(--font-mono)">
+            Version System: v2.4.0-stable<br>
+            Dernière mise à jour: 24/02/2026
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 const TRANSACTIONS = [
@@ -1243,6 +1767,62 @@ tr:hover td{background:#faf6ee}
 
 function showAddModal() { alert('Formulaire de saisie — En cours de développement\nModule actif : ' + document.getElementById('breadcrumb').textContent); }
 
+// Theme Toggle
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    document.getElementById('theme-toggle').textContent = isLight ? '☀️' : '🌓';
+});
+
+// Excel Row Calculation
+document.getElementById('excel-body').addEventListener('input', (e) => {
+    const row = e.target.closest('tr');
+    if (!row) return;
+    const qty = parseFloat(row.cells[3].querySelector('input').value) || 0;
+    const pu = parseFloat(row.cells[5].querySelector('input').value) || 0;
+    row.cells[6].textContent = (qty * pu).toFixed(2);
+});
+
+// GLPI Refresh
+async function refreshGLPI() {
+    const btn = document.querySelector('button.panel-action');
+    btn.innerHTML = '🔄 Synchronisation...';
+    await fetchDashboardData();
+    setTimeout(() => { btn.innerHTML = '✅ Rafraîchir GLPI'; }, 500);
+}
+
+// Fetch Unified Data from Backend
+async function fetchDashboardData() {
+    try {
+        const response = await fetch('/api/dashboard');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const result = await response.json();
+        
+        if (result.success) {
+            const { agro, it, maintenance } = result;
+            
+            // Update Financials
+            document.getElementById('agro-revenue').innerHTML = `${(agro.financials.totalRevenue / 1000000).toFixed(2)}<span class="kpi-unit">MDH</span>`;
+            document.getElementById('agro-expenses').innerHTML = `${(agro.financials.totalExpenses / 1000).toFixed(0)}<span class="kpi-unit">KDH</span>`;
+            document.getElementById('agro-profit').innerHTML = `${(agro.financials.netProfit / 1000).toFixed(0)}<span class="kpi-unit">KDH</span>`;
+            document.getElementById('agro-cash').innerHTML = `${(agro.financials.cashFlow / 1000).toFixed(0)}<span class="kpi-unit">KDH</span>`;
+            
+            // Update Operational
+            document.getElementById('agro-animals').innerHTML = `${agro.cheptel.total}<span class="kpi-unit">têtes</span>`;
+            document.getElementById('agro-poultry').innerHTML = `${agro.cheptel.poultry.toLocaleString()}<span class="kpi-unit">unités</span>`;
+            document.getElementById('agro-ha').innerHTML = `${agro.cultures.totalHa}<span class="kpi-unit">ha</span>`;
+            
+            // Update IT (GLPI)
+            document.getElementById('glpi-tickets-count').textContent = it.total;
+            // Assuming we fetch assets count separately or added to backend later
+            // For now use mock or provided data
+            document.getElementById('glpi-last-sync').textContent = new Date().toLocaleTimeString();
+        }
+    } catch (error) {
+        console.error('Dashboard sync error:', error);
+    }
+}
+
 // Animate bars on load
 window.addEventListener('load', () => {
   document.querySelectorAll('.bar').forEach(b => {
@@ -1250,6 +1830,11 @@ window.addEventListener('load', () => {
     b.style.height = '0';
     setTimeout(() => { b.style.height = h; }, 300);
   });
+  
+  // Initial data fetch
+  fetchDashboardData();
+  // Auto-refresh every 5 minutes
+  setInterval(fetchDashboardData, 300000);
 });
 </script>
 </body>

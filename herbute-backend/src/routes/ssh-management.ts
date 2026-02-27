@@ -1,11 +1,11 @@
-/**
+﻿/**
  * routes/ssh-management.ts
- * SSH server management — requires admin role + SSH rate limiter.
+ * SSH server management â€” requires admin role + SSH rate limiter.
  * All operations are audited.
  *
- * POST /api/ssh/rotate-password  → rotate user password via SSH
- * GET  /api/ssh/sessions         → list active SSH sessions
- * GET  /api/ssh/policy           → get password policy for user
+ * POST /api/ssh/rotate-password  â†’ rotate user password via SSH
+ * GET  /api/ssh/sessions         â†’ list active SSH sessions
+ * GET  /api/ssh/policy           â†’ get password policy for user
  */
 import { Router, Request, Response } from 'express';
 import { body, query } from 'express-validator';
@@ -22,7 +22,7 @@ const router = Router();
 // All SSH routes: authenticated + admin + rate limited
 router.use(authenticate, requireAdmin, sshLimiter);
 
-/* ── POST /api/ssh/rotate-password ─────────────── */
+/* â”€â”€ POST /api/ssh/rotate-password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.post(
   '/rotate-password',
   [
@@ -68,7 +68,7 @@ router.post(
   }),
 );
 
-/* ── GET /api/ssh/sessions ──────────────────────── */
+/* â”€â”€ GET /api/ssh/sessions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.get(
   '/sessions',
   asyncHandler(async (req: Request, res: Response) => {
@@ -83,7 +83,7 @@ router.get(
   }),
 );
 
-/* ── GET /api/ssh/policy ────────────────────────── */
+/* â”€â”€ GET /api/ssh/policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.get(
   '/policy',
   [query('user').trim().notEmpty().withMessage('user query parameter is required')],

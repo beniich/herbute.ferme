@@ -63,10 +63,8 @@ export default function ITAssetsPage() {
   const loadAssets = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (filterType !== 'all') params.type = filterType;
-
-      const res = await api.get('/api/it-assets', { params });
+      const queryString = filterType !== 'all' ? `?type=${filterType}` : '';
+      const res = await api.get(`/api/it-assets${queryString}`);
       setAssets(res.data.data || []); // Adjusted to match generic API response structure usually { success: true, data: [...] }
     } catch (error) {
       console.error('Failed to load assets:', error);

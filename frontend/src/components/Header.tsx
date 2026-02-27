@@ -1,8 +1,8 @@
 'use client';
 
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
-import { useAuthStore } from '@/store/authStore';
-import { BarChart3, CalendarDays, ChevronDown, FileText, LayoutDashboard, LogOut, Map, Menu, MessagesSquare, Settings as SettingsIcon, Shield, Truck, Users, X } from 'lucide-react';
+import { useAuth } from '@/providers/AuthProvider';
+import { BarChart3, CalendarDays, ChevronDown, FileText, LayoutDashboard, ListTodo, LogOut, Map, Menu, MessagesSquare, Settings as SettingsIcon, Shield, Truck, Users, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { OrganizationSelector } from './organization/OrganizationSelector';
 
 export default function Header() {
-    const { user, logout } = useAuthStore();
+    const { user, logout } = useAuth();
     const t = useTranslations('Navbar');
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,6 +54,9 @@ export default function Header() {
                     <Link href="/planning" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title={t('planning')}>
                         <CalendarDays className="w-5 h-5" />
                     </Link>
+                    <Link href="/tasks" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title="Helpdesk / GLPI Tasks">
+                        <ListTodo className="w-5 h-5 text-primary" />
+                    </Link>
                     <Link href="/map" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title={t('map')}>
                         <Map className="w-5 h-5" />
                     </Link>
@@ -63,6 +66,11 @@ export default function Header() {
                     <Link href="/system-info" className="p-2 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title={t('systemInfo')}>
                         <Shield className="w-5 h-5" />
                     </Link>
+                    {(user.role === 'super_admin' || user.role === 'admin') && (
+                        <Link href="/super-admin" className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all" title="Espace Super-Admin">
+                            <ShieldAlert className="w-5 h-5" />
+                        </Link>
+                    )}
 
                             {/* More Menu */}
                             <div className="relative group">
@@ -200,9 +208,23 @@ export default function Header() {
                                 <Link href="/complaints/list" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('complaints')}</Link>
                                 <Link href="/teams" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('teams')}</Link>
                                 <Link href="/planning" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('planning')}</Link>
+                                <Link href="/tasks" className="block px-4 py-2 rounded-lg bg-primary/10 text-primary font-bold transition-colors" onClick={() => setIsMenuOpen(false)}>
+                                    <div className="flex items-center gap-2">
+                                        <ListTodo className="w-4 h-4" />
+                                        <span>Helpdesk GLPI</span>
+                                    </div>
+                                </Link>
                                 <Link href="/map" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('map')}</Link>
                                 <Link href="/analytics" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('analytics')}</Link>
                                 <Link href="/system-info" className="block px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('systemInfo')}</Link>
+                                {(user.role === 'super_admin' || user.role === 'admin') && (
+                                    <Link href="/super-admin" className="block px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 font-bold transition-colors" onClick={() => setIsMenuOpen(false)}>
+                                        <div className="flex items-center gap-2">
+                                            <ShieldAlert className="w-4 h-4" />
+                                            <span>Super Admin Hub</span>
+                                        </div>
+                                    </Link>
+                                )}
                             </div>
                             <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-2">
                                 <Link href="/settings" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" onClick={() => setIsMenuOpen(false)}>

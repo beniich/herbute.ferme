@@ -1,11 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ICrop extends Document {
   organizationId: mongoose.Types.ObjectId;
   name: string; // e.g., 'Tomates', 'Menthe', 'Plantes'
-  category: 'Légumes' | 'Herbes' | 'Pépinière';
+  category: 'LÃ©gumes' | 'Herbes' | 'PÃ©piniÃ¨re';
   plotId: string; // Identifier for the field/plot
-  status: 'Planté' | 'En croissance' | 'Prêt à récolter' | 'Récolté';
+  status: 'PlantÃ©' | 'En croissance' | 'PrÃªt Ã  rÃ©colter' | 'RÃ©coltÃ©';
   plantedDate: Date;
   expectedHarvestDate?: Date;
   estimatedYield: number; // in kg or units
@@ -19,14 +19,14 @@ const CropSchema: Schema = new Schema({
   category: { 
     type: String, 
     required: true,
-    enum: ['Légumes', 'Herbes', 'Pépinière']
+    enum: ['VEGETABLE', 'HERB', 'NURSERY']
   },
   plotId: { type: String, required: true },
   status: { 
     type: String, 
     required: true,
-    enum: ['Planté', 'En croissance', 'Prêt à récolter', 'Récolté'],
-    default: 'Planté'
+    enum: ['PLANTED', 'GROWING', 'READY', 'HARVESTED'],
+    default: 'PLANTED'
   },
   plantedDate: { type: Date, required: true, default: Date.now },
   expectedHarvestDate: { type: Date },

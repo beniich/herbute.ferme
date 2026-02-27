@@ -1,7 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+﻿import { Router, Request, Response, NextFunction } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
+import { generateTokenPair } from '../utils/tokens.js';
 
 const router = Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -37,7 +38,7 @@ router.post('/google', async (req: Request, res: Response, next: NextFunction) =
             });
         }
 
-        const { email, name, picture, sub: googleId } = payload;
+        const { email, given_name, family_name, picture, sub: googleId } = payload;
 
         // Check if user exists
         let user = await User.findOne({ email });
@@ -45,43 +46,51 @@ router.post('/google', async (req: Request, res: Response, next: NextFunction) =
         if (!user) {
             // Create new user
             user = await User.create({
-                name: name || 'Google User',
+                nom: family_name || 'Google',
+                prenom: given_name || 'User',
                 email,
                 googleId,
-                avatar: picture,
-                role: 'citizen', // Default role for Google sign-ups
-                isEmailVerified: true, // Google emails are verified
-                authProvider: 'google'
+                avatarUrl: picture,
+                role: 'employe', // Default role for Google sign-ups
+                emailVerified: true, // Google emails are verified
+                authProvider: 'google',
+                plan: 'essai'
             });
         } else {
             // Update existing user with Google info if not set
             if (!user.googleId) {
                 user.googleId = googleId;
-                user.isEmailVerified = true;
+                user.emailVerified = true;
                 user.authProvider = 'google';
-                if (picture && !user.avatar) {
-                    user.avatar = picture;
+                if (picture && !user.avatarUrl) {
+                    user.avatarUrl = picture;
                 }
                 await user.save();
             }
         }
 
-        // Generate JWT token
-        const token = jwt.sign(
-            { id: user._id, email: user.email, role: user.role },
-            process.env.JWT_SECRET || 'fallback_secret',
-            { expiresIn: process.env.JWT_EXPIRE || '7d' } as jwt.SignOptions
-        );
+        // Generate JWT token pair with RS256
+        const { accessToken, refreshToken } = generateTokenPair({
+            id: user._id.toString(),
+            email: user.email,
+            role: user.role,
+            farmId: user.farmId?.toString(),
+            plan: user.plan
+        });
+
+        // Set cookies (standard practice now)
+        res.cookie('access_token', accessToken, { httpOnly: true, sameSite: 'strict' });
+        res.cookie('refresh_token', refreshToken, { httpOnly: true, path: '/api/auth/refresh' });
 
         res.status(200).json({
             success: true,
-            token,
             user: {
                 id: user._id,
-                name: user.name,
+                nom: user.nom,
+                prenom: user.prenom,
                 email: user.email,
                 role: user.role,
-                avatar: user.avatar
+                avatarUrl: user.avatarUrl
             }
         });
     } catch (error: any) {

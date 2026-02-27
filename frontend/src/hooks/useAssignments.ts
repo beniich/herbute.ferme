@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
+import apiClient from '@/lib/api';
 
 export interface Assignment {
     _id: string;
@@ -25,10 +25,9 @@ export function useAssignments(status?: string) {
     return useQuery({
         queryKey: ['assignments', status],
         queryFn: async () => {
-            const params = status ? { status } : {};
-            return await api.get<Assignment[]>('/assignments', { params });
+            const url = status ? `/api/assignments?status=${status}` : '/api/assignments';
+            return await apiClient.get<Assignment[]>(url);
         },
-        // Rafraîchir toutes les minutes pour avoir les nouvelles tâches
         refetchInterval: 60000,
     });
 }

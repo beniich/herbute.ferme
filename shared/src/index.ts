@@ -44,68 +44,68 @@ export const HERBUTE_ROUTES = {
   // Fleet & Équipements
   // ─────────────────────────────────────────────
   fleet: {
-    vehicles:     '/fleet/vehicles',
-    vehicleById:  (id: string) => `/fleet/vehicles/${id}`,
-    maintenance:  '/fleet/maintenance',
-    maintenanceById: (id: string) => `/fleet/maintenance/${id}`,
-    fuelLogs:     '/fleet/fuel-logs',
-    inspections:  '/fleet/inspections',
+    vehicles:     '/api/fleet/vehicles',
+    vehicleById:  (id: string) => `/api/fleet/vehicles/${id}`,
+    maintenance:  '/api/fleet/maintenance',
+    maintenanceById: (id: string) => `/api/fleet/maintenance/${id}`,
+    fuelLogs:     '/api/fleet/fuel-logs',
+    inspections:  '/api/fleet/inspections',
   },
 
   // ─────────────────────────────────────────────
   // Ressources Humaines (Agricole)
   // ─────────────────────────────────────────────
   hr: {
-    staff:         '/hr/staff',
-    staffById:     (id: string) => `/hr/staff/${id}`,
-    roster:        '/hr/roster',
-    rosterById:    (id: string) => `/hr/roster/${id}`,
-    leaves:        '/hr/leaves',
-    leaveById:     (id: string) => `/hr/leaves/${id}`,
-    leaveApprove:  (id: string) => `/hr/leaves/${id}/approve`,
-    leaveReject:   (id: string) => `/hr/leaves/${id}/reject`,
-    contracts:     '/hr/contracts',
-    payroll:       '/hr/payroll',
+    staff:         '/api/hr/staff',
+    staffById:     (id: string) => `/api/hr/staff/${id}`,
+    roster:        '/api/hr/roster',
+    rosterById:    (id: string) => `/api/hr/roster/${id}`,
+    leaves:        '/api/hr/leaves',
+    leaveById:     (id: string) => `/api/hr/leaves/${id}`,
+    leaveApprove:  (id: string) => `/api/hr/leaves/${id}/approve`,
+    leaveReject:   (id: string) => `/api/hr/leaves/${id}/reject`,
+    contracts:     '/api/hr/contracts',
+    payroll:       '/api/hr/payroll',
   },
 
   // ─────────────────────────────────────────────
   // Planning & Opérations
   // ─────────────────────────────────────────────
   planning: {
-    schedule:          '/planning/schedule',
-    scheduleById:      (id: string) => `/planning/schedule/${id}`,
-    interventions:     '/planning/interventions',
-    interventionById:  (id: string) => `/planning/interventions/${id}`,
-    tasks:             '/planning/tasks',
-    taskById:          (id: string) => `/planning/tasks/${id}`,
+    schedule:          '/api/planning/schedule',
+    scheduleById:      (id: string) => `/api/planning/schedule/${id}`,
+    interventions:     '/api/planning/interventions',
+    interventionById:  (id: string) => `/api/planning/interventions/${id}`,
+    tasks:             '/api/planning/tasks',
+    taskById:          (id: string) => `/api/planning/tasks/${id}`,
   },
 
   // ─────────────────────────────────────────────
   // Communication & Connaissance
   // ─────────────────────────────────────────────
   messaging: {
-    conversations:    '/messaging/conversations',
-    conversationById: (id: string) => `/messaging/conversations/${id}`,
-    messages:         (convId: string) => `/messaging/conversations/${convId}/messages`,
-    feedback:         '/messaging/feedback',
-    knowledge:        '/messaging/knowledge',
-    knowledgeById:    (id: string) => `/messaging/knowledge/${id}`,
+    conversations:    '/api/messaging/conversations',
+    conversationById: (id: string) => `/api/messaging/conversations/${id}`,
+    messages:         (convId: string) => `/api/messaging/conversations/${convId}/messages`,
+    feedback:         '/api/messaging/feedback',
+    knowledge:        '/api/messaging/knowledge',
+    knowledgeById:    (id: string) => `/api/messaging/knowledge/${id}`,
   },
 
   // ─────────────────────────────────────────────
   // Dashboard & Analytics
   // ─────────────────────────────────────────────
   dashboard: {
-    kpis:            '/dashboard/kpis',
-    farmSummary:     '/dashboard/farm-summary',
-    fleetSummary:    '/dashboard/fleet-summary',
-    staffSummary:    '/dashboard/staff-summary',
+    kpis:            '/api/dashboard/kpis',
+    farmSummary:     '/api/dashboard/farm-summary',
+    fleetSummary:    '/api/dashboard/fleet-summary',
+    staffSummary:    '/api/dashboard/staff-summary',
   },
 
   // ─────────────────────────────────────────────
   // Health Check
   // ─────────────────────────────────────────────
-  health: '/health',
+  health: '/',
 } as const;
 
 // Type utilitaire pour extraire les valeurs de routes

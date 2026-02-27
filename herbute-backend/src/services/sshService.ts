@@ -1,4 +1,4 @@
-/**
+﻿/**
  * services/sshService.ts
  * Secure SSH operations for server password management.
  *
@@ -27,9 +27,9 @@ function getSshConfig(): SshConfig {
     throw new SshAppError('SSH is not configured on this server');
   }
 
-  // NEVER log SSH_PRIVATE_KEY_PATH — just validate it exists
+  // NEVER log SSH_PRIVATE_KEY_PATH â€” just validate it exists
   if (!fs.existsSync(SSH_PRIVATE_KEY_PATH)) {
-    logger.error('[sshService] SSH private key file not found — check SSH_PRIVATE_KEY_PATH config');
+    logger.error('[sshService] SSH private key file not found â€” check SSH_PRIVATE_KEY_PATH config');
     throw new SshAppError('SSH private key configuration error');
   }
 
@@ -73,7 +73,7 @@ async function withSshConnection<T>(
       error: err instanceof Error ? err.message : 'Unknown SSH error',
       // Deliberately NOT logging: host, user, key path
     });
-    throw new SshAppError('SSH operation failed — check server logs for details');
+    throw new SshAppError('SSH operation failed â€” check server logs for details');
   } finally {
     ssh.dispose();
   }
@@ -104,7 +104,7 @@ export const sshService = {
     }
 
     await withSshConnection(async (ssh) => {
-      // Use chpasswd via stdin — avoids password appearing in process list
+      // Use chpasswd via stdin â€” avoids password appearing in process list
       const result = await ssh.execCommand(
         `echo "${safeUser}:${newPassword}" | sudo chpasswd`,
         { execOptions: { pty: false } }

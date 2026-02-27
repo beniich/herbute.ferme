@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '@/lib/api';
+import apiClient from '@/lib/api';
 
 export function useSecurityMetrics() {
     const [metrics, setMetrics] = useState<any>(null);
@@ -10,7 +10,7 @@ export function useSecurityMetrics() {
         const fetchMetrics = async () => {
             try {
                 setLoading(true);
-                const response = await adminApi.getSecurityMetrics();
+                const response = await apiClient.get('/api/admin/security-metrics');
                 setMetrics(response);
                 setError(null);
             } catch (err: any) {
@@ -22,7 +22,7 @@ export function useSecurityMetrics() {
         };
 
         fetchMetrics();
-        const interval = setInterval(fetchMetrics, 30000); // Refresh every 30s
+        const interval = setInterval(fetchMetrics, 30000);
         return () => clearInterval(interval);
     }, []);
 

@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/AuthProvider';
 import { Bell, Search, Settings, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button'; // Assuming Button component exists
 
@@ -13,7 +13,7 @@ interface HeaderProps {
 }
 
 export function Header({ showSearch = true, breadcrumbs }: HeaderProps) {
-    const { user, logout } = useAuthStore();
+    const { user, logout } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
 
     return (

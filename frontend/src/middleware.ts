@@ -4,20 +4,22 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
 
-// Routes publiques qui ne nécessitent pas d'authentification
+// Routes publiques (accessibles sans être connecté)
 const publicRoutes = ['/login', '/register', '/forgot-password', '/'];
 
-// Assistant Helper : Décodage JWT léger pour l'environnement Edge de Next.js
-function parseJwtInfo(token: string) {
+// Décode le payload JWT sans vérification de signature (edge runtime safe)
+function parseJwtPayload(token: string): Record<string, any> | null {
     try {
         const base64Url = token.split('.')[1];
+        if (!base64Url) return null;
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        // Décodage sûr supporté par la plupart des plateformes (Vercel, Node, etc.)
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        const jsonPayload = decodeURIComponent(
+            atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join('')
+        );
         return JSON.parse(jsonPayload);
-    } catch (e) {
+    } catch {
         return null;
     }
 }
@@ -25,41 +27,43 @@ function parseJwtInfo(token: string) {
 export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Détecter la locale pour les redirections
+    // Extraire la locale depuis l'URL
     const pathLocale = pathname.split('/')[1];
     const locale = ['fr', 'en'].includes(pathLocale) ? pathLocale : 'fr';
 
-    // Nettoyer l'URL de sa locale pour la vérification
-    const pathWithoutLocale = pathname.replace(/^\/(fr|en)/, '');
-    const isPublicRoute = publicRoutes.includes(pathWithoutLocale) || pathWithoutLocale === '';
+    // Chemin sans locale pour la comparaison
+    const pathWithoutLocale = pathname.replace(/^\/(fr|en)/, '') || '/';
 
-    const token = request.cookies.get('reclamtrack-auth-storage')?.value;
+    const isPublicRoute = publicRoutes.some(route =>
+        pathWithoutLocale === route || pathWithoutLocale.startsWith(route + '/')
+    );
 
-    // 1. Contrôle d'Accès Public / Privé
-    if (!isPublicRoute) {
-        if (!token) {
-            const loginUrl = new URL(`/${locale}/login`, request.url);
-            return NextResponse.redirect(loginUrl);
-        }
+    // ✅ On lit le cookie HttpOnly `access_token` posé par le backend Herbute
+    const accessToken = request.cookies.get('access_token')?.value;
+    const isAuthenticated = !!accessToken;
 
-        // 2. RBAC (Role-Based Access Control)
-        // Vérification des accès protégés (ex: /admin)
-        if (pathWithoutLocale.startsWith('/admin')) {
-            const jwtData = parseJwtInfo(token);
-            // Si pas de token JWT valide, ou le rôle n'est pas "admin"
-            if (!jwtData || (jwtData.role !== 'admin' && jwtData.role !== 'system_admin')) {
-                // Rediriger vers un tableau de bord par défaut (interdit)
-                const homeUrl = new URL(`/${locale}/dashboard`, request.url);
-                return NextResponse.redirect(homeUrl);
-            }
-        }
-    } else if (token && pathWithoutLocale === '/login') {
-         // Si l'utilisateur est déjà connecté et visite /login, on le redirige sur dashboard
-         const homeUrl = new URL(`/${locale}/dashboard`, request.url);
-         return NextResponse.redirect(homeUrl);
+    // Route protégée sans token → login
+    if (!isPublicRoute && !isAuthenticated) {
+        const loginUrl = new URL(`/${locale}/login`, request.url);
+        loginUrl.searchParams.set('from', pathname); // Garder la destination
+        return NextResponse.redirect(loginUrl);
     }
 
-    // Appliquer le routage multilingue classique Next-intl ensuite
+    // Déjà connecté et tente d'accéder à /login → dashboard
+    if (isPublicRoute && isAuthenticated && pathWithoutLocale === '/login') {
+        const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+        return NextResponse.redirect(dashboardUrl);
+    }
+
+    // RBAC : Vérification des routes admin
+    if (isAuthenticated && pathWithoutLocale.startsWith('/admin')) {
+        const payload = parseJwtPayload(accessToken!);
+        const isAdmin = payload?.role === 'admin' || payload?.role === 'super_admin';
+        if (!isAdmin) {
+            return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+        }
+    }
+
     return intlMiddleware(request);
 }
 

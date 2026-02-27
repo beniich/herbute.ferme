@@ -4,7 +4,7 @@ import { validator } from '../middleware/validator.js';
 import { authenticate as protect } from '../middleware/security.js';
 import { Membership } from '../models/Membership.js';
 import { Organization } from '../models/Organization.js';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 import AuditLog from '../models/AuditLog.js';
 
 const router = Router();

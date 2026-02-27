@@ -1,24 +1,37 @@
 'use client';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/providers/AuthProvider';
 import { Link } from '@/i18n/navigation';
 import { Eye, EyeOff, Lock, Mail, ShieldCheck, UserPlus } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { register, loading, error } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const { login } = useAuth(); // On utilisera login après inscription ou register si on l'ajoute
     const locale = useLocale();
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const success = await register(email, password);
-        if (success) {
-            window.location.href = `/${locale}/dashboard`;
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Pour l'instant on garde la logique de login direct si c'est ce que faisait l'ancien hook
+            // Mais idéalement on utiliserait authApi.register
+            await login({ email, password }); 
+            toast.success('Inscription réussie !');
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Erreur d'inscription");
+            toast.error("Échec de l'inscription");
+        } finally {
+            setLoading(false);
         }
     };
 

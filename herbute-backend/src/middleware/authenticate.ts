@@ -1,12 +1,12 @@
-/**
- * ═══════════════════════════════════════════════════════
- * middleware/authenticate.ts — Vérification JWT RS256
- * ═══════════════════════════════════════════════════════
+﻿/**
+ * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+ * middleware/authenticate.ts â€” VÃ©rification JWT RS256
+ * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  *
- * IMPORTANT : Ce middleware utilise UNIQUEMENT la clé publique
- * pour vérifier les tokens — il ne peut pas en émettre.
+ * IMPORTANT : Ce middleware utilise UNIQUEMENT la clÃ© publique
+ * pour vÃ©rifier les tokens â€” il ne peut pas en Ã©mettre.
  *
- * Lecture du token : Cookie HttpOnly en priorité,
+ * Lecture du token : Cookie HttpOnly en prioritÃ©,
  * fallback header Authorization (pour clients API non-browser)
  */
 
@@ -14,7 +14,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/tokens';
 import type { JwtPayload } from '@reclamtrack/shared';
 
-// Étendre le type Request d'Express pour inclure user
+// Ã‰tendre le type Request d'Express pour inclure user
 declare global {
   namespace Express {
     interface Request {
@@ -23,12 +23,12 @@ declare global {
   }
 }
 
-// ─────────────────────────────────────────────
-// Extraction du token depuis la requête
-// Priorité : Cookie HttpOnly > Header Authorization
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Extraction du token depuis la requÃªte
+// PrioritÃ© : Cookie HttpOnly > Header Authorization
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const extractToken = (req: Request): string | null => {
-  // 1. Cookie HttpOnly (recommandé — protège contre XSS)
+  // 1. Cookie HttpOnly (recommandÃ© â€” protÃ¨ge contre XSS)
   if (req.cookies?.access_token) {
     return req.cookies.access_token;
   }
@@ -42,9 +42,9 @@ const extractToken = (req: Request): string | null => {
   return null;
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Middleware : authentification obligatoire
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const authenticate = (
   req: Request,
   res: Response,
@@ -54,7 +54,7 @@ export const authenticate = (
 
   if (!token) {
     res.status(401).json({
-      error: 'Non authentifié',
+      error: 'Non authentifiÃ©',
       code:  'TOKEN_MISSING',
     });
     return;
@@ -67,7 +67,7 @@ export const authenticate = (
   } catch (err: any) {
     if (err.name === 'TokenExpiredError') {
       res.status(401).json({
-        error: 'Session expirée',
+        error: 'Session expirÃ©e',
         code:  'TOKEN_EXPIRED',
       });
       return;
@@ -80,11 +80,11 @@ export const authenticate = (
   }
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Middleware : authentification optionnelle
-// Attache req.user si un token valide est présent,
+// Attache req.user si un token valide est prÃ©sent,
 // mais laisse passer si absent (routes publiques enrichies)
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const authenticateOptional = (
   req: Request,
   res: Response,
@@ -96,7 +96,7 @@ export const authenticateOptional = (
     try {
       req.user = verifyAccessToken(token);
     } catch {
-      // Token présent mais invalide → on ignore silencieusement
+      // Token prÃ©sent mais invalide â†’ on ignore silencieusement
     }
   }
 

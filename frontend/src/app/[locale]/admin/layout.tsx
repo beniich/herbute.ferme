@@ -12,15 +12,15 @@ export default function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { user, token, _hasHydrated } = useAuthStore();
+    const { user, _hasHydrated } = useAuthStore();
     const router = useRouter();
     const { isRoleOrHigher } = usePermissions();
     const [isAuthorized, setIsAuthorized] = useState(false);
 
     useEffect(() => {
         if (_hasHydrated) {
-            if (!user || !token) {
-                console.log('[AdminLayout] Redirecting to login: No user and no token found after hydration.');
+            if (!user) {
+                console.log('[AdminLayout] Redirecting to login: No user found after hydration.');
                 router.push('/login');
                 return;
             }
@@ -36,7 +36,7 @@ export default function AdminLayout({
 
             setIsAuthorized(true);
         }
-    }, [user, token, _hasHydrated, router, isRoleOrHigher]);
+    }, [user, _hasHydrated, router, isRoleOrHigher]);
 
     if (!_hasHydrated) {
         return (

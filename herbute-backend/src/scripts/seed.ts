@@ -1,203 +1,140 @@
-import mongoose from 'mongoose';
+﻿import mongoose from 'mongoose';
 import { config } from 'dotenv';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 import { Team } from '../models/Team.js';
 import { Complaint } from '../models/Complaint.js';
 import { Staff } from '../models/Staff.js';
 import { Organization } from '../models/Organization.js';
 import { Membership } from '../models/Membership.js';
+import Animal from '../models/Animal.js';
+import Crop from '../models/Crop.js';
+import FarmKPI from '../models/FarmKPI.js';
+import ITAsset from '../models/ITAsset.js';
+import ITTicket from '../models/ITTicket.js';
+import bcrypt from 'bcryptjs';
 import { logger } from '../utils/logger.js';
 
 config();
 
 const seedDatabase = async () => {
     try {
-        // Connect to MongoDB
         const mongoUri = process.env.MONGODB_URI;
-        if (!mongoUri) {
-            throw new Error('MONGODB_URI not defined in .env');
-        }
+        if (!mongoUri) throw new Error('MONGODB_URI not defined');
 
         await mongoose.connect(mongoUri);
-        logger.info('✅ Connected to MongoDB for seeding');
+        logger.info('✅ Connected to MongoDB');
 
-        // Clear existing data
-        await User.deleteMany({});
-        await Team.deleteMany({});
-        await Complaint.deleteMany({});
-        await Staff.deleteMany({});
-        await Organization.deleteMany({});
-        await Membership.deleteMany({});
-        logger.info('🗑️  Cleared existing data');
+        // Clear existing
+        await Promise.all([
+            User.deleteMany({}),
+            Team.deleteMany({}),
+            Complaint.deleteMany({}),
+            Staff.deleteMany({}),
+            Organization.deleteMany({}),
+            Membership.deleteMany({}),
+            Animal.deleteMany({}),
+            Crop.deleteMany({}),
+            FarmKPI.deleteMany({}),
+            ITAsset.deleteMany({}),
+            ITTicket.deleteMany({})
+        ]);
 
-        // Create Admin User
-        const adminUser = await User.create({
+        // Hash password
+        const passwordHash = await bcrypt.hash('Admin123!', 10);
+
+        // Create Admin
+        const admin = await User.create({
             email: 'admin@reclamtrack.com',
-            password: 'Admin123!', // Will be hashed by the model
-            name: 'Admin System',
-            role: 'admin',
-            isEmailVerified: true
+            passwordHash,
+            nom: 'Benali',
+            prenom: 'Ahmed',
+            role: 'super_admin',
+            emailVerified: true
         });
-        logger.info('👤 Created admin user: admin@reclamtrack.com / Admin123!');
 
-        // Create Superadmin User for Monitoring
-        const superAdminUser = await User.create({
-            email: 'superadmin@reclamtrack.com',
-            password: 'SuperAdmin123!',
-            name: 'Super Administrator',
-            role: 'admin', // Using admin role but can be identified by email for special permissions
-            isEmailVerified: true
-        });
-        logger.info('🔐 Created superadmin user: superadmin@reclamtrack.com / SuperAdmin123!');
-
-        // Create Default Organization
-        const organization = await Organization.create({
-            name: 'ReclamTrack Default',
-            slug: 'reclamtrack-default',
-            ownerId: adminUser._id,
+        const org = await Organization.create({
+            name: 'Domaine Al Baraka',
+            slug: 'al-baraka',
+            ownerId: admin._id,
             subscription: {
                 plan: 'ENTERPRISE',
                 status: 'ACTIVE'
             }
         });
-        logger.info(`🏢 Created organization: ${organization.name}`);
 
-        // Add Admin to Organization
         await Membership.create({
-            userId: adminUser._id,
-            organizationId: organization._id,
+            userId: admin._id,
+            organizationId: org._id,
             roles: ['OWNER', 'ADMIN'],
-            status: 'ACTIVE',
-            joinedAt: new Date()
+            status: 'ACTIVE'
         });
 
-        // Add Superadmin to Organization
-        await Membership.create({
-            userId: superAdminUser._id,
-            organizationId: organization._id,
-            roles: ['OWNER', 'ADMIN'],
-            status: 'ACTIVE',
-            joinedAt: new Date()
+        // --- SEED AGRICULTURE ---
+        await FarmKPI.create({
+            organizationId: org._id,
+            totalRevenue: 1480000,
+            totalExpenses: 892000,
+            netProfit: 588000,
+            cashFlow: 284000,
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear()
         });
-        logger.info('🔗 Added admin and superadmin to organization');
 
-        // Create Teams
-        const teams = await Team.create([
-            {
-                name: 'Équipe Électricité',
-                specialization: 'electrical',
-                status: 'disponible',
-                organizationId: organization._id,
-                isActive: true
-            },
-            {
-                name: 'Équipe Plomberie',
-                specialization: 'plumbing',
-                status: 'disponible',
-                organizationId: organization._id,
-                isActive: true
-            },
-            {
-                name: 'Équipe Voirie',
-                specialization: 'infrastructure',
-                status: 'disponible',
-                organizationId: organization._id,
-                isActive: true
-            }
+        await Animal.create([
+            { organizationId: org._id, type: 'Vaches Laitières', breed: 'Holstein', count: 42, averageAge: 36, status: 'PRODUCTION', estimatedValue: 840000 },
+            { organizationId: org._id, type: 'Moutons', breed: 'Sardi', count: 120, averageAge: 12, status: 'ACTIVE', estimatedValue: 240000 },
+            { organizationId: org._id, type: 'Poulets de chair', breed: 'Cobb 500', count: 12400, averageAge: 1, status: 'GROWING', estimatedValue: 310000 }
         ]);
-        logger.info(`👥 Created ${teams.length} teams`);
 
-        // Create Staff Members
-        const staff = await Staff.create([
-            {
-                name: 'Jean Dupont',
-                email: 'jean.dupont@reclamtrack.com',
-                role: 'Technicien Électricité'
-            },
-            {
-                name: 'Marie Martin',
-                email: 'marie.martin@reclamtrack.com',
-                role: 'Technicienne Plomberie'
-            },
-            {
-                name: 'Pierre Bernard',
-                email: 'pierre.bernard@reclamtrack.com',
-                role: 'Superviseur Voirie'
-            }
+        await Crop.create([
+            { organizationId: org._id, name: 'Menthe Nanah', category: 'HERB', plotId: 'P1-HERB', status: 'GROWING', estimatedYield: 5000 },
+            { organizationId: org._id, name: 'Tomates Cerises', category: 'VEGETABLE', plotId: 'P2-LEG', status: 'READY', estimatedYield: 8000 },
+            { organizationId: org._id, name: 'Oliviers', category: 'NURSERY', plotId: 'P3-PEP', status: 'PLANTED', estimatedYield: 2000 }
         ]);
-        logger.info(`🔧 Created ${staff.length} staff members`);
 
-        // Create Sample Complaints
-        const complaints = await Complaint.create([
+        logger.info('🌾 Seeding Agriculture: OK');
+
+        // --- SEED IT (GLPI) ---
+        const asset = await ITAsset.create({
+            organizationId: org._id,
+            name: 'Serveur Central ERP',
+            type: 'server',
+            status: 'active',
+            assetTag: 'SRV-001',
+            hostname: 'erp-prod',
+            ipAddress: '192.168.1.10'
+        });
+
+        await ITTicket.create([
             {
-                category: 'Électricité',
-                subcategory: 'Panne de courant',
+                organizationId: org._id,
+                title: 'Panne Système Irrigation Wi-Fi',
+                description: 'Le contrôleur P2 ne répond plus au ping.',
+                status: 'new',
                 priority: 'urgent',
-                title: 'Panne électrique rue Victor Hugo',
-                description: 'Coupure de courant depuis 2 heures dans tout le quartier',
-                address: '15 Rue Victor Hugo',
-                city: 'Paris',
-                district: '16ème',
-                postalCode: '75016',
-                latitude: 48.8566,
-                longitude: 2.3522,
-                isAnonymous: false,
-                firstName: 'Sophie',
-                lastName: 'Dubois',
-                email: 'sophie.dubois@example.com',
-                phone: '+33612345678',
-                status: 'en cours',
-                assignedTeamId: teams[0]._id,
-                technicianId: adminUser._id, // Assign to a user instead of staff model if possible, or leave blank
-                organizationId: organization._id
+                category: 'network',
+                requestedBy: admin._id,
+                relatedAsset: asset._id,
+                ticketNumber: 'INC-2026-001'
             },
             {
-                category: 'Plomberie',
-                subcategory: 'Fuite d\'eau',
-                priority: 'high',
-                title: 'Fuite importante avenue des Champs',
-                description: 'Fuite d\'eau visible sur la chaussée, risque d\'inondation',
-                address: '42 Avenue des Champs-Élysées',
-                city: 'Paris',
-                district: '8ème',
-                postalCode: '75008',
-                latitude: 48.8698,
-                longitude: 2.3078,
-                isAnonymous: true,
-                status: 'nouvelle',
-                organizationId: organization._id
-            },
-            {
-                category: 'Voirie',
-                subcategory: 'Nid de poule',
+                organizationId: org._id,
+                title: 'Mise à jour BIOS Tablette Terrain',
+                description: 'Besoin de mise à jour pour le nouveau module GPS.',
+                status: 'pending',
                 priority: 'medium',
-                title: 'Nid de poule boulevard Saint-Germain',
-                description: 'Trou important sur la chaussée, dangereux pour les véhicules',
-                address: '120 Boulevard Saint-Germain',
-                city: 'Paris',
-                district: '6ème',
-                postalCode: '75006',
-                latitude: 48.8534,
-                longitude: 2.3364,
-                isAnonymous: false,
-                firstName: 'Marc',
-                lastName: 'Leroy',
-                email: 'marc.leroy@example.com',
-                phone: '+33698765432',
-                status: 'résolue',
-                assignedTeamId: teams[2]._id,
-                organizationId: organization._id
+                category: 'hardware',
+                requestedBy: admin._id,
+                ticketNumber: 'REQ-2026-002'
             }
         ]);
-        logger.info(`📋 Created ${complaints.length} sample complaints`);
 
-        logger.info('✅ Database seeding completed successfully!');
+        logger.info('💻 Seeding IT/GLPI: OK');
 
-        setTimeout(() => process.exit(0), 1000);
+        process.exit(0);
     } catch (error) {
-        console.error('❌ Seeding failed (console):', error);
-        logger.error('❌ Seeding failed (logger):', error);
-        setTimeout(() => process.exit(1), 1000);
+        console.error(error);
+        process.exit(1);
     }
 };
 

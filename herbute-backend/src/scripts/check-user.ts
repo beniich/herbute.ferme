@@ -1,6 +1,6 @@
-
+﻿
 import mongoose from 'mongoose';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 import { config } from 'dotenv';
 import path from 'path';
 
@@ -18,9 +18,9 @@ const checkUser = async () => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            console.log('❌ User NOT found');
+            console.log('âŒ User NOT found');
         } else {
-            console.log('✅ User found:', user.email);
+            console.log('âœ… User found:', user.email);
             console.log('   Role:', user.role);
             console.log('   Password Hash:', user.password ? 'Exists' : 'Missing');
         }

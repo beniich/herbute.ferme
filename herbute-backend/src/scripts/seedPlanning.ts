@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+﻿import mongoose from 'mongoose';
 import { Complaint } from '../models/Complaint.js';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 import { Team } from '../models/Team.js';
 import { Intervention } from '../models/Intervention.js';
 import { Roster } from '../models/Roster.js';
@@ -130,7 +130,7 @@ const seedPlanning = async () => {
 
         console.log('Created Intervention for Today');
 
-        console.log('✅ Seeding completed!');
+        console.log('âœ… Seeding completed!');
         process.exit(0);
 
     } catch (error) {

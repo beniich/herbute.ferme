@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+﻿import axios, { AxiosInstance } from 'axios';
 import https from 'https';
 
 interface PfSenseConfig {
@@ -194,7 +194,7 @@ export class PfSenseService {
       return {
         cpu: '45%',
         memory: '62%',
-        temperature: '52°C',
+        temperature: '52Â°C',
         uptime: '15 days',
         states: 1250,
         statesMax: 50000,

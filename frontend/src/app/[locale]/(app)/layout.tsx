@@ -1,7 +1,6 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -13,35 +12,32 @@ export default function AppLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { user } = useAuth();
-    const { _hasHydrated, token } = useAuthStore();
+    const { user, isLoading } = useAuth();
     const router = useRouter();
     useNotifications();
 
     useEffect(() => {
-        if (_hasHydrated && !user && !token) {
-            console.log('[AppLayout] Redirecting to login: No user and no token found after hydration.');
+        if (!isLoading && !user) {
+            console.log('[AppLayout] Redirecting to login — Session missing');
             router.push('/login');
         }
-    }, [user, token, _hasHydrated, router]);
+    }, [user, isLoading, router]);
 
-    if (!_hasHydrated) {
+    if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background">
+            <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
                 <div className="flex flex-col items-center gap-4">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                    <p className="text-sm text-muted-foreground">Initialisation...</p>
+                    <p className="text-sm text-slate-500">Chargement de votre session...</p>
                 </div>
             </div>
         );
     }
 
-    if (!user) {
-        return null; // Will redirect in useEffect
-    }
+    if (!user) return null;
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
             <Header />
             <main className="flex-1 container mx-auto px-4 py-8">
                 {children}

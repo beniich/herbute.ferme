@@ -65,10 +65,8 @@ export default function ITTicketsPage() {
   const loadTickets = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (filterStatus !== 'all') params.status = filterStatus;
-
-      const res = await api.get('/api/it-tickets', { params });
+      const queryString = filterStatus !== 'all' ? `?status=${filterStatus}` : '';
+      const res = await api.get(`/api/it-tickets${queryString}`);
       setTickets(res.data.data || []);
     } catch (error) {
       console.error('Failed to load tickets:', error);

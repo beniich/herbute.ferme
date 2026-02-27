@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function CheckoutSuccessPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const sessionId = searchParams.get('session_id');
-    const { checkAuth } = useAuthStore();
+    const { refreshUser } = useAuth();
     const [verifying, setVerifying] = useState(true);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export default function CheckoutSuccessPage() {
                 try {
                     // Simulate verification delay or call API
                     await new Promise(resolve => setTimeout(resolve, 1500));
-                    await checkAuth(); // Refresh user state (roles, plan, etc.)
+                    await refreshUser(); // Refresh user state (roles, plan, etc.)
                 } finally {
                     setVerifying(false);
                 }
@@ -31,7 +31,7 @@ export default function CheckoutSuccessPage() {
         } else {
             setVerifying(false);
         }
-    }, [sessionId, checkAuth]);
+    }, [sessionId, refreshUser]);
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-[#0e0e1b] dark:text-[#f8f8fc] min-h-screen font-display flex flex-col items-center justify-center p-6">

@@ -1,6 +1,6 @@
-
+﻿
 import mongoose from 'mongoose';
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 import { config } from 'dotenv';
 import path from 'path';
 
@@ -19,17 +19,17 @@ const testLogin = async () => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            console.log('❌ User NOT found');
+            console.log('âŒ User NOT found');
             process.exit(1);
         }
 
-        console.log('✅ User found:', user.email);
+        console.log('âœ… User found:', user.email);
 
         const isMatch = await user.comparePassword(password);
         if (isMatch) {
-            console.log('✅ Password Match: SUCCESS');
+            console.log('âœ… Password Match: SUCCESS');
         } else {
-            console.log('❌ Password Match: FAILED');
+            console.log('âŒ Password Match: FAILED');
             // Log hash to see if it looks right (starts with $2a$ or $2b$)
             console.log('Stored Hash:', user.password);
         }

@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAnimal extends Document {
   organizationId: mongoose.Types.ObjectId;
@@ -21,8 +21,8 @@ const AnimalSchema: Schema = new Schema({
   status: { 
     type: String, 
     required: true, 
-    enum: ['En production', 'Actif', 'Croissance', 'En ponte', 'Malade', 'Vendu'],
-    default: 'Actif'
+    enum: ['PRODUCTION', 'ACTIVE', 'GROWING', 'LAYING', 'SICK', 'SOLD'],
+    default: 'ACTIVE'
   },
   estimatedValue: { type: Number, default: 0 }
 }, {

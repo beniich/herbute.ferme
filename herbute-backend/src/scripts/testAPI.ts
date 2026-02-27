@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'; // Standard fetch might be available if node 18+
+﻿import fetch from 'node-fetch'; // Standard fetch might be available if node 18+
 
 const BASE_URL = 'http://localhost:5001/api';
 
@@ -8,7 +8,7 @@ async function testAutoAssign() {
     // 1. Create Complaint
     const complaintData = {
         title: 'Panne de Courant Quartier Y',
-        description: 'Coupure totale d\'électricité',
+        description: 'Coupure totale d\'Ã©lectricitÃ©',
         category: 'electricity',
         subcategory: 'Coupure',
         priority: 'urgent',
@@ -40,9 +40,9 @@ async function testAutoAssign() {
             console.log('\nComplaint Created ID:', data.data._id);
             console.log('Assigned Team:', data.data.assignedTeamId);
             if (data.data.assignedTeamId) {
-                console.log('✅ Auto-assignment SUCCESS');
+                console.log('âœ… Auto-assignment SUCCESS');
             } else {
-                console.log('❌ Auto-assignment FAILED (No team assigned)');
+                console.log('âŒ Auto-assignment FAILED (No team assigned)');
             }
         }
 

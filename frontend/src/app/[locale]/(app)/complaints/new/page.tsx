@@ -7,16 +7,16 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function NewComplaintPage() {
-    const { token } = useAuthStore();
+    const { user } = useAuthStore();
     const router = useRouter();
 
     useEffect(() => {
-        if (!token) {
+        if (!user) {
             router.push('/login');
         }
-    }, [token, router]);
+    }, [user, router]);
 
-    if (!token) return null;
+    if (!user) return null;
 
     return (
         <section className="py-8 bg-slate-50 dark:bg-slate-950 min-h-screen">

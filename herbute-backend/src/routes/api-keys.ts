@@ -1,11 +1,11 @@
-/**
+﻿/**
  * routes/api-keys.ts
- * API key management — admin only.
+ * API key management â€” admin only.
  *
- * GET    /api/api-keys           → list org API keys
- * POST   /api/api-keys           → create new key (raw key returned ONCE)
- * POST   /api/api-keys/:id/rotate → rotate key
- * DELETE /api/api-keys/:id        → revoke key
+ * GET    /api/api-keys           â†’ list org API keys
+ * POST   /api/api-keys           â†’ create new key (raw key returned ONCE)
+ * POST   /api/api-keys/:id/rotate â†’ rotate key
+ * DELETE /api/api-keys/:id        â†’ revoke key
  */
 import { Router, Request, Response } from 'express';
 import { param } from 'express-validator';
@@ -21,7 +21,7 @@ const router = Router();
 // All routes require authentication + admin role
 router.use(authenticate, requireAdmin);
 
-/* ── GET /api/api-keys ──────────────────────────── */
+/* â”€â”€ GET /api/api-keys â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
@@ -30,7 +30,7 @@ router.get(
   }),
 );
 
-/* ── POST /api/api-keys ─────────────────────────── */
+/* â”€â”€ POST /api/api-keys â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.post(
   '/',
   CreateApiKeyDto,
@@ -50,7 +50,7 @@ router.post(
     return sendSuccess(
       res,
       {
-        message: '⚠️ Save this key — it will not be shown again.',
+        message: 'âš ï¸ Save this key â€” it will not be shown again.',
         key: rawKey,
         id: apiKey._id,
         name: apiKey.name,
@@ -63,7 +63,7 @@ router.post(
   }),
 );
 
-/* ── POST /api/api-keys/:id/rotate ─────────────── */
+/* â”€â”€ POST /api/api-keys/:id/rotate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.post(
   '/:id/rotate',
   [param('id').isMongoId().withMessage('Invalid key ID')],
@@ -77,7 +77,7 @@ router.post(
     return sendSuccess(
       res,
       {
-        message: '⚠️ Save this new key — it will not be shown again. The old key is now revoked.',
+        message: 'âš ï¸ Save this new key â€” it will not be shown again. The old key is now revoked.',
         key: rawKey,
         id: apiKey._id,
         name: apiKey.name,
@@ -88,7 +88,7 @@ router.post(
   }),
 );
 
-/* ── DELETE /api/api-keys/:id ───────────────────── */
+/* â”€â”€ DELETE /api/api-keys/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.delete(
   '/:id',
   [param('id').isMongoId().withMessage('Invalid key ID')],

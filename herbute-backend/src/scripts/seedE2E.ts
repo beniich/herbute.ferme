@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+﻿import mongoose from 'mongoose';
 import { Complaint } from '../models/Complaint';
-import { User } from '../models/User';
+import { User } from '../models/user.model';
 import { Team } from '../models/Team';
 import { connectDB } from '../config/db';
 import dotenv from 'dotenv';
@@ -53,7 +53,7 @@ const seedE2E = async () => {
                 isActive: true
             },
             {
-                name: 'Beta Electricité',
+                name: 'Beta ElectricitÃ©',
                 specialization: 'electrical, lighting',
                 baseLocation: { latitude: 33.971590, longitude: -6.849813 }, // Hay Riad
                 color: '#f59e0b',
@@ -85,7 +85,7 @@ const seedE2E = async () => {
         });
         console.log('Seed complaint created (Low priority, Water)');
 
-        console.log('✅ E2E Seeding completed!');
+        console.log('âœ… E2E Seeding completed!');
         process.exit(0);
 
     } catch (error) {

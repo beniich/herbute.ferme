@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+﻿import mongoose, { Document, Schema } from 'mongoose';
 
-export type ComplaintStatus = 'nouvelle' | 'en cours' | 'résolue' | 'fermée' | 'rejetée';
+export type ComplaintStatus = 'nouvelle' | 'en cours' | 'rÃ©solue' | 'fermÃ©e' | 'rejetÃ©e';
 export type Priority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface IComplaint extends Document {
@@ -95,7 +95,7 @@ const ComplaintSchema: Schema = new Schema(
     // Workflow
     status: {
       type: String,
-      enum: ['nouvelle', 'en cours', 'résolue', 'fermée', 'rejetée'],
+      enum: ['nouvelle', 'en cours', 'rÃ©solue', 'fermÃ©e', 'rejetÃ©e'],
       default: 'nouvelle',
     },
     rejectionReason: { type: String },

@@ -32,7 +32,7 @@ export const useCall = () => {
 };
 
 export const CallProvider = ({ children }: { children: React.ReactNode }) => {
-    const { user, token } = useAuthStore();
+    const { user } = useAuthStore();
     // Use underscore to indicate unused variable, or remove it. Keeping it for potential socket state access.
     const [_socket, setSocket] = useState<Socket | null>(null);
     const [callState, setCallState] = useState<'idle' | 'calling' | 'incoming' | 'connected'>('idle');
@@ -67,7 +67,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Initialize Socket Connection
     useEffect(() => {
-        if (!token || !user) return;
+        if (!user) return;
 
         const URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
         // Remove /api if present for socket connection
@@ -75,7 +75,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
         const newSocket = io(socketUrl, {
             path: '/socket.io/',
-            auth: { token },
+            withCredentials: true,
             transports: ['websocket']
         });
 
@@ -120,7 +120,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         return () => {
             newSocket.disconnect();
         };
-    }, [user, token, endCall]);
+    }, [user, endCall]);
 
     const initializePeerConnection = useCallback(() => {
         const pc = new RTCPeerConnection(RTC_CONFIG);

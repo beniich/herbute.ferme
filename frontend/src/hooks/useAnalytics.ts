@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
+import apiClient from '@/lib/api';
 
 export interface SatisfactionData {
     averageRating: number;
@@ -45,26 +45,23 @@ export interface HeatmapData {
 export function useSatisfactionStats(range: string = '30d') {
     return useQuery({
         queryKey: ['analytics', 'satisfaction', range],
-        queryFn: async () => {
-            return await api.get<SatisfactionData>('/analytics/satisfaction', { params: { range } });
-        }
+        queryFn: () => apiClient.get<SatisfactionData>(`/api/analytics/satisfaction?range=${range}`),
     });
 }
 
 export function usePerformanceStats() {
     return useQuery({
         queryKey: ['analytics', 'performance'],
-        queryFn: async () => {
-            return await api.get<PerformanceData>('/analytics/performance');
-        }
+        queryFn: () => apiClient.get<PerformanceData>('/api/analytics/performance'),
     });
 }
 
 export function useHeatmapData(filters?: any) {
     return useQuery({
         queryKey: ['analytics', 'heatmap', filters],
-        queryFn: async () => {
-            return await api.get<HeatmapData[]>('/analytics/heatmap', { params: filters });
-        }
+        queryFn: () => {
+            const params = filters ? new URLSearchParams(filters).toString() : '';
+            return apiClient.get<HeatmapData[]>(`/api/analytics/heatmap${params ? '?' + params : ''}`);
+        },
     });
 }

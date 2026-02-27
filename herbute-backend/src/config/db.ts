@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+﻿import mongoose from 'mongoose';
 import { logger } from '../utils/logger.js';
 
 export const connectDB = async () => {
@@ -7,19 +7,19 @@ export const connectDB = async () => {
 
         if (!mongoUri || mongoUri.includes('username:password')) {
             (global as any).IS_DEMO_MODE = true;
-            logger.warn('⚠️  MongoDB non configuré - Mode DÉMO activé (données en mémoire)');
-            logger.warn('💡 Pour activer MongoDB, configure MONGODB_URI dans backend/.env');
+            logger.warn('âš ï¸  MongoDB non configurÃ© - Mode DÃ‰MO activÃ© (donnÃ©es en mÃ©moire)');
+            logger.warn('ðŸ’¡ Pour activer MongoDB, configure MONGODB_URI dans backend/.env');
             return;
         }
 
         await mongoose.connect(mongoUri);
-        logger.info('✅ MongoDB connecté');
+        logger.info('âœ… MongoDB connectÃ©');
     } catch (err) {
         mongoose.set('bufferCommands', false);
         (global as any).IS_DEMO_MODE = true;
-        logger.warn('⚠️  Impossible de se connecter à MongoDB - Mode DÉMO activé');
-        logger.warn('💡 Erreur:', err instanceof Error ? err.message : err);
-        logger.warn('💡 L\'application continuera sans base de données (données en mémoire)');
-        // Ne pas quitter le processus, continuer en mode démo
+        logger.warn('âš ï¸  Impossible de se connecter Ã  MongoDB - Mode DÃ‰MO activÃ©');
+        logger.warn('ðŸ’¡ Erreur:', err instanceof Error ? err.message : err);
+        logger.warn('ðŸ’¡ L\'application continuera sans base de donnÃ©es (donnÃ©es en mÃ©moire)');
+        // Ne pas quitter le processus, continuer en mode dÃ©mo
     }
 };

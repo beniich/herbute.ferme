@@ -1,11 +1,11 @@
-/**
+﻿/**
  * routes/billing.ts
  * Stripe billing integration.
  *
- * POST /api/billing/webhook          → Stripe webhook (signature verified, no fallback)
- * POST /api/billing/create-checkout  → Create Stripe checkout session
- * GET  /api/billing/subscription     → Get current org subscription
- * POST /api/billing/cancel           → Cancel subscription
+ * POST /api/billing/webhook          â†’ Stripe webhook (signature verified, no fallback)
+ * POST /api/billing/create-checkout  â†’ Create Stripe checkout session
+ * GET  /api/billing/subscription     â†’ Get current org subscription
+ * POST /api/billing/cancel           â†’ Cancel subscription
  */
 import { Router, Request, Response, raw } from 'express';
 import Stripe from 'stripe';
@@ -25,10 +25,10 @@ const stripe = new Stripe(stripeApiKey, {
   apiVersion: '2023-10-16' as any,
 });
 
-/* ═══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    POST /api/billing/webhook
-   MUST use raw body — express.json() breaks Stripe signature
-═══════════════════════════════════════════════════ */
+   MUST use raw body â€” express.json() breaks Stripe signature
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 router.post(
   '/webhook',
   globalLimiter,
@@ -43,7 +43,7 @@ router.post(
 
     let event: Stripe.Event;
     try {
-      // Signature verification — NO fallback. Fail hard if invalid.
+      // Signature verification â€” NO fallback. Fail hard if invalid.
       event = stripe.webhooks.constructEvent(
         req.body,
         sig,
@@ -59,7 +59,7 @@ router.post(
 
     logger.info('[billing] Webhook received', { requestId: req.id, type: event.type, id: event.id });
 
-    // Handle checkout session completed — provision subscription
+    // Handle checkout session completed â€” provision subscription
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
       const orgId = session.metadata?.orgId;
@@ -68,7 +68,7 @@ router.post(
       if (orgId && session.subscription && session.customer) {
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string) as any;
 
-        // Use dynamic price from DB/metadata — NOT hardcoded
+        // Use dynamic price from DB/metadata â€” NOT hardcoded
         await Subscription.findOneAndUpdate(
           { orgId },
           {
@@ -97,7 +97,7 @@ router.post(
   }),
 );
 
-/* ── POST /api/billing/create-checkout ─────────── */
+/* â”€â”€ POST /api/billing/create-checkout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.post(
   '/create-checkout',
   authenticate,
@@ -108,7 +108,7 @@ router.post(
       throw new AppError('Invalid plan', 400, 'BILLING_INVALID_PLAN');
     }
 
-    // Fetch price from Stripe dynamically by plan metadata — no hardcoded price IDs
+    // Fetch price from Stripe dynamically by plan metadata â€” no hardcoded price IDs
     const prices = await stripe.prices.list({
       active: true,
       expand: ['data.product'],
@@ -137,7 +137,7 @@ router.post(
   }),
 );
 
-/* ── GET /api/billing/subscription ─────────────── */
+/* â”€â”€ GET /api/billing/subscription â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 router.get(
   '/subscription',
   authenticate,

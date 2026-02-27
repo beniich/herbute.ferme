@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file auth.dto.ts
  * @description DTOs and validators for authentication routes.
  * @module backend/dto
@@ -6,7 +6,7 @@
 
 import { body } from 'express-validator';
 
-// ── Interfaces (TypeScript safety) ───────────────────────────────────────────
+// â”€â”€ Interfaces (TypeScript safety) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface RegisterDto {
   email: string;
@@ -23,13 +23,13 @@ export interface RefreshDto {
   refreshToken: string;
 }
 
-// ── Validators (express-validator chains) ─────────────────────────────────────
+// â”€â”€ Validators (express-validator chains) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const registerValidators = [
   body('email').isEmail().withMessage('Email invalide').normalizeEmail(),
   body('password')
     .isLength({ min: 8 })
-    .withMessage('Le mot de passe doit contenir au moins 8 caractères')
+    .withMessage('Le mot de passe doit contenir au moins 8 caractÃ¨res')
     .matches(/[A-Z]/)
     .withMessage('Doit contenir au moins une majuscule')
     .matches(/[0-9]/)
@@ -38,7 +38,7 @@ export const registerValidators = [
     .optional()
     .trim()
     .isLength({ max: 100 })
-    .withMessage('Le nom ne peut dépasser 100 caractères'),
+    .withMessage('Le nom ne peut dÃ©passer 100 caractÃ¨res'),
 ];
 
 export const loginValidators = [

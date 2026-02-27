@@ -1,7 +1,8 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/providers/AuthProvider';
+import { authApi } from '@/lib/api';
 import { GoogleLogin } from '@react-oauth/google';
 import { useLocale } from 'next-intl';
 import { useState } from 'react';
@@ -15,22 +16,17 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const locale = useLocale();
 
-    // Utilisation du store pour la gestion de l'état global
-    const { login, googleLogin } = useAuthStore();
+    // Utilisation du nouveau contexte Auth
+    const { login, user } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            await login(email, password);
+            await login({ email, password });
             toast.success('Connexion réussie !');
-
-            // Redirection avec locale pour garder le contexte i18n
-            setTimeout(() => {
-                window.location.href = `/${locale}/dashboard`;
-            }, 100);
-
+            // La redirection est gérée par le login() de l'AuthProvider
         } catch (error: any) {
             console.error('Login error:', error);
             const message = error.response?.data?.error || error.response?.data?.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.';
@@ -43,11 +39,11 @@ export default function LoginPage() {
     const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
         try {
             if (credentialResponse.credential) {
-                await googleLogin(credentialResponse.credential);
+                // Pour Google, on peut appeler directement l'api ou étendre l'AuthProvider
+                // Ici on utilise l'API pour déclencher la création du cookie
+                await authApi.googleLogin(credentialResponse.credential);
+                window.location.href = `/${locale}/dashboard`;
                 toast.success('Connexion Google réussie !');
-                setTimeout(() => {
-                    window.location.href = `/${locale}/dashboard`;
-                }, 100);
             }
         } catch (error: any) {
             console.error('Google login error:', error);

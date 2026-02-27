@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+﻿import express, { Response } from 'express';
 import { auth } from '../middleware/auth';
 import { requireOrganization } from '../middleware/organization';
 import NetworkDevice from '../models/NetworkDevice';

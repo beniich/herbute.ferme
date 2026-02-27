@@ -1,7 +1,7 @@
-/**
- * models/user.model.ts — Schéma Mongoose User
- * Centralisé ici (source unique de vérité)
- * Importé par @reclamtrack/shared si nécessaire
+﻿/**
+ * models/user.model.model.ts â€” SchÃ©ma Mongoose User
+ * CentralisÃ© ici (source unique de vÃ©ritÃ©)
+ * ImportÃ© par @reclamtrack/shared si nÃ©cessaire
  */
 
 import mongoose, { Schema, Document } from 'mongoose';
@@ -27,6 +27,8 @@ export interface IUser extends Document {
   lockedUntil?:        Date;
   lastLogin?:          Date;
   avatarUrl?:          string;
+  googleId?:           string;
+  authProvider:        'local' | 'google';
   preferences:         Record<string, unknown>;
   createdAt:           Date;
   updatedAt:           Date;
@@ -61,12 +63,14 @@ const UserSchema = new Schema<IUser>({
   lockedUntil:         { type: Date },
   lastLogin:           { type: Date },
   avatarUrl:           { type: String },
+  googleId:            { type: String, sparse: true },
+  authProvider:        { type: String, enum: ['local', 'google'], default: 'local' },
   preferences:         { type: Schema.Types.Mixed, default: {} },
 }, {
   timestamps: true,
 });
 
-// Index pour les lookups fréquents
+// Index pour les lookups frÃ©quents
 UserSchema.index({ email: 1 });
 UserSchema.index({ farmId: 1 });
 UserSchema.index({ role: 1 });

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file security.ts
  * @description Single source of truth for all Express security middleware.
  *              Handles authentication, organization context, RBAC, API key
@@ -17,9 +17,9 @@ import {
 } from '../utils/AppError.js';
 import { logger } from '../utils/logger.js';
 
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Types
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface JwtPayload {
   id?: string;
@@ -39,9 +39,9 @@ declare global {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 1. Authentication — verify JWT access token
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 1. Authentication â€” verify JWT access token
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Verifies the Bearer JWT in the Authorization header.
@@ -59,7 +59,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     req.user = decoded;
-    logger.debug(`[Auth] ✅ User ${decoded.id} authenticated`, { requestId: req.id });
+    logger.debug(`[Auth] âœ… User ${decoded.id} authenticated`, { requestId: req.id });
     next();
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
@@ -73,9 +73,9 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
 export const auth = authenticate;
 export const protect = authenticate;
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 2. Organization context — verify membership
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 2. Organization context â€” verify membership
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Verifies the user is an ACTIVE member of the organization specified
@@ -91,12 +91,12 @@ export const requireOrganization = async (
   try {
     const userId = req.user?._id ?? req.user?.id;
     if (!userId) {
-      return next(new AppError('Non authentifié', 401, 'AUTH_USER_MISSING'));
+      return next(new AppError('Non authentifiÃ©', 401, 'AUTH_USER_MISSING'));
     }
 
     const organizationId = req.headers['x-organization-id'] as string | undefined;
     if (!organizationId) {
-      return next(new AppError('En-tête x-organization-id requis', 400, 'ORG_HEADER_MISSING'));
+      return next(new AppError('En-tÃªte x-organization-id requis', 400, 'ORG_HEADER_MISSING'));
     }
 
     const membership = await Membership.findOne({
@@ -106,22 +106,22 @@ export const requireOrganization = async (
     });
 
     if (!membership) {
-      return next(new ForbiddenAppError('Accès refusé à cette organisation', 'ORG_ACCESS_DENIED'));
+      return next(new ForbiddenAppError('AccÃ¨s refusÃ© Ã  cette organisation', 'ORG_ACCESS_DENIED'));
     }
 
     req.organizationId = organizationId;
     req.membership = membership as any;
 
-    logger.debug(`[Org] ✅ User ${userId} → org ${organizationId}`, { requestId: req.id });
+    logger.debug(`[Org] âœ… User ${userId} â†’ org ${organizationId}`, { requestId: req.id });
     next();
   } catch (err) {
     next(err);
   }
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 3. Admin role — requires requireOrganization to run first
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 3. Admin role â€” requires requireOrganization to run first
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Requires the user to have admin rights in the current organization.
@@ -139,16 +139,16 @@ export const requireAdmin = async (
     if (!(req.membership as any).isAdmin()) {
       return next(new ForbiddenAppError('Droits administrateur requis', 'ADMIN_REQUIRED'));
     }
-    logger.debug(`[Admin] ✅ Admin access granted`, { requestId: req.id });
+    logger.debug(`[Admin] âœ… Admin access granted`, { requestId: req.id });
     next();
   } catch (err) {
     next(err);
   }
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 4. Role-based access control
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Requires the user to have at least one of the specified roles.
@@ -167,10 +167,10 @@ export const requireRole = (roles: string | string[]) => {
       const hasPermission = allowedRoles.some((role) => (req.membership as any).hasRole(role));
       if (!hasPermission) {
         return next(
-          new ForbiddenAppError(`Rôle requis: ${allowedRoles.join(' ou ')}`, 'ROLE_REQUIRED')
+          new ForbiddenAppError(`RÃ´le requis: ${allowedRoles.join(' ou ')}`, 'ROLE_REQUIRED')
         );
       }
-      logger.debug(`[RBAC] ✅ Role check passed: ${allowedRoles.join('|')}`, { requestId: req.id });
+      logger.debug(`[RBAC] âœ… Role check passed: ${allowedRoles.join('|')}`, { requestId: req.id });
       next();
     } catch (err) {
       next(err);
@@ -178,9 +178,9 @@ export const requireRole = (roles: string | string[]) => {
   };
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 5. API Key authentication
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Validates the API key provided in the `x-api-key` header.
@@ -195,7 +195,7 @@ export const requireApiKey = async (
   try {
     const rawKey = req.headers['x-api-key'] as string | undefined;
     if (!rawKey) {
-      return next(new AppError('En-tête x-api-key requis', 401, 'API_KEY_MISSING'));
+      return next(new AppError('En-tÃªte x-api-key requis', 401, 'API_KEY_MISSING'));
     }
 
     // Lazy import to avoid circular dependency before apiKeyService is created
@@ -203,7 +203,7 @@ export const requireApiKey = async (
     const keyDoc = await apiKeyService.validateApiKey(rawKey);
 
     if (!keyDoc) {
-      return next(new AppError('Clé API invalide ou expirée', 401, 'API_KEY_INVALID'));
+      return next(new AppError('ClÃ© API invalide ou expirÃ©e', 401, 'API_KEY_INVALID'));
     }
 
     req.apiKey = {
@@ -213,16 +213,16 @@ export const requireApiKey = async (
       name: keyDoc.name,
     };
 
-    logger.debug(`[ApiKey] ✅ Key "${keyDoc.name}" validated`, { requestId: req.id });
+    logger.debug(`[ApiKey] âœ… Key "${keyDoc.name}" validated`, { requestId: req.id });
     next();
   } catch (err) {
     next(err);
   }
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 6. Subscription feature gating
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Requires the organization's subscription to include a specific feature.
@@ -244,14 +244,14 @@ export const requireSubscription = (feature: string) => {
       if (!allowed) {
         return next(
           new AppError(
-            `Cette fonctionnalité ('${feature}') n'est pas disponible dans votre plan`,
+            `Cette fonctionnalitÃ© ('${feature}') n'est pas disponible dans votre plan`,
             402,
             'SUBSCRIPTION_FEATURE_REQUIRED'
           )
         );
       }
 
-      logger.debug(`[Sub] ✅ Feature '${feature}' granted`, { requestId: req.id });
+      logger.debug(`[Sub] âœ… Feature '${feature}' granted`, { requestId: req.id });
       next();
     } catch (err) {
       next(err);
@@ -259,9 +259,9 @@ export const requireSubscription = (feature: string) => {
   };
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 7. Security headers (additional to Helmet)
-// ──────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Adds supplemental security response headers not covered by Helmet.

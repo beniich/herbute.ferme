@@ -23,17 +23,17 @@ export interface SecurityAlert {
 }
 
 export const useSecuritySocket = () => {
-    const { token } = useAuthStore();
+    const { user } = useAuthStore();
     const [firewallLogs, setFirewallLogs] = useState<FirewallLog[]>([]);
     const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        if (!token) return;
+        if (!user) return;
 
         const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
         const socket: Socket = io(`${SOCKET_URL}/security`, {
-            auth: { token },
+            withCredentials: true,
             transports: ['websocket'],
         });
 
@@ -59,7 +59,7 @@ export const useSecuritySocket = () => {
         return () => {
             socket.disconnect();
         };
-    }, [token]);
+    }, [user]);
 
     return { firewallLogs, securityAlerts, isConnected };
 };

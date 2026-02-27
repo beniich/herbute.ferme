@@ -9,7 +9,7 @@
 
 Suite à la suppression du backend ReclamTrack, l'architecture est maintenant :
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │          Frontend Next.js (:3000)           │
 │  - 1 seul client Axios (cookies HttpOnly)   │
@@ -75,7 +75,7 @@ Suite à la suppression du backend ReclamTrack, l'architecture est maintenant :
 
 ## Structure des Fichiers Générés
 
-```
+```text
 herbute-backend/
 ├── generate-keys.sh              # Génère la paire RSA 4096 bits
 ├── .env.example                  # Template des variables d'env

@@ -35,7 +35,7 @@ export default function ComplaintControlPage() {
   const loadComplaints = async () => {
     try {
       // Fetch only NEW complaints
-      const res = await api.get('/api/complaints', { params: { status: 'nouvelle' } });
+      const res = await api.get('/api/complaints?status=nouvelle');
       setComplaints(res.data.data || []);
     } catch (error) {
       console.error('Failed to load complaints:', error);
