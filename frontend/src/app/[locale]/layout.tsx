@@ -9,7 +9,7 @@ import '@/styles/globals.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Inter, Sora } from 'next/font/google';
+import { Inter, Sora, Playfair_Display, Outfit, JetBrains_Mono } from 'next/font/google';
 import { notFound } from 'next/navigation';
 
 const inter = Inter({
@@ -22,6 +22,21 @@ const sora = Sora({
     subsets: ['latin'],
     display: 'swap',
     variable: '--font-sora'
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    variable: '--font-display'
+});
+
+const outfit = Outfit({
+    subsets: ['latin'],
+    variable: '--font-body'
+});
+
+const jetbrains = JetBrains_Mono({
+    subsets: ['latin'],
+    variable: '--font-mono'
 });
 
 export default async function LocaleLayout({
@@ -47,7 +62,7 @@ export default async function LocaleLayout({
                     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
                 />
             </head>
-            <body className={`${inter.variable} ${sora.variable} font-sans antialiased text-slate-900 dark:text-slate-100 bg-white dark:bg-[#020617]`}>
+            <body className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} font-sans antialiased text-slate-900 dark:text-slate-100 bg-white dark:bg-[#020617]`}>
                 <NextIntlClientProvider messages={messages} locale={locale}>
                     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
                         <QueryProvider>
@@ -66,3 +81,4 @@ export default async function LocaleLayout({
         </html>
     );
 }
+

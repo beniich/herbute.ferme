@@ -22,10 +22,8 @@
 import path from 'path';
 import fs from 'fs';
 import { Application, Request, Response } from 'express';
-import soap from 'strong-soap';
+import { soap } from 'strong-soap';
 import { AuthSoapService } from '../services/auth.soap.service.js';
-
-const { server: soapServer } = soap;
 
 // ─────────────────────────────────────────────
 // Chemin vers le fichier WSDL
@@ -79,7 +77,7 @@ export const mountSoapService = (
    * Le contexte { req, res } est injecté dans chaque opération
    * pour permettre la lecture/écriture des cookies HttpOnly.
    */
-  const createdSoapServer = soapServer.listen(
+  const createdSoapServer = soap.listen(
     httpServer,
     soapPath,
     AuthSoapService,

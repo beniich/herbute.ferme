@@ -46,12 +46,14 @@ class ApiClient {
           config.headers['x-organization-id'] = orgId;
         }
       }
+      console.log('[Axios Request]', config.method?.toUpperCase(), config.url, config.data);
       return config;
     });
 
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
+        console.error('[Axios Error]', error.config?.url, error.response?.status, error.response?.data);
         if (error.response?.status === 401) {
           authEventBus.emit('session-expired');
         }
@@ -60,11 +62,11 @@ class ApiClient {
     );
   }
 
-  get<T = any>(url: string) { return this.client.get<T>(url).then(r => r.data); }
-  post<T = any>(url: string, data?: any) { return this.client.post<T>(url, data).then(r => r.data); }
-  put<T = any>(url: string, data?: any) { return this.client.put<T>(url, data).then(r => r.data); }
-  patch<T = any>(url: string, data?: any) { return this.client.patch<T>(url, data).then(r => r.data); }
-  delete<T = any>(url: string) { return this.client.delete<T>(url).then(r => r.data); }
+  get<T = any>(url: string, config?: any) { return this.client.get<T>(url, config).then(r => r.data); }
+  post<T = any>(url: string, data?: any, config?: any) { return this.client.post<T>(url, data, config).then(r => r.data); }
+  put<T = any>(url: string, data?: any, config?: any) { return this.client.put<T>(url, data, config).then(r => r.data); }
+  patch<T = any>(url: string, data?: any, config?: any) { return this.client.patch<T>(url, data, config).then(r => r.data); }
+  delete<T = any>(url: string, config?: any) { return this.client.delete<T>(url, config).then(r => r.data); }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
@@ -159,3 +161,68 @@ export const teamsApi = {
 };
 
 export default apiClient;
+
+// ─────────────────────────────────────────────
+// Alias "api" — utilisé dans hooks et pages legacy
+// ─────────────────────────────────────────────
+export const api = apiClient;
+
+// ─────────────────────────────────────────────
+// DataSource helpers
+// ─────────────────────────────────────────────
+export const datasourceHelpers = {
+  list: () => apiClient.get('/api/datasources'),
+  create: (data: Record<string, unknown>) => apiClient.post('/api/datasources', data),
+  update: (id: string, data: Record<string, unknown>) => apiClient.put(`/api/datasources/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/api/datasources/${id}`),
+  test: (id: string) => apiClient.post(`/api/datasources/${id}/test`),
+  sync: (id: string) => apiClient.post(`/api/datasources/${id}/sync`),
+  syncAll: () => apiClient.post('/api/datasources/sync-all'),
+  preview: (id: string) => apiClient.get(`/api/datasources/${id}/preview`),
+  getData: (module: string, params?: Record<string, unknown>) =>
+    apiClient.get(`/api/datasources/data/${module}`, { params }),
+};
+
+// ─────────────────────────────────────────────
+// apiHelpers — objet centralisé pour auth-provider et composants
+// ─────────────────────────────────────────────
+export const apiHelpers = {
+  auth: {
+    login: (data: any) => apiClient.post('/api/auth/login', data),
+    logout: () => apiClient.post('/api/auth/logout'),
+    logoutAll: () => apiClient.post('/api/auth/logout-all'),
+    me: () => apiClient.get('/api/auth/me'),
+    register: (data: any) => apiClient.post('/api/auth/register', data),
+    refresh: () => apiClient.post('/api/auth/refresh'),
+    googleLogin: (credential: string) => apiClient.post('/api/auth/google', { credential }),
+  },
+  fleet: {
+    getVehicles: () => apiClient.get('/api/fleet/vehicles'),
+    getVehicle: (id: string) => apiClient.get(`/api/fleet/vehicles/${id}`),
+  },
+  hr: {
+    getStaff: () => apiClient.get('/api/hr/staff'),
+    getLeaves: () => apiClient.get('/api/hr/leaves'),
+  },
+  planning: {
+    getSchedule: () => apiClient.get('/api/planning/schedule'),
+    getInterventions: () => apiClient.get('/api/planning/interventions'),
+  },
+  organizations: {
+    list: () => apiClient.get('/api/organizations'),
+    get: (id: string) => apiClient.get(`/api/organizations/${id}`),
+    create: (data: any) => apiClient.post('/api/organizations', data),
+    update: (id: string, data: any) => apiClient.patch(`/api/organizations/${id}`, data),
+    getMembers: (orgId: string) => apiClient.get(`/api/organizations/${orgId}/members`),
+    inviteMember: (orgId: string, email: string, role: string) =>
+      apiClient.post(`/api/organizations/${orgId}/members`, { email, role }),
+    removeMember: (orgId: string, membershipId: string) =>
+      apiClient.delete(`/api/organizations/${orgId}/members/${membershipId}`),
+  },
+  datasources: datasourceHelpers,
+  billing: {
+    mockCheckout: () => apiClient.post('/api/billing/mock-checkout'),
+    getSubscription: () => apiClient.get('/api/billing/subscription'),
+    createCheckout: (data: any) => apiClient.post('/api/billing/create-checkout', data),
+  },
+};

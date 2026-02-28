@@ -165,7 +165,12 @@ router.post('/register', authLimiter, async (req: Request, res: Response, next: 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 router.post('/login', authLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password } = req.body;
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corps de requête manquant.' });
+    }
+
+    const email = typeof req.body.email === 'string' ? req.body.email.trim() : req.body.email;
+    const password = typeof req.body.password === 'string' ? req.body.password.trim() : req.body.password;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email et mot de passe requis.' });

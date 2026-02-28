@@ -19,8 +19,8 @@ import React, {
   ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { authBus } from './auth-event-bus';
-import { apiHelpers } from './api';
+import { authEventBus } from '@/lib/auth-event-bus';
+import { apiHelpers } from '@/lib/api';
 import type { LoginResponse, UserRole, SubscriptionPlan } from '@reclamtrack/shared';
 
 // ─────────────────────────────────────────────
@@ -59,8 +59,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Charger l'utilisateur au montage (si cookie valide)
   const refreshUser = useCallback(async () => {
     try {
-      const { data } = await apiHelpers.auth.me();
-      setUser(data);
+      const userData = await apiHelpers.auth.me();
+      setUser(userData);
     } catch {
       setUser(null);
     }
@@ -73,10 +73,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // ── Écoute de l'AuthEventBus ─────────────────
   useEffect(() => {
     // Sur 401 → déconnexion propre et redirection
-    const cleanup = authBus.onUnauthorized((code) => {
-      console.warn('[Auth] Session invalide, code:', code);
+    const cleanup = authEventBus.on('session-expired', () => {
+      console.warn('[Auth] Session invalide / expirée');
       setUser(null);
-      router.push('/login?reason=' + (code || 'session_expired'));
+      router.push('/login?reason=session_expired');
     });
 
     return cleanup;
@@ -84,8 +84,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // ─────────────────────────────────────────────
   const login = useCallback(async (email: string, password: string) => {
-    const { data } = await apiHelpers.auth.login({ email, password }) as { data: LoginResponse };
-    setUser(data.user as AuthUser);
+    const result = await apiHelpers.auth.login({ email, password }) as LoginResponse;
+    setUser(result.user as AuthUser);
     router.push('/dashboard');
   }, [router]);
 

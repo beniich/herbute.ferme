@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * lib/hooks/useRealData.ts — Hook de remplacement des mocks
+ * lib/hooks/useRealData.tsx — Hook de remplacement des mocks
  * ═══════════════════════════════════════════════════════════════
  *
  * Ce hook est le pont principal entre les composants existants
@@ -72,16 +72,16 @@ export function useRealData<T = Record<string, unknown>>(
         ...(search ? { search } : {}),
       });
 
-      const { data: result } = await api.get(`/api/datasources/data/${module}?${params}`);
+      const result = await api.get(`/api/datasources/data/${module}?${params}`);
 
       if (!mountedRef.current) return;
 
-      setData(result.data ?? []);
-      setTotal(result.total ?? 0);
-      setPages(result.pages ?? 0);
-      setSources(result.sources ?? []);
-      setHasSource((result.sources ?? []).length > 0);
-      setNotice(result._notice);
+      setData(result?.data ?? []);
+      setTotal(result?.total ?? 0);
+      setPages(result?.pages ?? 0);
+      setSources(result?.sources ?? []);
+      setHasSource((result?.sources ?? []).length > 0);
+      setNotice(result?._notice);
     } catch (err: any) {
       if (!mountedRef.current) return;
       setError(err.response?.data?.error || 'Erreur de chargement des données.');

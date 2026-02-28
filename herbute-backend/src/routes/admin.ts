@@ -64,7 +64,7 @@ const users: User[] = [
 ];
 
 // GET /api/admin/users - Liste utilisateurs
-router.get('/users', auth, adminOnly, (req: Request, res: Response) => {
+router.get('/', auth, adminOnly, (req: Request, res: Response) => {
   res.json({ success: true, data: users });
 });
 

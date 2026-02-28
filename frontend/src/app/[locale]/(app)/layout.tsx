@@ -3,8 +3,7 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Header from '@/components/Header';
-import { Footer } from '@/components/layout/Footer';
+import AgroLayout from '@/components/layout/AgroLayout';
 import useNotifications from '@/hooks/useNotifications';
 
 export default function AppLayout({
@@ -37,12 +36,8 @@ export default function AppLayout({
     if (!user) return null;
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
-            <Header />
-            <main className="flex-1 container mx-auto px-4 py-8">
-                {children}
-            </main>
-            <Footer />
-        </div>
+        <AgroLayout>
+            {children}
+        </AgroLayout>
     );
 }

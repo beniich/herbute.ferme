@@ -41,6 +41,8 @@ import apiKeyRoutes from './routes/api-keys.js';
 // notifications route not yet implemented — removed to fix TS2307
 import analyticsRoutes from './routes/analytics.js';
 import dashboardRoutes from './routes/dashboard.js';
+import billingRoutes from './routes/billing.js';
+import membersRoutes from './routes/members.js';
 
 // Validate environment
 envValidator();
@@ -49,6 +51,9 @@ const app = express();
 const httpServer = createServer(app);
 
 // Security middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(requestId);
 app.use(securityHeaders);
 app.use(
@@ -62,16 +67,13 @@ app.use(
     origin: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:2070')
       .split(',')
       .map(o => o.trim()),
-    credentials: true, // REQUIS pour les cookies HttpOnly
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-organization-id'],
   })
 );
 
 app.use('/api/', globalLimiter);
-app.use(cookieParser()); // Indispensable pour lire req.cookies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Mount routes
@@ -112,6 +114,12 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Upload
 app.use('/api/upload', uploadRoutes);
+
+// Billing & Subscriptions
+app.use('/api/billing', billingRoutes);
+
+// Organization Members (routes /api/organizations/:orgId/members)
+app.use('/api', membersRoutes);
 
 // Health check
 app.get('/', (_req, res) => {
