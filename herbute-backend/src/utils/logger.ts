@@ -33,6 +33,7 @@ function redact(obj: unknown, depth = 0): unknown {
 }
 
 const redactFormat = winston.format((info) => {
+  if (!info) return info;
   if (info.meta) info.meta = redact(info.meta);
   if (info.data) info.data = redact(info.data);
   return info;

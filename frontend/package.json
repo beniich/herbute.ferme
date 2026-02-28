@@ -11,6 +11,7 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "generate:component": "node scripts/generate-component.js"
   },
   "dependencies": {
@@ -33,7 +34,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@react-google-maps/api": "^2.20.8",
     "@react-oauth/google": "^0.13.4",
-    "@reclamtrack/shared": "file:../../ticket/reclamtrack/shared",
+    "@reclamtrack/shared": "file:../shared",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^5.90.21",
@@ -85,6 +86,6 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.0"
+    "vitest": "^3.2.4"
   }
 }

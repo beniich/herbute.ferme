@@ -4,33 +4,43 @@ import { describe, it, expect, vi } from 'vitest';
 
 // Mock winston
 vi.mock('winston', () => {
-    const format = {
+    const formatMock = {
         combine: vi.fn(),
         timestamp: vi.fn(),
         printf: vi.fn(),
         colorize: vi.fn(),
+        errors: vi.fn(),
+        json: vi.fn(),
     };
+
+    const formatCreator = vi.fn((fn) => {
+        const mockFormat = vi.fn((info) => (fn ? fn(info) : info));
+        Object.assign(mockFormat, formatMock);
+        return mockFormat;
+    });
+    Object.assign(formatCreator, formatMock);
+
     const transports = {
         Console: vi.fn(),
         File: vi.fn(),
     };
+
+    const loggerMock = {
+        info: vi.fn(),
+        error: vi.fn(),
+        debug: vi.fn(),
+        child: vi.fn().mockReturnThis(),
+    };
+
     return {
         default: {
-            format,
+            format: formatCreator,
             transports,
-            createLogger: vi.fn().mockReturnValue({
-                info: vi.fn(),
-                error: vi.fn(),
-                debug: vi.fn(),
-            }),
+            createLogger: vi.fn().mockReturnValue(loggerMock),
         },
-        format,
+        format: formatCreator,
         transports,
-        createLogger: vi.fn().mockReturnValue({
-            info: vi.fn(),
-            error: vi.fn(),
-            debug: vi.fn(),
-        }),
+        createLogger: vi.fn().mockReturnValue(loggerMock),
     };
 });
 
