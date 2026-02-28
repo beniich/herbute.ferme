@@ -41,7 +41,8 @@ import apiKeyRoutes from './routes/api-keys.js';
 // notifications route not yet implemented — removed to fix TS2307
 import analyticsRoutes from './routes/analytics.js';
 import dashboardRoutes from './routes/dashboard.js';
-import billingRoutes from './routes/billing.js';
+import billingRoutes from './routes/billing.routes.js';
+import glpiRoutes from './routes/glpi.routes.js';
 import membersRoutes from './routes/members.js';
 
 // Validate environment
@@ -50,7 +51,9 @@ envValidator();
 const app = express();
 const httpServer = createServer(app);
 
-// Security middleware
+// Webhook de Stripe AVANT express.json()
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -117,6 +120,9 @@ app.use('/api/upload', uploadRoutes);
 
 // Billing & Subscriptions
 app.use('/api/billing', billingRoutes);
+
+// GLPI integration
+app.use('/api/glpi', glpiRoutes);
 
 // Organization Members (routes /api/organizations/:orgId/members)
 app.use('/api', membersRoutes);

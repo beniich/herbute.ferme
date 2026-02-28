@@ -224,5 +224,12 @@ export const apiHelpers = {
     mockCheckout: () => apiClient.post('/api/billing/mock-checkout'),
     getSubscription: () => apiClient.get('/api/billing/subscription'),
     createCheckout: (data: any) => apiClient.post('/api/billing/create-checkout', data),
+    createSubscription: (data: any) => apiClient.post('/api/billing/create-subscription', data),
+    startTrial: (data: any) => apiClient.post('/api/billing/start-trial', data),
+  },
+  glpi: {
+    getTickets: (params?: any) => apiClient.get('/api/glpi/tickets' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+    updateTicket: (id: number, data: any) => apiClient.patch(`/api/glpi/tickets/${id}`, data),
+    sync: () => apiClient.post('/api/glpi/sync'),
   },
 };

@@ -18,12 +18,12 @@ export default function MeteoPage() {
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--text2)' }}>Ensoleillé · Vent Nord-Ouest 12 km/h</div>
           </div>
           <div style={{ display: 'flex', gap: '48px' }}>
-            <div className="weather-detail" style={{ fontSize: '14px', line_height: '2.5' }}>
+            <div className="weather-detail" style={{ fontSize: '14px', lineHeight: '2.5' }}>
               <div>💧 Humidité : <span style={{ color: 'var(--text)' }}>48%</span></div>
               <div>🌧️ Prob. Pluie : <span style={{ color: 'var(--text)' }}>5%</span></div>
               <div>☀️ Indice UV : <span style={{ color: 'var(--gold2)' }}>7 (Élevé)</span></div>
             </div>
-            <div className="weather-detail" style={{ fontSize: '14px', line_height: '2.5' }}>
+            <div className="weather-detail" style={{ fontSize: '14px', lineHeight: '2.5' }}>
               <div>🌡️ Point de rosée : <span style={{ color: 'var(--text)' }}>12°C</span></div>
               <div>💨 Rafales : <span style={{ color: 'var(--text)' }}>18 km/h</span></div>
               <div>👁️ Visibilité : <span style={{ color: 'var(--text)' }}>15 km</span></div>

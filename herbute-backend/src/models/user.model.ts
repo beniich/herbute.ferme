@@ -30,6 +30,8 @@ export interface IUser extends Document {
   googleId?:           string;
   authProvider:        'local' | 'google';
   preferences:         Record<string, unknown>;
+  stripeCustomerId?:   string;
+  directLoginToken?:   string;
   createdAt:           Date;
   updatedAt:           Date;
 }
@@ -66,6 +68,8 @@ const UserSchema = new Schema<IUser>({
   googleId:            { type: String, sparse: true },
   authProvider:        { type: String, enum: ['local', 'google'], default: 'local' },
   preferences:         { type: Schema.Types.Mixed, default: {} },
+  stripeCustomerId:    { type: String },
+  directLoginToken:    { type: String, select: false },
 }, {
   timestamps: true,
 });
