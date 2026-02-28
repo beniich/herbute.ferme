@@ -14,9 +14,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['@parcel/watcher'],
-  },
   images: {
     domains: ['lh3.googleusercontent.com', 'placeholder.pics'],
   },
