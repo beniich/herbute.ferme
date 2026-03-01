@@ -58,8 +58,8 @@ export const useComplaintsStore = create<ComplaintsState>((set, get) => ({
         const currentFilters = get().filters;
         set({ isLoading: true, error: null });
         try {
-            const data = await complaintsApi.getAll(params || currentFilters);
-            set({ complaints: data as any, isLoading: false });
+            const response = await complaintsApi.getAll(params || currentFilters) as any;
+            set({ complaints: response?.data || [], isLoading: false });
         } catch (error: any) {
             set({
                 error: error.response?.data?.message || 'Erreur lors du chargement des réclamations',
@@ -71,8 +71,8 @@ export const useComplaintsStore = create<ComplaintsState>((set, get) => ({
     fetchComplaintById: async (id) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await complaintsApi.getById(id);
-            set({ selectedComplaint: data as any, isLoading: false });
+            const response = await complaintsApi.getById(id) as any;
+            set({ selectedComplaint: response?.data || null, isLoading: false });
         } catch (error: any) {
             set({
                 error: error.response?.data?.message || 'Réclamation introuvable',

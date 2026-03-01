@@ -13,7 +13,7 @@ export default function TeamsPage() {
     const [selectedComplaint, setSelectedComplaint] = useState<string>('');
 
     useEffect(() => {
-        api.get<Team[]>('/teams')
+        api.get<Team[]>('/api/teams')
             .then((teamsData) => {
                 if (Array.isArray(teamsData)) {
                     setTeams(teamsData);
@@ -35,13 +35,13 @@ export default function TeamsPage() {
             return;
         }
         try {
-            await api.post('/assignments', {
+            await api.post('/api/assignments', {
                 complaintId: selectedComplaint,
                 teamId
             });
             alert('Équipe affectée avec succès !');
             // Refresh teams
-            const refreshed = await api.get<Team[]>('/teams');
+            const refreshed = await api.get<Team[]>('/api/teams');
             if (Array.isArray(refreshed)) {
                 setTeams(refreshed);
             }

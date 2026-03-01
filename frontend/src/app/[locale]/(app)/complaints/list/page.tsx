@@ -21,7 +21,7 @@ export default function ComplaintListPage() {
         setExporting(true);
         const toastId = toast.loading('Génération de l\'export Excel...');
         try {
-            const result = await api.get('/analytics/export/complaints');
+            const result = await api.get('/api/analytics/export/complaints');
             toast.dismiss(toastId);
             if (result?.data?.mode === 'local' && result?.data?.downloadUrl) {
                 toast.success('Export prêt ! Téléchargement en cours...');
@@ -42,8 +42,8 @@ export default function ComplaintListPage() {
 
     useEffect(() => {
         api
-            .get('/complaints')
-            .then((res) => setComplaints(res || []))
+            .get('/api/complaints')
+            .then((res) => setComplaints(res?.data || []))
             .catch((err) => {
                 console.error(err);
                 setComplaints([]);
@@ -58,8 +58,6 @@ export default function ComplaintListPage() {
             </div>
         );
     }
-
-
 
     return (
         <section className="max-w-6xl mx-auto py-6">

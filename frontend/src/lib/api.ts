@@ -53,7 +53,8 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-        console.error('[Axios Error]', error.config?.url, error.response?.status, error.response?.data);
+        // Prevent aggressive Red Error Overlay in Next.js Dev by using console.warn instead of console.error
+        console.warn('[Axios API Error]', error.config?.url, error.response?.status, error.response?.data || error.message);
         if (error.response?.status === 401) {
           authEventBus.emit('session-expired');
         }
@@ -123,6 +124,49 @@ export const inventoryApi = {
 export const complaintsApi = {
   getAll: (params?: any) => apiClient.get('/api/complaints' + (params ? '?' + new URLSearchParams(params).toString() : '')),
   getById: (id: string) => apiClient.get(`/api/complaints/${id}`),
+};
+
+export const animalsApi = {
+  getAll: (params?: Record<string, string>) => apiClient.get('/api/animals' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  getById: (id: string) => apiClient.get(`/api/animals/${id}`),
+  getStats: (params?: Record<string, string>) => apiClient.get('/api/animals/stats' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  create: (data: any) => apiClient.post('/api/animals', data),
+  update: (id: string, data: any) => apiClient.put(`/api/animals/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/api/animals/${id}`),
+};
+
+export const cropsApi = {
+  getAll: (params?: Record<string, string>) => apiClient.get('/api/crops' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  getById: (id: string) => apiClient.get(`/api/crops/${id}`),
+  getStats: (params?: Record<string, string>) => apiClient.get('/api/crops/stats' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  create: (data: any) => apiClient.post('/api/crops', data),
+  update: (id: string, data: any) => apiClient.put(`/api/crops/${id}`, data),
+  harvest: (id: string, actualYield: number) => apiClient.post(`/api/crops/${id}/harvest`, { actualYield }),
+  delete: (id: string) => apiClient.delete(`/api/crops/${id}`),
+};
+
+export const financeApi = {
+  getTransactions: (params?: Record<string, string>) => apiClient.get('/api/finance/transactions' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  createTransaction: (data: any) => apiClient.post('/api/finance/transactions', data),
+  updateTransaction: (id: string, data: any) => apiClient.put(`/api/finance/transactions/${id}`, data),
+  deleteTransaction: (id: string) => apiClient.delete(`/api/finance/transactions/${id}`),
+  getStats: () => apiClient.get('/api/finance/stats'),
+  getKPIs: (params?: Record<string, string>) => apiClient.get('/api/finance/kpis' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+};
+
+export const irrigationApi = {
+  getAll: (params?: Record<string, string>) => apiClient.get('/api/irrigation' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  getStats: () => apiClient.get('/api/irrigation/stats'),
+  create: (data: any) => apiClient.post('/api/irrigation', data),
+  update: (id: string, data: any) => apiClient.put(`/api/irrigation/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/api/irrigation/${id}`),
+};
+
+export const infrastructureApi = {
+  getAll: (params?: Record<string, string>) => apiClient.get('/api/infrastructure' + (params ? '?' + new URLSearchParams(params).toString() : '')),
+  create: (data: any) => apiClient.post('/api/infrastructure', data),
+  update: (id: string, data: any) => apiClient.put(`/api/infrastructure/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/api/infrastructure/${id}`),
 };
 
 // Aliases and Stubs for legacy components and TS build

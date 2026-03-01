@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import AgroLayout from '@/components/layout/AgroLayout';
 import useNotifications from '@/hooks/useNotifications';
+import { useOrgStore } from '@/store/orgStore';
 
 export default function AppLayout({
     children,
@@ -12,8 +13,15 @@ export default function AppLayout({
     children: React.ReactNode;
 }) {
     const { user, isLoading } = useAuth();
+    const { fetchOrganizations } = useOrgStore();
     const router = useRouter();
     useNotifications();
+
+    useEffect(() => {
+        if (!isLoading && user) {
+            fetchOrganizations();
+        }
+    }, [user, isLoading, fetchOrganizations]);
 
     useEffect(() => {
         if (!isLoading && !user) {

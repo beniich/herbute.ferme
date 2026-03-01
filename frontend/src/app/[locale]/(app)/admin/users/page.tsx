@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { adminApi } from '@/lib/api';
 import { DataTable } from '@/components/ui/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Users, UserPlus, Filter, MoreVertical, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import PageHeader from '@/components/layout/PageHeader';
+import { Shield, Users, UserPlus, Filter, MoreVertical, CheckCircle2, Clock } from 'lucide-react';
 
 interface User {
     id: string;
@@ -127,28 +128,25 @@ export default function UsersPage() {
     ];
 
     return (
-        <div className="p-6 md:p-8 space-y-8 flex-1 w-full max-w-[1400px] mx-auto animate-in fade-in duration-500">
-            {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                        User & Roles Management
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400">
-                        Manage access levels and profiles for platform operators and field staff.
-                    </p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" className="gap-2 font-bold text-slate-700 dark:text-slate-300">
-                        <Filter className="w-4 h-4" />
-                        Filter
-                    </Button>
-                    <Button className="gap-2 font-bold bg-primary hover:bg-blue-700 text-white shadow-lg shadow-primary/20">
-                        <UserPlus className="w-4 h-4" />
-                        Add User
-                    </Button>
-                </div>
-            </div>
+        <div className="page active space-y-8 flex-1 w-full max-w-[1400px] mx-auto animate-in fade-in duration-500">
+            <PageHeader
+                label="Administration"
+                title="User & Roles Management"
+                subtitle="Manage access levels and profiles for platform operators and field staff."
+                labelColor="var(--purple)"
+                actions={
+                    <>
+                        <Button variant="outline" className="gap-2 font-bold text-slate-700 dark:text-slate-300">
+                            <Filter className="w-4 h-4" />
+                            Filter
+                        </Button>
+                        <Button className="gap-2 font-bold bg-primary hover:bg-blue-700 text-white shadow-lg shadow-primary/20">
+                            <UserPlus className="w-4 h-4" />
+                            Add User
+                        </Button>
+                    </>
+                }
+            />
 
             {/* Smart Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

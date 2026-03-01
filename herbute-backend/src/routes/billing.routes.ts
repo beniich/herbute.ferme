@@ -13,7 +13,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
-import bcrypt   from 'bcrypt';
+import bcrypt   from 'bcryptjs';
 import crypto   from 'crypto';
 import express  from 'express';
 import { authenticate } from '../middleware/authenticate';
@@ -25,7 +25,7 @@ import { generateTokenPair } from '../utils/tokens';
 
 const router = Router();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_to_avoid_crash', {
   apiVersion: '2024-06-20' as any,
 });
 

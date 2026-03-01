@@ -44,6 +44,11 @@ import dashboardRoutes from './routes/dashboard.js';
 import billingRoutes from './routes/billing.routes.js';
 import glpiRoutes from './routes/glpi.routes.js';
 import membersRoutes from './routes/members.js';
+import animalsRoutes from './routes/animals.js';
+import cropsRoutes from './routes/crops.js';
+import financeRoutes from './routes/finance.js';
+import irrigationRoutes from './routes/irrigation.js';
+import infrastructureRoutes from './routes/infrastructure.js';
 
 // Validate environment
 envValidator();
@@ -126,6 +131,13 @@ app.use('/api/glpi', glpiRoutes);
 
 // Organization Members (routes /api/organizations/:orgId/members)
 app.use('/api', membersRoutes);
+
+// Agricultural domain routes
+app.use('/api/animals', animalsRoutes);
+app.use('/api/crops', cropsRoutes);
+app.use('/api/finance', financeRoutes);
+app.use('/api/irrigation', irrigationRoutes);
+app.use('/api/infrastructure', infrastructureRoutes);
 
 // Health check
 app.get('/', (_req, res) => {

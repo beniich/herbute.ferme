@@ -22,8 +22,9 @@ export default function MapPage() {
     const { data: complaints, isLoading, error } = useQuery({
         queryKey: ['complaints'],
         queryFn: async () => {
-            const res = await api.get('/complaints');
-            return res;
+            const res = await api.get('/api/complaints');
+            // Backend returns { success: true, data: [...] }
+            return res.data || [];
         }
     });
 

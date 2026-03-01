@@ -119,7 +119,21 @@ export const requireOrganization = async (
       return next(new AppError('Non authentifiÃ©', 401, 'AUTH_USER_MISSING'));
     }
 
-    const organizationId = req.headers['x-organization-id'] as string | undefined;
+    let organizationId = req.headers['x-organization-id'] as string | undefined;
+    
+    // Tenter de récupérer l'organisation depuis le JWT si non fournie (fallback dashboard initial load)
+    if (!organizationId) {
+      organizationId = req.user?.organizationId || req.user?.orgId || req.user?.org;
+    }
+
+    // Secondary fallback: get first active membership
+    if (!organizationId) {
+      const activeMembership = await Membership.findOne({ userId, status: 'ACTIVE' });
+      if (activeMembership) {
+        organizationId = activeMembership.organizationId.toString();
+      }
+    }
+
     if (!organizationId) {
       return next(new AppError('En-tÃªte x-organization-id requis', 400, 'ORG_HEADER_MISSING'));
     }

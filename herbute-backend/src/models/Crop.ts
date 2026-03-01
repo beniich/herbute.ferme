@@ -19,7 +19,7 @@ const CropSchema: Schema = new Schema({
   category: { 
     type: String, 
     required: true,
-    enum: ['VEGETABLE', 'HERB', 'NURSERY']
+    enum: ['VEGETABLE', 'HERB', 'NURSERY', 'FOREST']
   },
   plotId: { type: String, required: true },
   status: { 
@@ -30,7 +30,10 @@ const CropSchema: Schema = new Schema({
   },
   plantedDate: { type: Date, required: true, default: Date.now },
   expectedHarvestDate: { type: Date },
-  estimatedYield: { type: Number, default: 0 }
+  harvestedAt: { type: Date },
+  estimatedYield: { type: Number, default: 0 },
+  surface: { type: Number, default: 0 },
+  notes: { type: String },
 }, {
   timestamps: true
 });

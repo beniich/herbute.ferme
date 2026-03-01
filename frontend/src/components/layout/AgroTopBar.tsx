@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from '@/providers/AuthProvider';
+import { useOrgStore } from '@/store/orgStore';
 
 const routeLabels: Record<string, string> = {
   '/dashboard': 'Vue Générale',
@@ -42,6 +43,7 @@ const routeLabels: Record<string, string> = {
 
 export default function AgroTopBar() {
   const { user, logout } = useAuth();
+  const { activeOrganization } = useOrgStore();
   const pathname = usePathname();
   const [isLightMode, setIsLightMode] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
@@ -96,7 +98,7 @@ export default function AgroTopBar() {
 
       <div className="topbar-center">
         <Link href="/dashboard" style={{ color: 'var(--text3)', textDecoration: 'none' }}>
-          Domaine Al Baraka
+          {activeOrganization?.name || 'AgroMaître'}
         </Link>
         <span style={{ color: 'var(--text3)', margin: '0 4px' }}>›</span>
         <span id="breadcrumb" style={{ color: 'var(--text2)' }}>{getBreadcrumb()}</span>

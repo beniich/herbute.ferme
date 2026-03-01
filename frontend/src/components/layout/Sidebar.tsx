@@ -81,8 +81,19 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 flex flex-col h-[calc(100vh-4rem)] sticky top-16 hidden lg:flex transition-all duration-300 group/sidebar hover:w-64">
-            <nav className="flex-1 space-y-2 p-3 overflow-y-auto">
+        <aside 
+            className="flex flex-col h-[calc(100vh-56px)] sticky top-[56px] hidden lg:flex transition-all duration-300 group/sidebar z-40"
+            style={{ 
+                width: '64px',
+                background: 'var(--panel)', 
+                borderLeft: '1px solid var(--border)',
+                fontFamily: 'var(--font-body)',
+                overflowX: 'hidden'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.width = '240px'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.width = '64px'; }}
+        >
+            <nav className="flex-1 space-y-1 p-2 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--bg3) transparent' }}>
                 {menuItems.map((item) => {
                     const isActive = pathname.startsWith(item.href);
                     const Icon = item.icon;
@@ -92,21 +103,41 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             title={item.label}
-                            className={cn(
-                                "flex items-center gap-4 px-3 py-3 rounded-xl font-medium transition-all duration-200 overflow-hidden",
-                                isActive
-                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white"
-                            )}
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-all duration-200 overflow-hidden relative"
+                            style={{
+                                background: isActive ? 'rgba(90,158,69,0.12)' : 'transparent',
+                                color: isActive ? 'var(--text)' : 'var(--text2)',
+                                borderLeft: isActive ? '2px solid var(--green)' : '2px solid transparent',
+                                textDecoration: 'none'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                                    e.currentTarget.style.color = 'var(--text)';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = 'transparent';
+                                    e.currentTarget.style.color = 'var(--text2)';
+                                }
+                            }}
                         >
                             <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                                <Icon className={cn("w-6 h-6", isActive ? "text-white" : "text-gray-500")} />
+                                <Icon style={{ width: '18px', height: '18px', color: isActive ? 'var(--green2)' : 'inherit' }} />
                             </div>
-                            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap text-[14px]">
                                 {item.label}
                             </span>
                             {item.badge && (
-                                <span className="absolute right-2 top-2 px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-sm group-hover/sidebar:static group-hover/sidebar:ml-auto">
+                                <span 
+                                    className="absolute right-2 opacity-0 group-hover/sidebar:opacity-100 px-1.5 rounded-[10px] text-[11px] flex items-center justify-center"
+                                    style={{ 
+                                        fontFamily: 'var(--font-mono)', 
+                                        background: 'rgba(200,146,26,0.2)', 
+                                        color: 'var(--gold2)' 
+                                    }}
+                                >
                                     {item.badge}
                                 </span>
                             )}
@@ -116,28 +147,22 @@ export function Sidebar() {
             </nav>
 
             {/* System Status Footer */}
-            <div className="p-3 mt-auto border-t border-gray-200 dark:border-gray-800 overflow-hidden">
-                <div className="p-3 bg-gray-50 dark:bg-slate-800 rounded-xl space-y-3">
-                    <div className="flex items-center gap-3">
-                        <span className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500 animate-pulse"></span>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-0 group-hover/sidebar:opacity-100 transition-opacity">
-                            Online
+            <div className="p-3 mt-auto" style={{ borderTop: '1px solid var(--border)' }}>
+                <div className="p-2 rounded-xl space-y-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid var(--border)' }}>
+                    <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full animate-pulse flex-shrink-0" style={{ background: 'var(--green2)' }}></span>
+                        <p className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity uppercase tracking-widest whitespace-nowrap" style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', color: 'var(--text3)' }}>
+                            Système Actif
                         </p>
-                    </div>
-                    <div className="group-hover/sidebar:block hidden space-y-2">
-                        <div className="flex items-center justify-between text-[10px]">
-                            <span className="text-gray-500">Rate</span>
-                            <span className="font-bold text-primary">94%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full w-[94%]" />
-                        </div>
                     </div>
                 </div>
 
-                <button className="w-full mt-4 flex items-center gap-4 px-3 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
-                    <HelpCircle className="w-6 h-6 flex-shrink-0" />
-                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity">Help</span>
+                <button className="w-full mt-3 flex items-center gap-3 px-3 transition-colors" style={{ color: 'var(--text3)', fontSize: '13px' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text2)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text3)'}
+                >
+                    <HelpCircle className="w-5 h-5 flex-shrink-0" />
+                    <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity whitespace-nowrap">Aide & Support</span>
                 </button>
             </div>
         </aside>
