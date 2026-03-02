@@ -318,6 +318,7 @@ export default function ComptabilitePage() {
             </div>
           </div>
         </div>
+      )}
     </div>
   );
 }

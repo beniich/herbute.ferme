@@ -119,18 +119,20 @@ export default function IrrigationPage() {
     }
   };
 
+  return (
     <div className="page active" id="page-irrigation">
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-          <div>
-            <div className="page-label" style={{ color: 'var(--blue)' }}>Module Irrigation</div>
-            <h1 className="page-title">Gestion de l&apos;Eau &amp; Arrosage</h1>
-            <div className="page-sub">Suivi des volumes et des sessions · Base de données active</div>
-          </div>
-          <button onClick={openCreate} style={{ padding: '10px 20px', background: 'rgba(52,152,219,0.15)', border: '1px solid rgba(52,152,219,0.4)', borderRadius: '10px', color: 'var(--blue)', fontFamily: 'var(--font-mono)', fontSize: '12px', cursor: 'pointer' }}>
-            ➕ Nouvelle Session
-          </button>
-        </div>
+      <div style={{ padding: '24px' }}>
+        <PageHeader
+          label="Module Irrigation"
+          title="Gestion de l'Eau &amp; Arrosage"
+          subtitle="Suivi des volumes et des sessions · Base de données active"
+          labelColor="var(--blue)"
+          actions={
+            <button onClick={openCreate} style={{ padding: '10px 20px', background: 'rgba(52,152,219,0.15)', border: '1px solid rgba(52,152,219,0.4)', borderRadius: '10px', color: 'var(--blue)', fontFamily: 'var(--font-mono)', fontSize: '12px', cursor: 'pointer' }}>
+              ➕ Nouvelle Session
+            </button>
+          }
+        />
 
         {/* KPIs */}
         <div className="kpi-grid kpi-grid-4" style={{ marginBottom: '24px' }}>
@@ -260,6 +262,7 @@ export default function IrrigationPage() {
       {deleteId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: 'var(--panel)', border: '1px solid var(--red)', borderRadius: '16px', padding: '28px', maxWidth: '380px', textAlign: 'center' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚠️</div>
             <h3 style={{ color: 'var(--cream)', marginBottom: '24px' }}>Supprimer ce relevé ?</h3>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text2)', cursor: 'pointer' }}>Annuler</button>
@@ -267,6 +270,7 @@ export default function IrrigationPage() {
             </div>
           </div>
         </div>
+      )}
     </div>
   );
 }
