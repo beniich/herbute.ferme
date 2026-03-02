@@ -61,9 +61,9 @@ app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(requestId);
-app.use(securityHeaders);
+app.use(cookieParser() as any);
+app.use(requestId as any);
+app.use(securityHeaders as any);
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
