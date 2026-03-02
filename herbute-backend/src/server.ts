@@ -85,7 +85,7 @@ app.use(
   })
 );
 
-app.use(compressionMiddleware);
+app.use(compressionMiddleware as any);
 app.use('/api/', globalLimiter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 

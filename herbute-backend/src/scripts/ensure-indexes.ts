@@ -31,10 +31,10 @@ async function ensureIndexes(): Promise<void> {
   await connectDB();
 
   // Use a typed array to avoid any-casts below
-  const models: Array<{ name: string; model: mongoose.Model<mongoose.Document> }> = [
-    { name: 'Crop',           model: Crop           as mongoose.Model<mongoose.Document> },
-    { name: 'Animal',         model: Animal         as mongoose.Model<mongoose.Document> },
-    { name: 'AnalysisReport', model: AnalysisReport as mongoose.Model<mongoose.Document> },
+  const models: Array<{ name: string; model: any }> = [
+    { name: 'Crop',           model: Crop           as any },
+    { name: 'Animal',         model: Animal         as any },
+    { name: 'AnalysisReport', model: AnalysisReport as any },
   ];
 
   let totalCreated = 0;
