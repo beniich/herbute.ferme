@@ -119,9 +119,7 @@ export default function IrrigationPage() {
     }
   };
 
-  return (
-    <div className="page active">
-      <div style={{ padding: '24px' }}>
+    <div className="page active" id="page-irrigation">
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
           <div>
@@ -269,7 +267,6 @@ export default function IrrigationPage() {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 }

@@ -11,6 +11,8 @@ import { globalLimiter } from './middleware/rateLimiters.js';
 import { requestId } from './middleware/requestId.js';
 import { securityHeaders } from './middleware/security.js';
 import { logger } from './utils/logger.js';
+import { compressionMiddleware } from './middleware/compression.js';
+import { cacheMiddleware, CACHE_TTL } from './middleware/cache.js';
 // Config (charge et valide les clés JWT RS256 au démarrage)
 import './config/jwt.js';
 import { mountSoapService } from './routes/soap.mount.js';
@@ -49,6 +51,8 @@ import cropsRoutes from './routes/crops.js';
 import financeRoutes from './routes/finance.js';
 import irrigationRoutes from './routes/irrigation.js';
 import infrastructureRoutes from './routes/infrastructure.js';
+import agentReportsRoutes from './routes/reports.agent.js';
+import { scheduleRecurringJobs } from './services/agent/queue.service.js';
 
 // Validate environment
 envValidator();
@@ -81,6 +85,7 @@ app.use(
   })
 );
 
+app.use(compressionMiddleware);
 app.use('/api/', globalLimiter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -139,6 +144,9 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/irrigation', irrigationRoutes);
 app.use('/api/infrastructure', infrastructureRoutes);
 
+// Agent IA — rapports & analyses
+app.use('/api/reports', agentReportsRoutes);
+
 // Health check
 app.get('/', (_req, res) => {
   res.json({ status: 'ok', service: 'Herbute API' });
@@ -161,6 +169,10 @@ const start = async () => {
       } catch (soapErr) {
         logger.error('❌ Échec montage SOAP:', soapErr);
       }
+      // Planifier les jobs IA (BullMQ — nécessite Redis)
+      scheduleRecurringJobs().catch(err =>
+        logger.warn('[Queue] Jobs IA non planifiés (Redis indisponible?):', err.message)
+      );
     });
   } catch (err) {
     logger.error('âŒ Ã‰chec dÃ©marrage serveur Herbute', err);

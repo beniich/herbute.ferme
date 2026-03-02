@@ -122,8 +122,7 @@ export default function DomainePage() {
   };
 
   return (
-    <div className="page active">
-      <div style={{ padding: '24px' }}>
+    <div className="page active" id="page-domaine">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
           <div>
             <div className="page-label" style={{ color: 'var(--brown)' }}>Infrastructure</div>
@@ -196,7 +195,6 @@ export default function DomainePage() {
             )}
           </div>
         </div>
-      </div>
 
       {showModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>

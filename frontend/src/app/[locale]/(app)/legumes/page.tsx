@@ -149,8 +149,7 @@ export default function LegumesPage({ category = 'VEGETABLE', pageTitle = 'Légu
   const readyCount = crops.filter(c => c.status === 'READY').length;
 
   return (
-    <div className="page active">
-      <div style={{ padding: '24px' }}>
+    <div className="page active" id="page-legumes">
         <PageHeader 
           label={pageLabel}
           title={pageTitle}
@@ -230,7 +229,6 @@ export default function LegumesPage({ category = 'VEGETABLE', pageTitle = 'Légu
             )}
           </div>
         </div>
-      </div>
 
       {/* Modal Formulaire */}
       {showModal && (
@@ -326,7 +324,7 @@ export default function LegumesPage({ category = 'VEGETABLE', pageTitle = 'Légu
             <p style={{ color: 'var(--text3)', fontFamily: 'var(--font-mono)', fontSize: '13px', marginBottom: '24px' }}>Cette action est irréversible.</p>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text2)', cursor: 'pointer' }}>Annuler</button>
-              <button onClick={() => handleDelete(deleteId)} style={{ flex: 1, padding: '10px', background: 'rgba(192,57,43,0.2)', border: '1px solid rgba(192,57,43,0.4)', borderRadius: '8px', color: '#e87070', cursor: 'pointer', fontWeight: 700 }}>Supprimer</button>
+              <button onClick={() => deleteId && handleDelete(deleteId)} style={{ flex: 1, padding: '10px', background: 'rgba(192,57,43,0.2)', border: '1px solid rgba(192,57,43,0.4)', borderRadius: '8px', color: '#e87070', cursor: 'pointer', fontWeight: 700 }}>Supprimer</button>
             </div>
           </div>
         </div>

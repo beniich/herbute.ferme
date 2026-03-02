@@ -5,7 +5,6 @@ import React from 'react';
 export default function MeteoPage() {
   return (
     <div className="page active" id="page-meteo">
-      <div style={{ padding: '24px' }}>
         <div className="page-header">
           <div className="page-label" style={{ color: 'var(--blue)' }}>Météo & Environnement</div>
           <h1 className="page-title">Station Météo du Domaine</h1>
@@ -86,7 +85,6 @@ export default function MeteoPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

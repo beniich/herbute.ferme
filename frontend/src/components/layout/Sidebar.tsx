@@ -82,10 +82,9 @@ export function Sidebar() {
 
     return (
         <aside 
-            className="flex flex-col h-[calc(100vh-56px)] sticky top-[56px] hidden lg:flex transition-all duration-300 group/sidebar z-40"
+            className="flex flex-col h-[calc(100vh-56px)] sticky top-[56px] hidden lg:flex transition-all duration-300 group/sidebar z-40 sidebar"
             style={{ 
                 width: '64px',
-                background: 'var(--panel)', 
                 borderLeft: '1px solid var(--border)',
                 fontFamily: 'var(--font-body)',
                 overflowX: 'hidden'
@@ -102,42 +101,19 @@ export function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            title={item.label}
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-all duration-200 overflow-hidden relative"
-                            style={{
-                                background: isActive ? 'rgba(90,158,69,0.12)' : 'transparent',
-                                color: isActive ? 'var(--text)' : 'var(--text2)',
-                                borderLeft: isActive ? '2px solid var(--green)' : '2px solid transparent',
-                                textDecoration: 'none'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive) {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                                    e.currentTarget.style.color = 'var(--text)';
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive) {
-                                    e.currentTarget.style.background = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text2)';
-                                }
-                            }}
+                            className={cn(
+                                "nav-item mb-2", 
+                                isActive && "active"
+                            )}
                         >
-                            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                                <Icon style={{ width: '18px', height: '18px', color: isActive ? 'var(--green2)' : 'inherit' }} />
+                            <div className="ni">
+                                <Icon style={{ width: '18px', height: '18px' }} />
                             </div>
-                            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap text-[14px]">
+                            <span className="nav-label opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300">
                                 {item.label}
                             </span>
                             {item.badge && (
-                                <span 
-                                    className="absolute right-2 opacity-0 group-hover/sidebar:opacity-100 px-1.5 rounded-[10px] text-[11px] flex items-center justify-center"
-                                    style={{ 
-                                        fontFamily: 'var(--font-mono)', 
-                                        background: 'rgba(200,146,26,0.2)', 
-                                        color: 'var(--gold2)' 
-                                    }}
-                                >
+                                <span className="badge opacity-0 group-hover/sidebar:opacity-100">
                                     {item.badge}
                                 </span>
                             )}

@@ -6,6 +6,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { CallProvider } from '@/providers/CallProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
 import '@/styles/globals.css';
+import '@/styles/agro-theme.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -66,7 +67,7 @@ export default async function LocaleLayout({
                     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
                 />
             </head>
-            <body className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} font-sans antialiased text-slate-900 dark:text-slate-100 bg-white dark:bg-[#020617]`}>
+            <body className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} font-sans antialiased agro-theme`}>
                 <NextIntlClientProvider messages={messages} locale={locale}>
                     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
                         <QueryProvider>
