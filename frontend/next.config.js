@@ -15,28 +15,35 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['lh3.googleusercontent.com', 'placeholder.pics'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'placeholder.pics' },
+    ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/debug/:path*',
-        destination: 'http://localhost:8000/debug/:path*',
-      },
-      {
-        source: '/analytics/:path*',
-        destination: 'http://localhost:8000/analytics/:path*',
-      },
-      {
-        source: '/error',
-        destination: 'http://localhost:8000/error',
-      },
-      {
-        source: '/ping',
-        destination: 'http://localhost:8000/ping',
-      },
-    ]
-  },
+  // Rewrites uniquement en développement local (évite les erreurs en production)
+  ...(process.env.NODE_ENV === 'development' && {
+    async rewrites() {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      return [
+        {
+          source: '/debug/:path*',
+          destination: `${backendUrl}/debug/:path*`,
+        },
+        {
+          source: '/analytics/:path*',
+          destination: `${backendUrl}/analytics/:path*`,
+        },
+        {
+          source: '/error',
+          destination: `${backendUrl}/error`,
+        },
+        {
+          source: '/ping',
+          destination: `${backendUrl}/ping`,
+        },
+      ];
+    },
+  }),
 };
 
 module.exports = withNextIntl(nextConfig);
