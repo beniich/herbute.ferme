@@ -6,128 +6,171 @@
 
 @layer base {
   :root {
-    /* ===== Harmonized Palette (Next / Tailwind) ===== */
-    /* Mapped from design-tokens.css */
-    
-    --background: 210 40% 98%;    /* var(--vanilla-custard) */
-    --foreground: 222 47% 11%;    /* var(--ink-black) */
+    /* ── Tailwind / shadcn mapping → palette #F5FBE6 #215E61 #233D4D #FE7F2D ── */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --background:       74 60% 94%;   /* #F5FBE6 Soft Mint */
+    --foreground:       203 37% 22%;  /* #233D4D Midnight Blue */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --card:             0 0% 100%;
+    --card-foreground:  203 37% 22%;
 
-    --primary: 166 100% 33%;     /* var(--pearl-aqua) */
+    --popover:          0 0% 100%;
+    --popover-foreground: 203 37% 22%;
+
+    --primary:          183 49% 25%;  /* #215E61 Dark Teal */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 199 89% 48%;    /* var(--dark-cyan) */
-    --secondary-foreground: 0 0% 100%;
+    --secondary:        74 60% 94%;   /* #F5FBE6 */
+    --secondary-foreground: 203 37% 22%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted:            74 40% 90%;
+    --muted-foreground: 203 20% 45%;
 
-    --accent: 38 92% 50%;        /* var(--golden-orange) */
+    --accent:           23 99% 59%;   /* #FE7F2D Pumpkin Orange */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive:      347 77% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 166 100% 33%;
+    --border:           203 37% 22% / 0.12;
+    --input:            203 37% 22% / 0.10;
+    --ring:             183 49% 25%;  /* #215E61 */
 
-    --radius: var(--radius-md);
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background:       183 49% 8%;
+    --foreground:       74 60% 94%;
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card:             183 49% 10%;
+    --card-foreground:  74 60% 94%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover:          183 49% 10%;
+    --popover-foreground: 74 60% 94%;
 
-    --primary: 166 100% 33%;
-    --primary-foreground: 222 47% 11%;
+    --primary:          183 49% 35%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 199 89% 48%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary:        183 49% 14%;
+    --secondary-foreground: 74 60% 90%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted:            183 49% 14%;
+    --muted-foreground: 183 30% 60%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 210 40% 98%;
+    --accent:           23 99% 59%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive:      0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 166 100% 33%;
+    --border:           183 49% 25% / 0.25;
+    --input:            183 49% 25% / 0.20;
+    --ring:             183 49% 35%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    @apply scroll-smooth;
-  }
-
+  * { @apply border-border; }
+  html { @apply scroll-smooth; }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* ===== High-End Transitions ===== */
-  .page-transition {
-    @apply transition-all duration-300 ease-in-out;
   }
 }
 
 @layer components {
-  /* Premium Glassmorphism */
+  /* ── Glass card avec teinte mint ── */
   .glass-card {
-    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 shadow-premium;
+    background: rgba(245, 251, 230, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(33, 94, 97, 0.15);
+    box-shadow: var(--shadow-card);
   }
 
-  .premium-sidebar {
-    @apply bg-primary-dark text-white border-r border-white/10;
+  /* ── Premium card ── */
+  .premium-card {
+    @apply bg-white rounded-2xl border;
+    border-color: rgba(35, 61, 77, 0.10);
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+  .premium-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-premium);
   }
 
-  /* Status Badges with new professional colors */
-  .status-badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider;
+  /* ── Badges de statut ── */
+  .badge-success { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800; }
+  .badge-warning { background: rgba(254, 127, 45, 0.15); color: #cc5d10; @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-error   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700; }
+  .badge-info    { background: rgba(33, 94, 97, 0.12); color: #215E61; @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold; }
+
+  /* ── Boutons ── */
+  .btn-brand-primary {
+    background: #215E61;
+    color: #F5FBE6;
+    @apply px-4 py-2 rounded-lg font-medium transition-all;
+    box-shadow: 0 4px 12px rgba(33, 94, 97, 0.25);
+  }
+  .btn-brand-primary:hover {
+    background: #2c7a7e;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(33, 94, 97, 0.35);
   }
 
-  .status-success { @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400; }
-  .status-warning { @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400; }
-  .status-error { @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400; }
-  .status-info { @apply bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400; }
-
-  /* Premium Buttons */
-  .btn-premium {
-    @apply px-4 py-2 rounded-lg font-medium transition-all shadow-sm 
-           hover:shadow-md hover:-translate-y-0.5 active:translate-y-0;
+  .btn-brand-accent {
+    background: #FE7F2D;
+    color: #ffffff;
+    @apply px-4 py-2 rounded-lg font-medium transition-all;
+    box-shadow: 0 4px 12px rgba(254, 127, 45, 0.25);
   }
-  
-  .btn-primary {
-    @apply btn-premium bg-primary text-white hover:bg-primary-light;
+  .btn-brand-accent:hover {
+    background: #ff9e5e;
+    transform: translateY(-1px);
   }
 
-  .btn-secondary {
-    @apply btn-premium bg-secondary text-white hover:bg-secondary-light;
+  /* ── Titre de page (orange accent) ── */
+  .page-title-brand {
+    color: #FE7F2D;
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+  .page-label-brand {
+    color: #FE7F2D;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
 
-  .btn-outline {
-    @apply btn-premium border border-border bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800;
+  /* ── Sidebar pill active ── */
+  .nav-active-pill {
+    background: rgba(254, 127, 45, 0.15);
+    border-left: 3px solid #FE7F2D;
+    color: #FE7F2D;
+  }
+
+  /* ── Gradient mint ── */
+  .bg-brand-gradient {
+    background: linear-gradient(135deg, #F5FBE6 0%, #e5f0c8 100%);
+  }
+  .bg-sidebar-gradient {
+    background: linear-gradient(180deg, #215E61 0%, #164143 100%);
+  }
+
+  /* ── Micro-animations ── */
+  .animate-fade-in { animation: fadeIn 0.4s ease-out both; }
+  .animate-slide-up { animation: slideUp 0.35s ease-out both; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 }

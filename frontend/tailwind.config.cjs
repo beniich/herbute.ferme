@@ -8,98 +8,120 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                // PREMIUM AGRO PALETTE (Matched to design-tokens.css)
+                /* ── Palette officielle ───────────────────────── */
+                /* #F5FBE6  Soft Mint      */
+                /* #215E61  Dark Teal      */
+                /* #233D4D  Midnight Blue  */
+                /* #FE7F2D  Pumpkin Orange */
+
+                brand: {
+                    mint:           '#F5FBE6',
+                    'mint-dark':    '#e5f0c8',
+                    teal:           '#215E61',
+                    'teal-light':   '#2c7a7e',
+                    'teal-dark':    '#164143',
+                    navy:           '#233D4D',
+                    'navy-light':   '#3a5b6d',
+                    orange:         '#FE7F2D',
+                    'orange-light': '#ff9e5e',
+                    'orange-dark':  '#cc5d10',
+                },
+
                 primary: {
-                    DEFAULT: '#00A896', /* var(--pearl-aqua) - Teal Primary */
-                    light: '#059669',   /* Emerald Success */
-                    dark: '#064E3B',    /* Deep Forest Green - Sidebar/Deep Elements */
+                    DEFAULT: '#215E61',
+                    light:   '#2c7a7e',
+                    dark:    '#164143',
                 },
                 secondary: {
-                    DEFAULT: '#0284C7', /* var(--dark-cyan) - Professional Blue */
-                    light: '#0EA5E9',
-                    dark: '#0369A1',
+                    DEFAULT: '#233D4D',
+                    light:   '#3a5b6d',
                 },
                 accent: {
-                    DEFAULT: '#F59E0B', /* var(--golden-orange) - Amber Accent */
-                    light: '#FBBF24',
-                    dark: '#D97706',
+                    DEFAULT: '#FE7F2D',
+                    light:   '#ff9e5e',
+                    dark:    '#cc5d10',
                 },
-                brand: {
-                    forest: '#064E3B',
-                    teal: '#00A896',
-                    amber: '#F59E0B',
-                    navy: '#0F172A',
-                    vanilla: '#F9FAFB',
-                },
-                
-                // Status colors
-                success: '#10B981',
-                warning: '#F59E0B',
-                error: '#EF4444',
-                info: '#3B82F6',
 
-                // Shadcn / Tailwind variables
-                background: 'hsl(var(--background) / <alpha-value>)',
-                foreground: 'hsl(var(--foreground) / <alpha-value>)',
+                /* ── Sémantiques ── */
+                success: '#10b981',
+                warning: '#FE7F2D',
+                error:   '#e11d48',
+                info:    '#215E61',
+
+                /* ── Shadcn variable mapping ── */
+                background:  'hsl(var(--background) / <alpha-value>)',
+                foreground:  'hsl(var(--foreground) / <alpha-value>)',
                 card: {
-                    DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+                    DEFAULT:    'hsl(var(--card) / <alpha-value>)',
                     foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
                 },
                 popover: {
-                    DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
+                    DEFAULT:    'hsl(var(--popover) / <alpha-value>)',
                     foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
                 },
                 muted: {
-                    DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
+                    DEFAULT:    'hsl(var(--muted) / <alpha-value>)',
                     foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
                 },
                 border: 'hsl(var(--border) / <alpha-value>)',
-                input: 'hsl(var(--input) / <alpha-value>)',
-                ring: 'hsl(var(--ring) / <alpha-value>)',
+                input:  'hsl(var(--input) / <alpha-value>)',
+                ring:   'hsl(var(--ring) / <alpha-value>)',
             },
+
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans:    ['Inter', 'system-ui', 'sans-serif'],
                 display: ['Sora', 'Inter', 'sans-serif'],
-                mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                mono:    ['JetBrains Mono', 'Fira Code', 'monospace'],
             },
+
             borderRadius: {
-              'xs': 'var(--radius-xs)',
-              'sm': 'var(--radius-sm)',
-              'DEFAULT': 'var(--radius-md)',
-              'md': 'var(--radius-md)',
-              'lg': 'var(--radius-lg)',
-              'xl': 'var(--radius-xl)',
-              '2xl': 'var(--radius-2xl)',
+                'xs':  'var(--radius-xs)',
+                'sm':  'var(--radius-sm)',
+                DEFAULT: 'var(--radius-md)',
+                'md':  'var(--radius-md)',
+                'lg':  'var(--radius-lg)',
+                'xl':  'var(--radius-xl)',
+                '2xl': 'var(--radius-2xl)',
             },
+
             boxShadow: {
-              'sm': 'var(--shadow-sm)',
-              'md': 'var(--shadow-md)',
-              'lg': 'var(--shadow-lg)',
-              'xl': 'var(--shadow-xl)',
-              'premium': 'var(--shadow-premium)',
+                'sm':      'var(--shadow-sm)',
+                DEFAULT:   'var(--shadow-md)',
+                'md':      'var(--shadow-md)',
+                'lg':      'var(--shadow-lg)',
+                'xl':      'var(--shadow-xl)',
+                'card':    'var(--shadow-card)',
+                'premium': 'var(--shadow-premium)',
             },
+
             animation: {
-                'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.2, 1) infinite',
-                'float': 'float 6s ease-in-out infinite',
-                'fade-in': 'fadeIn 0.5s ease-in-out',
-                'slide-in-left': 'slideInFromLeft 0.5s ease-out',
-                'slide-in-right': 'slideInFromRight 0.5s ease-out',
+                'pulse-slow':     'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float':          'float 6s ease-in-out infinite',
+                'fade-in':        'fadeIn 0.4s ease-out',
+                'slide-up':       'slideUp 0.35s ease-out',
+                'slide-in-left':  'slideInFromLeft 0.4s ease-out',
+                'slide-in-right': 'slideInFromRight 0.4s ease-out',
             },
+
             keyframes: {
                 float: {
                     '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-20px)' },
+                    '50%':      { transform: 'translateY(-16px)' },
                 },
                 fadeIn: {
-                    '0%': { opacity: '0' },
+                    '0%':   { opacity: '0' },
                     '100%': { opacity: '1' },
                 },
+                slideUp: {
+                    '0%':   { opacity: '0', transform: 'translateY(12px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
                 slideInFromLeft: {
-                    '0%': { opacity: '0', transform: 'translateX(-2rem)' },
+                    '0%':   { opacity: '0', transform: 'translateX(-1.5rem)' },
                     '100%': { opacity: '1', transform: 'translateX(0)' },
                 },
                 slideInFromRight: {
-                    '0%': { opacity: '0', transform: 'translateX(2rem)' },
+                    '0%':   { opacity: '0', transform: 'translateX(1.5rem)' },
                     '100%': { opacity: '1', transform: 'translateX(0)' },
                 },
             },
