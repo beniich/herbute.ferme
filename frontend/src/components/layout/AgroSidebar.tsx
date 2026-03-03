@@ -30,8 +30,9 @@ import {
   Library, 
   AlertCircle, 
   ThumbsUp, 
-  Activity, 
-  Settings 
+  Activity,
+  Settings,
+  Cpu
 } from 'lucide-react';
 
 interface NavItem {
@@ -54,6 +55,7 @@ const navConfig: NavSection[] = [
       { href: '/dashboard', icon: <LayoutDashboard size={18} />, label: 'Vue Générale' },
       { href: '/analytics', icon: <BarChart3 size={18} />, label: 'Analytics & KPIs' },
       { href: '/map', icon: <MapIcon size={18} />, label: 'Carte Interactive' },
+      { href: '/iot', icon: <Cpu size={18} />, label: 'Dashboard IoT' },
       { href: '/meteo', icon: <CloudSun size={18} />, label: 'Météo & Environnement' },
     ],
   },

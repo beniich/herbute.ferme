@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir paho-mqtt pymongo python-dotenv
+
+COPY ingestion/mqtt_bridge.py .
+
+RUN addgroup --gid 1001 herbute && \
+    adduser  --uid 1001 --gid 1001 --no-create-home herbute
+USER herbute
+
+CMD ["python", "mqtt_bridge.py"]

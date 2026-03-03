@@ -37,7 +37,7 @@ export default function TermsPage() {
                     <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-16">
                         {/* Interactive Sidebar */}
                         <aside className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-8">
-                            <div className="bg-[var(--sidebar-bg)] text-white rounded-[2rem] p-8 relative overflow-hidden group shadow-2xl">
+                            <div className="bg-[var(--sidebar-bg)] text-white rounded-[2rem] p-8 relative overflow-hidden group shadow-2xl hover:shadow-electric hover:border-[#FE7F2D] transition-all duration-700">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--green)] opacity-10 blur-3xl transition-opacity"></div>
                                 <h2 className="text-lg font-black mb-6 flex items-center gap-2 uppercase tracking-tight italic">
                                     <ListChecks className="w-5 h-5 text-[var(--gold)]" />
@@ -45,7 +45,7 @@ export default function TermsPage() {
                                 </h2>
                                 <nav className="space-y-1">
                                     {sections.map((s, i) => (
-                                        <a key={i} href={`#${s.id}`} className="flex items-center gap-3 p-3 rounded-xl text-xs font-bold text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest">
+                                        <a key={i} href={`#${s.id}`} className="flex items-center gap-3 p-3 rounded-xl text-xs font-black text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest italic no-underline">
                                             <span className="text-[var(--gold)]">0{i+1}</span>
                                             {s.title.split('. ')[1]}
                                         </a>
@@ -53,9 +53,9 @@ export default function TermsPage() {
                                 </nav>
                             </div>
 
-                            <div className="p-8 border border-[var(--border)] rounded-[2rem] bg-white shadow-xl shadow-black/[0.02]">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--green)] mb-6">Exigence</p>
-                                <p className="text-sm text-[var(--text2)] font-medium leading-relaxed opacity-90">
+                            <div className="p-8 border border-[var(--border)] rounded-[2rem] bg-white shadow-xl shadow-black/[0.02] hover:shadow-electric hover:border-[#FE7F2D] transition-all duration-500">
+                                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--green)] mb-6 italic">Exigence</p>
+                                <p className="text-sm text-[var(--text2)] font-normal leading-relaxed opacity-70 italic">
                                     L'utilisation d'AgroMaître Pro implique une conformité totale avec ces termes. Les protocoles sont mis à jour trimestriellement.
                                 </p>
                             </div>

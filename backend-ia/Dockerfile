@@ -1,30 +1,43 @@
-# Image de base optimisée pour l'IA
-FROM python:3.11-slim
+# ════════════════════════════════════════════════
+#  Herbute IA — Python Flask Multi-stage
+# ════════════════════════════════════════════════
 
-# Dépendances système pour OpenCV & YOLO
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
-
+FROM python:3.11-slim AS base
 WORKDIR /app
 
-# Copie des dépendances Python
+# Dépendances système pour rasterio/numpy
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ libgdal-dev curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Dépendances Python ────────────────────────
+FROM base AS deps
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copie du code et des modèles
-COPY . .
+# ── Production ────────────────────────────────
+FROM base AS production
+WORKDIR /app
 
-# Création des dossiers nécessaires
-RUN mkdir -p uploads models
+RUN addgroup --gid 1001 herbute && \
+    adduser  --uid 1001 --gid 1001 --no-create-home herbute
 
-# Dossier volume pour les modèles (persistance si nécessaire)
-VOLUME /app/models
+# Copier dépendances installées
+COPY --from=deps /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=deps /usr/local/bin /usr/local/bin
 
-ENV PORT=5001
-ENV DEBUG=false
+# Copier code source
+COPY --chown=herbute:herbute . .
 
+# Dossiers de travail
+RUN mkdir -p uploads results/satellite models/ml && \
+    chown -R herbute:herbute uploads results models
+
+USER herbute
 EXPOSE 5001
+
+HEALTHCHECK --interval=20s --timeout=5s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:5001/health || exit 1
 
 CMD ["python", "api_server.py"]

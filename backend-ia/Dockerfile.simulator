@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+RUN pip install --no-cache-dir paho-mqtt python-dotenv numpy
+
+COPY ingestion/iot_simulator.py .
+
+RUN addgroup --gid 1001 herbute && \
+    adduser  --uid 1001 --gid 1001 --no-create-home herbute
+USER herbute
+
+CMD ["python", "iot_simulator.py"]

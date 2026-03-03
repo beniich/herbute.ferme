@@ -86,21 +86,21 @@ Pour exercer votre souveraineté, contactez : dpo@agromaitre.ma`
                     <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-16">
                         {/* Sidebar Summary */}
                         <aside className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-8">
-                            <div className="bg-white border border-[var(--border)] rounded-3xl p-8 shadow-xl shadow-black/[0.02]">
-                                <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-[var(--text)] uppercase tracking-tight">
+                            <div className="bg-white border border-[var(--border)] rounded-3xl p-8 shadow-xl shadow-black/[0.02] hover:shadow-electric hover:border-[#FE7F2D] transition-all duration-500">
+                                <h2 className="text-lg font-black mb-4 flex items-center gap-2 text-[var(--text)] uppercase tracking-tight italic">
                                     <FileText className="w-5 h-5 text-[var(--green)]" />
                                     Résumé de Mission
                                 </h2>
-                                <p className="text-sm text-[var(--text2)] leading-relaxed font-normal opacity-90">
+                                <p className="text-sm text-[var(--text2)] leading-relaxed font-normal opacity-70 italic">
                                     Nous collectons des données uniquement pour alimenter votre exploitation agricole. Nous ne vendons rien, ne compromettons rien. Vos données sont fortifiées et la souveraineté vous appartient à tout moment.
                                 </p>
                             </div>
 
                             <nav className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text3)] mb-6 px-4">Sections du Protocole</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text3)] mb-6 px-4 italic">Sections du Protocole</p>
                                 {sections.map((s, i) => (
-                                    <a key={i} href={`#${s.id}`} className="flex items-center gap-3 p-4 rounded-xl text-sm font-bold text-[var(--text3)] hover:bg-[var(--green)]/5 hover:text-[var(--green)] transition-all group border border-transparent hover:border-[var(--green)]/10">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--border)] group-hover:bg-[var(--green)]"></div>
+                                    <a key={i} href={`#${s.id}`} className="flex items-center gap-4 p-5 rounded-2xl text-xs font-black text-[var(--text3)] hover:bg-[var(--green)]/5 hover:text-[var(--green)] transition-all group border border-transparent hover:border-[var(--green)]/10 uppercase tracking-widest italic no-underline">
+                                        <div className="w-2 h-2 rounded-full bg-[var(--border)] group-hover:bg-[var(--green)] transition-colors"></div>
                                         {s.title}
                                     </a>
                                 ))}
