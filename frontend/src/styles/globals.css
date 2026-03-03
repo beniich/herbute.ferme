@@ -6,87 +6,68 @@
 
 @layer base {
   :root {
-
     /* ===== Harmonized Palette (Next / Tailwind) ===== */
-    /* Derived from: #F5FBE6 (bg), #215E61 (primary), #233D4D (text/border), #FE7F2D (accent) */
+    /* Mapped from design-tokens.css */
     
-    --background: 74 60% 94%;    /* #F5FBE6 - Soft Mint */
-    --foreground: 203 37% 22%;   /* #233D4D - Midnight Blue */
+    --background: 210 40% 98%;    /* var(--vanilla-custard) */
+    --foreground: 222 47% 11%;    /* var(--ink-black) */
 
-    --background-light: #fdfdf9;
-    --background-dark: #215E61;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --card: 74 60% 98%;
-    --card-foreground: 203 37% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --popover: 74 60% 98%;
-    --popover-foreground: 203 37% 22%;
+    --primary: 166 100% 33%;     /* var(--pearl-aqua) */
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 74 40% 90%;
-    --muted-foreground: 203 20% 40%;
+    --secondary: 199 89% 48%;    /* var(--dark-cyan) */
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 23 99% 59%;        /* #FE7F2D - Pumpkin Orange */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 38 92% 50%;        /* var(--golden-orange) */
     --accent-foreground: 0 0% 100%;
 
-    /* ===== Border & Input ===== */
-    --border: 203 37% 22% / 0.15;
-    --input: 203 37% 22% / 0.1;
-    --ring: 182 49% 26%;         /* #215E61 - Dark Teal */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    /* ===== Typography ===== */
-    --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 166 100% 33%;
 
-    /* ===== Spacing & Sizing ===== */
-    --radius-sm: 0.375rem;
-    --radius: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
-
-    /* ===== Shadows ===== */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-    /* ===== Transitions ===== */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: var(--radius-md);
   }
 
   .dark {
-    /* ===== Dark Mode Overrides ===== */
-    --background: 222.2 84% 4.9%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
-    --background-light: #1e1e2e;
-    --background-dark: #0a0a0f;
-
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --primary: 166 100% 33%;
+    --primary-foreground: 222 47% 11%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 38 92% 50%;
     --accent-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
 
-    /* Dark mode shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 166 100% 33%;
   }
 }
 
@@ -106,199 +87,47 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ===== Custom Scrollbar ===== */
-  ::-webkit-scrollbar {
-    @apply w-2 h-2;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-600;
+  /* ===== High-End Transitions ===== */
+  .page-transition {
+    @apply transition-all duration-300 ease-in-out;
   }
 }
 
 @layer components {
-  /* ===== Animation Utilities ===== */
-  .animate-in {
-    animation-duration: 0.5s;
-    animation-fill-mode: both;
-  }
-
-  .fade-in {
-    animation-name: fadeIn;
-  }
-
-  .slide-in-from-left-8 {
-    animation-name: slideInFromLeft;
-  }
-
-  .slide-in-from-right-8 {
-    animation-name: slideInFromRight;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideInFromLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInFromRight {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  /* ===== Utility Classes ===== */
-  .glass-effect {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md;
-  }
-
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-  }
-
-  /* DevOps Dashboard Utilities */
-  .pulse-indicator {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    }
-    70% {
-      transform: scale(1);
-      box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-    }
-    100% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-    }
-  }
-
-  .terminal-scrollbar::-webkit-scrollbar {
-    width: 8px;
-  }
-  .terminal-scrollbar::-webkit-scrollbar-track {
-    background: #0b0f17;
-  }
-  .terminal-scrollbar::-webkit-scrollbar-thumb {
-    background: #2d3a54;
-    border-radius: 4px;
-  }
-  .terminal-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #135bec;
-  }
-
-  .canvas-grid {
-    background-image: radial-gradient(circle, #232f48 1px, transparent 1px);
-    background-size: 30px 30px;
-  }
-
-  .chart-gradient-hot {
-    fill: url(#hotGradient);
-  }
-
-  .diff-added {
-    background-color: rgba(16, 185, 129, 0.1);
-    border-left: 3px solid #10b981;
-  }
-
-  .diff-removed {
-    background-color: rgba(239, 68, 68, 0.1);
-    border-left: 3px solid #ef4444;
-  }
-
-  .heatmap-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 4px;
-  }
-
-  .heatmap-cell {
-    aspect-ratio: 1;
-    border-radius: 2px;
-  }
-
-  /* Added for DevOps Dashboards from pppppp integration */
-  .dashboard-card {
-    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm;
-  }
-  .data-table {
-    @apply w-full text-left text-sm;
-  }
-  .status-badge {
-      @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
-  }
-  .status-success {
-      @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400;
-  }
-  .status-warning {
-      @apply bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400;
-  }
-  .status-error {
-      @apply bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400;
-  }
-  .status-info {
-      @apply bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400;
-  }
-
-  /* Glassmorphism & Effects from Mockup */
-  .glass-nav {
-    background: rgba(10, 14, 23, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
+  /* Premium Glassmorphism */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 shadow-premium;
   }
-  .glass-card:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(238, 155, 0, 0.4);
-    box-shadow: 0 0 30px rgba(238, 155, 0, 0.1);
+
+  .premium-sidebar {
+    @apply bg-primary-dark text-white border-r border-white/10;
   }
-  .gradient-bg {
-    background: radial-gradient(circle at top right, #1e293b, #020617 60%);
+
+  /* Status Badges with new professional colors */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider;
   }
-  .orange-glow {
-    filter: drop-shadow(0 0 15px rgba(238, 155, 0, 0.3));
+
+  .status-success { @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400; }
+  .status-warning { @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400; }
+  .status-error { @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400; }
+  .status-info { @apply bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400; }
+
+  /* Premium Buttons */
+  .btn-premium {
+    @apply px-4 py-2 rounded-lg font-medium transition-all shadow-sm 
+           hover:shadow-md hover:-translate-y-0.5 active:translate-y-0;
   }
-  .text-gradient {
-    background: linear-gradient(to right, #ffffff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  
+  .btn-primary {
+    @apply btn-premium bg-primary text-white hover:bg-primary-light;
+  }
+
+  .btn-secondary {
+    @apply btn-premium bg-secondary text-white hover:bg-secondary-light;
+  }
+
+  .btn-outline {
+    @apply btn-premium border border-border bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800;
   }
 }

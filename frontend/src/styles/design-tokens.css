@@ -1,114 +1,132 @@
 :root {
-  /* Core Palette (User Defined) */
-  --color-main-base: #F5FBE6;    /* Soft Mint - Main background/base */
-  --color-sidebar-base: #215E61; /* Dark Teal - Sidebar */
-  --color-border-base: #233D4D;  /* Midnight Blue - Borders */
-  --color-title-base: #FE7F2D;   /* Pumpkin Orange - Dashboard Titles */
+  /* =========================================
+     PREMIUM AGRO-PROFESSIONAL DESIGN TOKENS
+     ========================================= */
 
-  /* Colors - Functional Mapping */
-  --color-primary: var(--color-sidebar-base);
-  --color-primary-light: #2c7a7e;
-  --color-primary-dark: #164143;
+  /* --- Core Palette (Professional High-End) --- */
+  --pearl-aqua: #00A896;
+  --dark-teal: #064E3B; /* Deep Forest Green - Primary */
+  --dark-cyan: #0284C7; /* Professional Blue - Secondary */
+  --vanilla-custard: #F9FAFB; /* Clean Surface Background */
+  --golden-orange: #F59E0B; /* Amber Accent */
+  --burnt-caramel: #B45309;
+  --rusty-spice: #92400E;
+  --oxidized-iron: #7F1D1D;
+  --brown-red: #991B1B;
+  --ink-black: #0F172A; /* Deep Navy Text */
 
-  --color-secondary: var(--color-border-base);
+  /* --- Functional Semantic Mapping --- */
+  --color-primary: var(--dark-teal);
+  --color-primary-light: #065F46;
+  --color-primary-dark: #022C22;
+
+  --color-secondary: var(--dark-cyan);
+  --color-secondary-light: #0EA5E9;
+  --color-secondary-dark: #0369A1;
+
+  --color-accent: var(--golden-orange);
+  --color-accent-light: #FBBF24;
+  --color-accent-dark: #D97706;
+
+  /* --- UI Backgrounds & Surfaces --- */
+  --color-bg-page: var(--vanilla-custard);
+  --color-bg-card: #FFFFFF;
+  --color-bg-sidebar: var(--dark-teal);
   
-  --color-accent: var(--color-title-base);
-  --color-accent-light: #ff9e5e;
-  --color-accent-dark: #cc5d10;
+  --color-border: #E5E7EB;
+  --color-border-hover: #D1D5DB;
 
-  /* Status Colors */
-  --color-success: #10b981;
-  --color-warning: var(--color-title-base);
-  --color-error: #e11d48;
-  --color-info: var(--color-primary);
+  /* --- Status Colors --- */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
 
-  /* Neutrals & UI Backgrounds */
-  --color-bg-page: var(--color-main-base);
-  --color-bg-card: #ffffff;
-  --color-gray-50: #fcfdf9;
-  --color-gray-100: #f5fbe6;
-  --color-gray-200: #e5e9d9;
-  --color-gray-300: #d1d5c5;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: var(--color-sidebar-base);
-  --color-gray-800: var(--color-border-base);
-  --color-gray-900: #0a111a;
+  /* --- Neutral Grayscale --- */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
 
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Fira Code', 'Consolas', monospace;
+  /* --- Typography --- */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Sora', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  --font-size-xs: 0.65rem;
-  --font-size-sm: 0.75rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
   --font-size-base: 0.875rem;
   --font-size-lg: 1rem;
   --font-size-xl: 1.125rem;
   --font-size-2xl: 1.25rem;
   --font-size-3xl: 1.5rem;
-  --font-size-4xl: 1.875rem;
+  --font-size-4xl: 2rem;
 
-  /* Spacing */
-  --spacing-nav: 4rem;
-  --spacing-sidebar: 16rem;
+  /* --- Spacing System --- */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
+  --spacing-sidebar: 260px;
+  --spacing-header: 64px;
 
-  /* Border Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-card: 0.75rem;
-  --radius-button: 0.5rem;
-  --radius-input: 0.5rem;
+  /* --- Borders & Radius --- */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
 
-  /* Shadows */
+  /* --- Elevation (Shadows) --- */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 1px 3px 0 rgba(23, 40, 68, 0.1), 0 1px 2px 0 rgba(23, 40, 68, 0.06);
-  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 10px 40px -10px rgba(6, 78, 59, 0.12);
 
-  /* Transitions */
-  --transition-fast: 150ms;
-  --transition-base: 200ms;
-  --transition-slow: 300ms;
+  /* --- Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Z-index */
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
+  /* --- Z-index --- */
+  --z-sidebar: 40;
+  --z-header: 50;
+  --z-modal: 100;
+  --z-popover: 110;
+  --z-tooltip: 120;
 }
 
-/* Dark Mode */
-[data-theme='dark'] {
-  --color-primary: var(--pearl-aqua);
-  --color-primary-light: #a8dfcd;
-  --color-primary-dark: var(--dark-cyan);
+/* --- Dark Theme Overrides --- */
+[data-theme='dark'], .dark {
+  --color-bg-page: #0B0F17;
+  --color-bg-card: #151C2C;
+  --color-bg-sidebar: #0F172A;
+  
+  --color-border: #1E293B;
+  --color-border-hover: #334155;
 
-  --color-secondary: #fdf6e3;
-  --color-secondary-light: #ffffff;
-  --color-secondary-dark: var(--vanilla-custard);
+  --color-gray-50: #111827;
+  --color-gray-100: #1F2937;
+  --color-gray-200: #374151;
+  --color-gray-300: #4B5563;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #D1D5DB;
 
-  --color-success: #34d399;
-  --color-warning: #ffb703;
-  --color-error: #f87171;
-  --color-info: var(--pearl-aqua);
+  --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 }
 
-/* Global Styles */
+/* --- Global Reset Refinements --- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -116,44 +134,40 @@
 }
 
 html {
+  font-size: 100%;
   scroll-behavior: smooth;
-  font-size: 87.5%; /* Réduit la police globale à ~14px au lieu de 16px */
+  height: 100%;
 }
 
 body {
   font-family: var(--font-sans);
+  background: var(--color-bg-page);
+  color: var(--color-gray-900);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  height: 100%;
 }
 
-/* Custom Scrollbar */
+/* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-gray-100);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gray-400);
-  border-radius: var(--radius-lg);
+  background: var(--color-gray-300);
+  border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-500);
-}
-
-/* Dark mode scrollbar */
-[data-theme='dark'] ::-webkit-scrollbar-track {
-  background: var(--color-gray-800);
+  background: var(--color-gray-400);
 }
 
 [data-theme='dark'] ::-webkit-scrollbar-thumb {
-  background: var(--color-gray-600);
-}
-
-[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-500);
+  background: var(--color-gray-700);
 }
