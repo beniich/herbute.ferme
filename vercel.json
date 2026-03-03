@@ -2,6 +2,5 @@
   "buildCommand": "npm run build -w shared && npm run build -w frontend",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "frontend/.next",
-  "framework": "nextjs",
-  "rootDirectory": "."
+  "framework": "nextjs"
 }
