@@ -1,0 +1,116 @@
+﻿­ƒöÉ JWT RS256 : cl├®s trouv├®es
+Ô£à Variables d'environnement Herbute valid├®es
+node.exe : (node:14304) [MONGOOSE] Warning: Duplicate schema index on 
+{"email":1} found. This is often due to declaring an index using both "index: 
+true" and "schema.index()". Please remove the duplicate index definition.
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:14304) [M...dex definition.: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14304) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. 
+This is often due to declaring an index using both "index: true" and 
+"schema.index()". Please remove the duplicate index definition.
+(node:14304) [MONGOOSE] Warning: Duplicate schema index on {"ticketNumber":1} 
+found. This is often due to declaring an index using both "index: true" and 
+"schema.index()". Please remove the duplicate index definition.
+2026-03-05 18:20:39 [[32MINFO[39M] Ô£à MongoDB connect├® (pool: 5ÔÇô10 connexions)
+[Cache] Ô£à Redis connect├®
+2026-03-05 18:20:39 [[32MINFO[39M] Redis Client Connected
+2026-03-05 18:20:39 [[32MINFO[39M] Ô£à API Herbute ├®coute sur le port 2065 (0.0.0.0)
+2026-03-05 18:20:39 [[32MINFO[39M] Ô£à Socket.io Herbute initialis├® avec succ├¿s
+2026-03-05 18:20:39 [[32MINFO[39M] Ô£à Service SOAP Herbute mont├® avec succ├¿s
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+[Queue] ÔÜá´©Å Aucun ORGANIZATION_IDS d├®fini dans .env ÔÇö jobs non planifi├®s
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (C:\Users\pc gold\projet 
+dash\herbute\node_modules\bullmq\src\classes\redis-connection.ts:267:17)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:104:5)

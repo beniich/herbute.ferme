@@ -30,18 +30,30 @@ export default function AppLayout({
         }
     }, [user, isLoading, router]);
 
+    // Spinner pendant la vérification de session
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                    <p className="text-sm text-slate-500">Chargement de votre session...</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#F5FBE6' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', border: '3px solid #215E61', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <p style={{ fontSize: '14px', color: '#6b7280' }}>Chargement de votre session...</p>
                 </div>
             </div>
         );
     }
 
-    if (!user) return null;
+    // Pas encore d'utilisateur (redirection en cours)
+    // Affiche un écran de chargement au lieu de `return null` qui cause une page blanche
+    if (!user) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#F5FBE6' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '32px', height: '32px', border: '3px solid #9ca3af', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Redirection...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <AgroLayout>

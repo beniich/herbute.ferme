@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { useOrgStore } from '@/store/orgStore';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { StatCard } from '@/components/shared/StatCard';
-import { Skeleton } from '@/components/shared/Skeleton';
+import Skeleton from '@/components/shared/Skeleton';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
 import { 
   TrendingUp, TrendingDown, Tractor, AlertTriangle,
-  Users, LineChart, Server, RefreshCw
+  Users, LineChart, Server, RefreshCw, Trees
 } from 'lucide-react';
 
 // ─── TYPES ────────────────────────────────────────────────────────────────
@@ -43,13 +43,13 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="p-8">
-        <ErrorFallback onRetry={refresh} message="Impossible de charger le tableau de bord" />
+        <ErrorFallback error={error} onRetry={refresh} message="Impossible de charger le tableau de bord" />
       </div>
     );
   }
 
   return (
-    <div className="page active p-6 lg:p-10 space-y-10" id="page-dashboard">
+    <div className="w-full min-h-screen p-6 lg:p-10 space-y-10" id="page-dashboard" style={{ display: 'block' }}>
       
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -81,28 +81,28 @@ export default function DashboardPage() {
           <>
             <StatCard 
               label="Chiffre d'Affaires" 
-              value={((agro?.financials.totalRevenue ?? 0) / 1_000).toFixed(0)} 
+              value={((agro?.financials?.totalRevenue ?? 0) / 1_000).toFixed(0)} 
               unit="KDH"
               icon={<TrendingUp size={20} />}
               color="green"
             />
             <StatCard 
               label="Charges Totales" 
-              value={((agro?.financials.totalExpenses ?? 0) / 1_000).toFixed(0)} 
+              value={((agro?.financials?.totalExpenses ?? 0) / 1_000).toFixed(0)} 
               unit="KDH"
               icon={<TrendingDown size={20} />}
               color="red"
             />
             <StatCard 
               label="Bénéfice Net" 
-              value={((agro?.financials.netProfit ?? 0) / 1_000).toFixed(0)} 
+              value={((agro?.financials?.netProfit ?? 0) / 1_000).toFixed(0)} 
               unit="KDH"
               icon={<TrendingUp size={20} />}
               color="amber"
             />
             <StatCard 
               label="Trésorerie (Est.)" 
-              value={((agro?.financials.cashFlow ?? 0) / 1_000).toFixed(1)} 
+              value={((agro?.financials?.cashFlow ?? 0) / 1_000).toFixed(1)} 
               unit="KDH"
               icon={<LineChart size={20} />}
               color="blue"
@@ -119,7 +119,7 @@ export default function DashboardPage() {
           <>
             <StatCard 
               label="Cheptel Total" 
-              value={agro?.cheptel.total ?? 0} 
+              value={agro?.cheptel?.total ?? 0} 
               unit="têtes"
               icon={<Tractor size={18} />}
               color="amber"
@@ -127,7 +127,7 @@ export default function DashboardPage() {
             />
             <StatCard 
               label="Cultures" 
-              value={agro?.cultures.totalHa ?? 0} 
+              value={agro?.cultures?.totalHa ?? 0} 
               unit="hectares"
               icon={<Trees size={18} />}
               color="green"

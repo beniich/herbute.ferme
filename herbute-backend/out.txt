@@ -1,0 +1,67 @@
+﻿node.exe : ValidationError: Custom keyGenerator appears to use request IP 
+without calling the ipKeyGenerator helper function for IPv6 addresses. This 
+could allow IPv6 users to bypass limits. See 
+https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/ for more information.
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ValidationError...re information.: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    at Object.keyGeneratorIpFallback (file:///C:/Users/pc%20gold/projet%20dash/h
+erbute/node_modules/express-rate-limit/dist/index.mjs:608:13)
+    at wrappedValidations.<computed> [as keyGeneratorIpFallback] (file:///C:/Use
+rs/pc%20gold/projet%20dash/herbute/node_modules/express-rate-limit/dist/index.mj
+s:651:22)
+    at parseOptions (file:///C:/Users/pc%20gold/projet%20dash/herbute/node_modul
+es/express-rate-limit/dist/index.mjs:721:16)
+    at rateLimit (file:///C:/Users/pc%20gold/projet%20dash/herbute/node_modules/
+express-rate-limit/dist/index.mjs:802:18)
+    at <anonymous> (C:\Users\pc gold\projet 
+dash\herbute\herbute-backend\src\middleware\rateLimiters.ts:19:30)
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ 
+(node:internal/modules/esm/loader:655:26)
+    at async asyncRunEntryPointWithESMLoader 
+(node:internal/modules/run_main:101:5) {
+  code: 'ERR_ERL_KEY_GEN_IPV6',
+  help: 'https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/'
+}
+­ƒöÉ JWT RS256 : cl├®s trouv├®es
+Ô£à Variables d'environnement Herbute valid├®es
+(node:14732) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. 
+This is often due to declaring an index using both "index: true" and 
+"schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14732) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. 
+This is often due to declaring an index using both "index: true" and 
+"schema.index()". Please remove the duplicate index definition.
+(node:14732) [MONGOOSE] Warning: Duplicate schema index on {"ticketNumber":1} 
+found. This is often due to declaring an index using both "index: true" and 
+"schema.index()". Please remove the duplicate index definition.
+C:\Users\pc gold\projet 
+dash\herbute\node_modules\@redis\client\dist\lib\client\index.js:676
+            return Promise.reject(new errors_1.ClientClosedError());
+                                  ^
+
+ClientClosedError: The client is closed
+    at Class.sendCommand (C:\Users\pc gold\projet 
+dash\herbute\node_modules\@redis\client\lib\client\index.ts:1084:29)
+    at RedisStore.sendCommand (C:\Users\pc gold\projet 
+dash\herbute\herbute-backend\src\middleware\rateLimiters.ts:8:53)
+    at RedisStore.sendCommand (file:///C:/Users/pc%20gold/projet%20dash/herbute/
+node_modules/rate-limit-redis/dist/index.mjs:81:49)
+    at RedisStore.loadIncrementScript (file:///C:/Users/pc%20gold/projet%20dash/
+herbute/node_modules/rate-limit-redis/dist/index.mjs:98:31)
+    at new RedisStore (file:///C:/Users/pc%20gold/projet%20dash/herbute/node_mod
+ules/rate-limit-redis/dist/index.mjs:91:36)
+    at <anonymous> (C:\Users\pc gold\projet 
+dash\herbute\herbute-backend\src\middleware\rateLimiters.ts:7:10)
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ 
+(node:internal/modules/esm/loader:655:26)
+    at async asyncRunEntryPointWithESMLoader 
+(node:internal/modules/run_main:101:5)
+
+Node.js v25.6.1

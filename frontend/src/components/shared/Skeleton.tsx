@@ -3,10 +3,20 @@ import React from 'react';
 interface SkeletonProps {
   count?: number;
   className?: string;
+  type?: 'card' | 'list' | 'text' | 'chart';
 }
 
-/** Cartes KPI en chargement */
-export function CardSkeleton({ count = 4, className = '' }: SkeletonProps) {
+/** Carte KPI en chargement — s'insère dans une grille externe */
+export function CardSkeleton({ count = 1, className = '' }: SkeletonProps) {
+  if (count === 1) {
+    return (
+      <div
+        className={`h-28 rounded-xl bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 animate-pulse ${className}`}
+        aria-hidden="true"
+      />
+    );
+  }
+  // Grille autonome quand count > 1
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
@@ -58,3 +68,16 @@ export function ChartSkeleton({ height = 'h-64', className = '' }: { height?: st
     <div className={`${height} rounded-xl bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 animate-pulse ${className}`} aria-hidden="true" />
   );
 }
+
+/** Dispatcher component used as default export */
+export const Skeleton = ({ type, count = 1, className }: SkeletonProps) => {
+  switch (type) {
+    case 'card':  return <CardSkeleton count={count} className={className} />;
+    case 'list':  return <TableSkeleton count={count} className={className} />;
+    case 'chart': return <ChartSkeleton className={className} />;
+    case 'text':  return <TextSkeleton lines={count} />;
+    default:      return <div className={`animate-pulse bg-gray-200 rounded ${className}`} />;
+  }
+};
+
+export default Skeleton;
