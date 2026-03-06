@@ -2,6 +2,7 @@
 import { authenticate as auth } from '../middleware/security.js';
 import AuditLog from '../models/AuditLog.js';
 import { logger } from '../utils/logger.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 const router = Router();
 
@@ -11,8 +12,8 @@ router.get('/', auth, async (req: Request, res: Response) => {
         const { limit = '50', page = '1', action, userId } = req.query;
 
         if ((global as any).IS_DEMO_MODE) {
-            return res.json({
-                data: [
+            return sendSuccess(res, {
+                logs: [
                     { action: 'LOGIN', user: 'admin@reclamtrack.com', targetType: 'Session', timestamp: new Date() },
                     { action: 'SECURITY_AUDIT', user: 'system', targetType: 'System', timestamp: new Date(Date.now() - 3600000) },
                     { action: 'WAF_BLOCK', user: 'Firewall', targetType: 'Network', timestamp: new Date(Date.now() - 7200000) }
@@ -33,26 +34,26 @@ router.get('/', auth, async (req: Request, res: Response) => {
             .sort({ timestamp: -1 })
             .limit(limitNum)
             .skip(skip)
-            .populate('userId', 'name email role') // Populate user details
+            .populate('userId', 'name email role')
             .lean();
 
         const total = await AuditLog.countDocuments(query);
 
-        res.json({
-            data: logs,
+        return sendSuccess(res, {
+            logs,
             pagination: {
                 total,
                 page: pageNum,
                 pages: Math.ceil(total / limitNum)
             }
         });
-    } catch (error) {
+    } catch (error: any) {
         logger.error('Error fetching audit logs:', error);
-        res.status(500).json({ message: 'Server error retrieving audit logs' });
+        return sendError(res, 'Server error retrieving audit logs');
     }
 });
 
-// POST /api/audit-logs - Create a log (Internal use or specific client actions)
+// POST /api/audit-logs
 router.post('/', auth, async (req: Request, res: Response) => {
     try {
         const { action, targetId, targetType, details } = req.body;
@@ -67,10 +68,10 @@ router.post('/', auth, async (req: Request, res: Response) => {
         });
 
         await log.save();
-        res.status(201).json(log);
-    } catch (error) {
+        return sendSuccess(res, log, 201);
+    } catch (error: any) {
         logger.error('Error creating audit log:', error);
-        res.status(500).json({ message: 'Server error creating audit log' });
+        return sendError(res, 'Server error creating audit log');
     }
 });
 

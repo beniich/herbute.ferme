@@ -32,9 +32,9 @@ export default function ITAdminDashboard() {
     try {
       setLoading(true);
       const [assetsRes, networkRes, ticketsRes] = await Promise.all([
-        api.get('/api/it-assets/stats'),
+        api.get('/api/admin/it/assets/stats'),
         api.get('/api/network/stats'),
-        api.get('/api/it-tickets/stats'),
+        api.get('/api/admin/it/tickets/stats'),
       ]);
 
       const assetsStats = assetsRes.data.stats;

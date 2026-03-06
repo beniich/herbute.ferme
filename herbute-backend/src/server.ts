@@ -1,4 +1,5 @@
 ﻿import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { createServer } from 'http';
@@ -55,6 +56,15 @@ import infrastructureRoutes from './routes/infrastructure.js';
 import agentReportsRoutes from './routes/reports.agent.js';
 import { scheduleRecurringJobs } from './services/agent/queue.service.js';
 import { initSocket } from './services/socketService.js';
+import adRoutes from './routes/ad.js';
+import securityRoutes from './routes/security.js';
+import networkRoutes from './routes/network.js';
+import monitoringRoutes from './routes/monitoring.js';
+import devopsRoutes from './routes/devops.js';
+import sshManagementRoutes from './routes/ssh-management.js';
+import datasourceRoutes from './routes/datasource.routes.js';
+import eventsRoutes from './routes/events.js';
+import assignmentsRoutes from './routes/assignments.js';
 
 // Validate environment
 envValidator();
@@ -76,7 +86,7 @@ app.use(helmet());
 app.use(corsMiddleware);
 
 app.use(compressionMiddleware as any);
-app.use('/api/', globalLimiter);
+app.use('/api/', globalLimiter as any);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Mount routes
@@ -107,6 +117,7 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/teams', teamRoutes);
 
 // Admin & System
+app.use('/api', membersRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/audit-logs', auditRoutes);
@@ -114,6 +125,15 @@ app.use('/api/admin/security/api-keys', apiKeyRoutes);
 // app.use('/api/notifications', notificationRoutes); // not yet implemented
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/ad', adRoutes);
+app.use('/api/security', securityRoutes);
+app.use('/api/network', networkRoutes);
+app.use('/api/monitoring', monitoringRoutes);
+app.use('/api/devops', devopsRoutes);
+app.use('/api/ssh', sshManagementRoutes);
+app.use('/api/datasources', datasourceRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/assignments', assignmentsRoutes);
 
 // Upload
 app.use('/api/upload', uploadRoutes);

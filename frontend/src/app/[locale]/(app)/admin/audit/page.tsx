@@ -47,8 +47,9 @@ export default function AuditPage() {
   const loadLogs = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/api/audit-logs?limit=100');
-      setLogs(res.data.data || []);
+      const res = await api.get('/api/admin/audit-logs?limit=100');
+      // Backend sendSuccess(res, { logs, pagination }) -> unwrap returns { logs, pagination }
+      setLogs(res.logs || []);
     } catch (error) {
       toast.error('Failed to load audit logs');
     } finally {

@@ -47,3 +47,5 @@ export const loginLimiter = isEnabled ? rateLimit({
     res.status(429).json({ error: 'Trop de tentatives échouées. Réessayez dans 15 minutes' });
   },
 }) : dummyLimiter;
+// 4. Alias for backward compatibility / specific imports
+export const authLimiter = loginLimiter;

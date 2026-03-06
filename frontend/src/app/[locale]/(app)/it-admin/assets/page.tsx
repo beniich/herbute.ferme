@@ -65,8 +65,8 @@ export default function ITAssetsPage() {
     setLoading(true);
     try {
       const queryString = filterType !== 'all' ? `?type=${filterType}` : '';
-      const res = await api.get(`/api/it-assets${queryString}`);
-      setAssets(res.data.data || []); // Adjusted to match generic API response structure usually { success: true, data: [...] }
+      const res = await api.get(`/api/admin/it/assets${queryString}`);
+      setAssets(res.data.assets || []); 
     } catch (error) {
       console.error('Failed to load assets:', error);
       toast.error('Failed to load assets');
@@ -91,7 +91,7 @@ export default function ITAssetsPage() {
     if (!confirm('Are you sure you want to delete this asset?')) return;
 
     try {
-      await api.delete(`/api/it-assets/${id}`);
+      await api.delete(`/api/admin/it/assets/${id}`);
       toast.success('Asset deleted successfully');
       loadAssets();
     } catch (error) {
@@ -104,10 +104,10 @@ export default function ITAssetsPage() {
     e.preventDefault();
     try {
       if (editingAsset) {
-        await api.put(`/api/it-assets/${editingAsset._id}`, formData);
+        await api.put(`/api/admin/it/assets/${editingAsset._id}`, formData);
         toast.success('Asset updated successfully');
       } else {
-        await api.post('/api/it-assets', formData);
+        await api.post('/api/admin/it/assets', formData);
         toast.success('Asset created successfully');
       }
       setIsDialogOpen(false);

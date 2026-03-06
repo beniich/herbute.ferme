@@ -66,8 +66,8 @@ export default function ITTicketsPage() {
     setLoading(true);
     try {
       const queryString = filterStatus !== 'all' ? `?status=${filterStatus}` : '';
-      const res = await api.get(`/api/it-tickets${queryString}`);
-      setTickets(res.data.data || []);
+      const res = await api.get(`/api/admin/it/tickets${queryString}`);
+      setTickets(res.data.tickets || []);
     } catch (error) {
       console.error('Failed to load tickets:', error);
       toast.error('Failed to load tickets');
@@ -92,7 +92,7 @@ export default function ITTicketsPage() {
     if (!confirm('Are you sure you want to delete this ticket?')) return;
 
     try {
-      await api.delete(`/api/it-tickets/${id}`);
+      await api.delete(`/api/admin/it/tickets/${id}`);
       toast.success('Ticket deleted successfully');
       loadTickets();
     } catch (error) {
@@ -105,10 +105,10 @@ export default function ITTicketsPage() {
     e.preventDefault();
     try {
       if (editingTicket) {
-        await api.put(`/api/it-tickets/${editingTicket._id}`, formData);
+        await api.put(`/api/admin/it/tickets/${editingTicket._id}`, formData);
         toast.success('Ticket updated successfully');
       } else {
-        await api.post('/api/it-tickets', formData);
+        await api.post('/api/admin/it/tickets', formData);
         toast.success('Ticket created successfully');
       }
       setIsDialogOpen(false);
@@ -121,7 +121,7 @@ export default function ITTicketsPage() {
 
   const handleStatusChange = async (ticket: ITTicket, newStatus: string) => {
      try {
-        await api.put(`/api/it-tickets/${ticket._id}`, { status: newStatus });
+        await api.put(`/api/admin/it/tickets/${ticket._id}`, { status: newStatus });
         toast.success(`Ticket status updated to ${newStatus}`);
         loadTickets();
      } catch (error) {

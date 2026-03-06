@@ -4,6 +4,7 @@ import { requireOrganization } from '../middleware/organization.js';
 import NetworkDevice from '../models/NetworkDevice.js';
 import { AuthenticatedRequest } from '../types/request.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 const router = express.Router();
 
@@ -28,10 +29,10 @@ router.get('/devices', asyncHandler(async (req: any, res: Response) => {
 
     const devices = await NetworkDevice.find(query).sort({ name: 1 });
 
-    res.json({ devices, count: devices.length });
+    return sendSuccess(res, { devices, count: devices.length });
   } catch (error: any) {
     console.error('Error fetching network devices:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'FETCH_NETWORK_DEVICES_ERROR', 500);
   }
 }));
 
@@ -44,13 +45,13 @@ router.get('/devices/:id', asyncHandler(async (req: any, res: Response) => {
     });
 
     if (!device) {
-      return res.status(404).json({ error: 'Device not found' });
+      return sendError(res, 'Device not found', 'DEVICE_NOT_FOUND', 404);
     }
 
-    res.json({ device });
+    return sendSuccess(res, { device });
   } catch (error: any) {
     console.error('Error fetching device:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'FETCH_DEVICE_ERROR', 500);
   }
 }));
 
@@ -62,10 +63,10 @@ router.post('/devices', asyncHandler(async (req: any, res: Response) => {
       organizationId: req.organizationId,
     });
 
-    res.status(201).json({ device });
+    return sendSuccess(res, { device }, 201);
   } catch (error: any) {
     console.error('Error creating device:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'CREATE_DEVICE_ERROR', 500);
   }
 }));
 
@@ -79,13 +80,13 @@ router.put('/devices/:id', asyncHandler(async (req: any, res: Response) => {
     );
 
     if (!device) {
-      return res.status(404).json({ error: 'Device not found' });
+      return sendError(res, 'Device not found', 'DEVICE_NOT_FOUND', 404);
     }
 
-    res.json({ device });
+    return sendSuccess(res, { device });
   } catch (error: any) {
     console.error('Error updating device:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'UPDATE_DEVICE_ERROR', 500);
   }
 }));
 
@@ -98,13 +99,13 @@ router.delete('/devices/:id', asyncHandler(async (req: any, res: Response) => {
     });
 
     if (!device) {
-      return res.status(404).json({ error: 'Device not found' });
+      return sendError(res, 'Device not found', 'DEVICE_NOT_FOUND', 404);
     }
 
-    res.json({ message: 'Device deleted successfully', device });
+    return sendSuccess(res, { message: 'Device deleted successfully', device });
   } catch (error: any) {
     console.error('Error deleting device:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'DELETE_DEVICE_ERROR', 500);
   }
 }));
 
@@ -117,7 +118,7 @@ router.get('/devices/:id/metrics', asyncHandler(async (req: any, res: Response) 
     });
 
     if (!device) {
-      return res.status(404).json({ error: 'Device not found' });
+      return sendError(res, 'Device not found', 'DEVICE_NOT_FOUND', 404);
     }
 
     // Return current metrics
@@ -132,10 +133,10 @@ router.get('/devices/:id/metrics', asyncHandler(async (req: any, res: Response) 
       timestamp: new Date(),
     };
 
-    res.json({ metrics });
+    return sendSuccess(res, { metrics });
   } catch (error: any) {
     console.error('Error fetching device metrics:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'FETCH_DEVICE_METRICS_ERROR', 500);
   }
 }));
 
@@ -156,13 +157,13 @@ router.post('/devices/:id/metrics', asyncHandler(async (req: any, res) => {
     );
 
     if (!device) {
-      return res.status(404).json({ error: 'Device not found' });
+      return sendError(res, 'Device not found', 'DEVICE_NOT_FOUND', 404);
     }
 
-    res.json({ device });
+    return sendSuccess(res, { device });
   } catch (error: any) {
     console.error('Error updating device metrics:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'UPDATE_DEVICE_METRICS_ERROR', 500);
   }
 }));
 
@@ -198,10 +199,10 @@ router.get('/stats', asyncHandler(async (req: any, res) => {
       }),
     };
 
-    res.json({ stats });
+    return sendSuccess(res, { stats });
   } catch (error: any) {
     console.error('Error fetching network stats:', error);
-    res.status(500).json({ error: error.message });
+    return sendError(res, error.message, 'FETCH_NETWORK_STATS_ERROR', 500);
   }
 }));
 

@@ -28,11 +28,13 @@ export default function PublicLayout({
     children: React.ReactNode;
 }) {
     const [scrolled, setScrolled] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const cursorRef = useRef<HTMLDivElement>(null);
     const ringRef = useRef<HTMLDivElement>(null);
     const [isHovering, setIsHovering] = useState(false);
 
     useEffect(() => {
+        setIsMounted(true);
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
         };
@@ -93,7 +95,7 @@ export default function PublicLayout({
                     <nav className={`flex items-center justify-between px-10 py-5 rounded-[2.5rem] border transition-all duration-700 bg-white/70 backdrop-blur-2xl ${scrolled ? 'shadow-2xl border-[var(--green)]/10 scale-[0.98]' : 'border-transparent shadow-none'}`}>
                         <Link href="/" className="flex items-center gap-4 group">
                             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--green)] to-[var(--green2)] flex items-center justify-center text-white shadow-xl group-hover:rotate-12 transition-transform duration-500">
-                                <Sprout size={24} />
+                                {isMounted && <Sprout size={24} />}
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xl font-black text-[var(--green)] tracking-tighter uppercase italic">AgroMaître</span>
@@ -162,7 +164,7 @@ export default function PublicLayout({
                         <div className="lg:col-span-12 mb-10">
                              <Link href="/" className="flex items-center gap-6 group">
                                 <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-[var(--green)] to-[var(--green2)] flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-transform duration-700">
-                                    <Sprout size={32} />
+                                    {isMounted && <Sprout size={32} />}
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-3xl font-black text-[var(--green)] tracking-tighter uppercase italic">AgroMaître</span>

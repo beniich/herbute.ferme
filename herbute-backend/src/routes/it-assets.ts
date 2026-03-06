@@ -2,7 +2,7 @@
 import { authenticate, requireOrganization } from '../middleware/security.js';
 import { authorize, Permission } from '../middleware/authorize.js';
 import ITAsset from '../models/ITAsset.js';
-import { sendSuccess } from '../utils/apiResponse.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 
 const router = express.Router();
@@ -40,7 +40,7 @@ router.get('/',
       return sendSuccess(res, { assets, count: assets.length });
     } catch (error: any) {
       console.error('Error fetching assets:', error);
-      return res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_ASSETS_ERROR', 500);
     }
   })
 );
@@ -79,10 +79,10 @@ router.get('/stats',
         }),
       };
 
-      res.json({ stats });
+      return sendSuccess(res, { stats });
     } catch (error: any) {
       console.error('Error fetching asset stats:', error);
-      res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_ASSET_STATS_ERROR', 500);
     }
   })
 );
@@ -105,10 +105,10 @@ router.get('/:id',
         return res.status(404).json({ error: 'Asset not found' });
       }
 
-      res.json({ asset });
+      return sendSuccess(res, { asset });
     } catch (error: any) {
       console.error('Error fetching asset:', error);
-      res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_ASSET_ERROR', 500);
     }
   })
 );

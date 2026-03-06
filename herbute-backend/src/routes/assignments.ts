@@ -3,7 +3,7 @@ import { authenticate as protect } from '../middleware/security.js';
 import { body } from 'express-validator';
 import { validator } from '../middleware/validator.js';
 import { Assignment } from '../models/Assignment.js';
-import { Complaint } from '../models/Complaint.js';
+import { Complaint } from '../modules/complaint/complaint.model.js';
 import { Team } from '../models/Team.js';
 import { io } from '../services/socketService.js';
 

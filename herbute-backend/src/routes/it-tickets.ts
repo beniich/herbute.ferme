@@ -3,6 +3,7 @@ import { authenticate, requireOrganization } from '../middleware/security.js';
 import { authorize, Permission } from '../middleware/authorize.js';
 import ITTicket from '../models/ITTicket.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 const router = express.Router();
 
@@ -39,10 +40,10 @@ router.get('/',
         .populate('relatedAsset', 'name type assetTag')
         .sort({ createdAt: -1 });
 
-      res.json({ tickets, count: tickets.length });
+      return sendSuccess(res, { tickets, count: tickets.length });
     } catch (error: any) {
       console.error('Error fetching IT tickets:', error);
-      res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_TICKETS_ERROR', 500);
     }
   })
 );
@@ -101,10 +102,10 @@ router.get('/stats',
         ]),
       };
 
-      res.json({ stats });
+      return sendSuccess(res, { stats });
     } catch (error: any) {
       console.error('Error fetching ticket stats:', error);
-      res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_TICKETS_STATS_ERROR', 500);
     }
   })
 );
@@ -130,10 +131,10 @@ router.get('/:id',
         return res.status(404).json({ error: 'Ticket not found' });
       }
 
-      res.json({ ticket });
+      return sendSuccess(res, { ticket });
     } catch (error: any) {
       console.error('Error fetching ticket:', error);
-      res.status(500).json({ error: error.message });
+      return sendError(res, error.message, 'FETCH_TICKET_ERROR', 500);
     }
   })
 );

@@ -1,5 +1,5 @@
 ﻿import mongoose from 'mongoose';
-import { Complaint } from '../models/Complaint.js';
+import { Complaint } from '../modules/complaint/complaint.model.js';
 import { User } from '../models/user.model.js';
 import { Team } from '../models/Team.js';
 import { Intervention } from '../models/Intervention.js';

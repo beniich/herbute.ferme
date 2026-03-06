@@ -67,11 +67,19 @@ class ApiClient {
     );
   }
 
-  get<T = any>(url: string, config?: any) { return this.client.get<T>(url, config).then(r => r.data); }
-  post<T = any>(url: string, data?: any, config?: any) { return this.client.post<T>(url, data, config).then(r => r.data); }
-  put<T = any>(url: string, data?: any, config?: any) { return this.client.put<T>(url, data, config).then(r => r.data); }
-  patch<T = any>(url: string, data?: any, config?: any) { return this.client.patch<T>(url, data, config).then(r => r.data); }
-  delete<T = any>(url: string, config?: any) { return this.client.delete<T>(url, config).then(r => r.data); }
+  private unwrap<T>(res: AxiosResponse<any>): T {
+    const body = res.data;
+    if (body && typeof body === 'object' && body.success === true && body.data !== undefined) {
+      return body.data as T;
+    }
+    return body as T;
+  }
+
+  get<T = any>(url: string, config?: any) { return this.client.get<any>(url, config).then(r => this.unwrap<T>(r)); }
+  post<T = any>(url: string, data?: any, config?: any) { return this.client.post<any>(url, data, config).then(r => this.unwrap<T>(r)); }
+  put<T = any>(url: string, data?: any, config?: any) { return this.client.put<any>(url, data, config).then(r => this.unwrap<T>(r)); }
+  patch<T = any>(url: string, data?: any, config?: any) { return this.client.patch<any>(url, data, config).then(r => this.unwrap<T>(r)); }
+  delete<T = any>(url: string, config?: any) { return this.client.delete<any>(url, config).then(r => this.unwrap<T>(r)); }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
@@ -94,11 +102,11 @@ export const organizationsApi = {
   getMyOrganizations: () => apiClient.get('/api/organizations'),
   getOrganization: (id: string) => apiClient.get(`/api/organizations/${id}`),
   createOrganization: (data: any) => apiClient.post('/api/organizations', data),
-  updateOrganization: (id: string, data: any) => apiClient.put(`/api/organizations/${id}`, data),
+  updateOrganization: (id: string, data: any) => apiClient.patch(`/api/organizations/${id}`, data),
   getMembers: (id: string) => apiClient.get(`/api/organizations/${id}/members`),
-  inviteMember: (id: string, email: string, roles: string[]) => apiClient.post(`/api/organizations/${id}/members/invite`, { email, roles }),
-  updateMemberRole: (id: string, userId: string, role: string | string[]) => apiClient.patch(`/api/organizations/${id}/members/${userId}/role`, { role }),
-  removeMember: (id: string, userId: string) => apiClient.delete(`/api/organizations/${id}/members/${userId}`),
+  inviteMember: (id: string, email: string, roles: string[]) => apiClient.post(`/api/organizations/${id}/members`, { email, roles }),
+  updateMemberRole: (id: string, membershipId: string, roles: string[]) => apiClient.patch(`/api/organizations/${id}/members/${membershipId}`, { roles }),
+  removeMember: (id: string, membershipId: string) => apiClient.delete(`/api/organizations/${id}/members/${membershipId}`),
 };
 
 export const fleetApi = {
@@ -176,20 +184,27 @@ export const infrastructureApi = {
 // Aliases and Stubs for legacy components and TS build
 export const organizationApi = organizationsApi;
 export const adminApi = {
-  getSecurityMetrics: () => apiClient.get('/api/admin/security/metrics'),
+  getSecurityMetrics: () => apiClient.get('/api/admin/users/security/metrics'),
   getUsers: () => apiClient.get('/api/admin/users'),
   getAuditLogs: () => apiClient.get('/api/admin/audit-logs'),
-  getSecurityAudit: () => apiClient.get('/api/admin/security-audit'),
+  getSecurityAudit: () => apiClient.get('/api/admin/users/security/audit'),
 };
 export const securityApi = {
   getAlerts: () => apiClient.get('/api/admin/security/alerts'),
-  getSecrets: () => apiClient.get('/api/admin/security/secrets'),
+  getSecrets: () => apiClient.get('/api/admin/security/secrets'), // This will likely 404 until implemented
+  getVaultStats: () => apiClient.get('/api/admin/security/secrets/stats'),
   createSecret: (data: any) => apiClient.post('/api/admin/security/secrets', data),
   revealSecret: (id: string) => apiClient.get(`/api/admin/security/secrets/${id}/reveal`),
   deleteSecret: (id: string) => apiClient.delete(`/api/admin/security/secrets/${id}`),
-  getCompliance: () => apiClient.get('/api/admin/security/compliance'),
-  getRdpSessions: () => apiClient.get('/api/admin/security/rdp'),
-  getPasswordAudit: () => apiClient.get('/api/admin/security/passwords'),
+  getCompliance: () => apiClient.get('/api/security/compliance'),
+  getRdpSessions: () => apiClient.get('/api/security/sessions/rdp'),
+  getPasswordAudit: () => apiClient.get('/api/security/audit/passwords'),
+  getFirewallLogs: () => apiClient.get('/api/security/firewall-logs'),
+  getStatus: () => apiClient.get('/api/security/status'),
+  getApiKeys: () => apiClient.get('/api/admin/security/api-keys'),
+  createApiKey: (data: any) => apiClient.post('/api/admin/security/api-keys', data),
+  rotateApiKey: (id: string) => apiClient.post(`/api/admin/security/api-keys/${id}/rotate`),
+  deleteApiKey: (id: string) => apiClient.delete(`/api/admin/security/api-keys/${id}`),
 };
 export const itAssetsApi = {
   getAssets: () => apiClient.get('/api/admin/it/assets'),
