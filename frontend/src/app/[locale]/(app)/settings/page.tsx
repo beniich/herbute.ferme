@@ -96,7 +96,16 @@ export default function SettingsPage() {
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                     {loading 
-                        ? <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                        ? <div style={{ 
+                            width: 16, 
+                            height: 16, 
+                            borderWidth: '2px',
+                            borderStyle: 'solid',
+                            borderColor: 'rgba(255,255,255,0.3)', 
+                            borderTopColor: 'white', 
+                            borderRadius: '50%', 
+                            animation: 'spin 1s linear infinite' 
+                        }} />
                         : <Save size={16} />
                     }
                     Enregistrer

@@ -35,7 +35,18 @@ export default function AppLayout({
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#F5FBE6' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ width: '48px', height: '48px', border: '3px solid #215E61', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <div style={{ 
+                        width: '48px', 
+                        height: '48px', 
+                        borderWidth: '3px',
+                        borderStyle: 'solid',
+                        borderLeftColor: '#215E61',
+                        borderRightColor: '#215E61',
+                        borderBottomColor: '#215E61',
+                        borderTopColor: 'transparent', 
+                        borderRadius: '50%', 
+                        animation: 'spin 1s linear infinite' 
+                    }}></div>
                     <p style={{ fontSize: '14px', color: '#6b7280' }}>Chargement de votre session...</p>
                 </div>
             </div>
@@ -48,7 +59,18 @@ export default function AppLayout({
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#F5FBE6' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ width: '32px', height: '32px', border: '3px solid #9ca3af', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        borderWidth: '3px',
+                        borderStyle: 'solid',
+                        borderLeftColor: '#9ca3af',
+                        borderRightColor: '#9ca3af',
+                        borderBottomColor: '#9ca3af',
+                        borderTopColor: 'transparent', 
+                        borderRadius: '50%', 
+                        animation: 'spin 1s linear infinite' 
+                    }}></div>
                     <p style={{ fontSize: '14px', color: '#9ca3af' }}>Redirection...</p>
                 </div>
             </div>
