@@ -1,5 +1,6 @@
 // backend/controllers/accounting.controller.ts
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import AccountingEntry from '../models/AccountingEntry.js';
 import moment from 'moment';
 import { reportGenerator } from '../services/reportGenerator.js';
@@ -189,7 +190,7 @@ export const downloadBalanceSheet = async (req: any, res: Response) => {
 };
 export const getStats = async (req: any, res: Response) => {
   try {
-    const domainId = req.user.domain;
+    const domainId = new mongoose.Types.ObjectId(req.user.domain);
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);

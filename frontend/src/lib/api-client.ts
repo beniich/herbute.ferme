@@ -25,7 +25,7 @@ export class APIClient {
           return `${window.location.protocol}//${window.location.hostname}:${port || '2065'}`;
         }
       }
-      return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:2065';
+      return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
     };
 
     const baseURL = getApiUrl();
