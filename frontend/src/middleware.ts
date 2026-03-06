@@ -40,9 +40,10 @@ export default function middleware(request: NextRequest) {
 
     // ✅ On lit le cookie HttpOnly `access_token` posé par le backend Herbute
     const accessToken = request.cookies.get('access_token')?.value;
-    const isAuthenticated = !!accessToken;
+    const isMockMode = request.nextUrl.searchParams.get('mock') === 'true';
+    const isAuthenticated = !!accessToken || isMockMode;
 
-    // Route protégée sans token → login
+    // Route protégée sans token → login (Bypass si mock=true)
     if (!isPublicRoute && !isAuthenticated) {
         const loginUrl = new URL(`/${locale}/login`, request.url);
         loginUrl.searchParams.set('from', pathname); // Garder la destination

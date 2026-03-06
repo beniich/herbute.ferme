@@ -26,6 +26,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const checkSession = async () => {
     try {
       setLoading(true);
+      
+      // -- MOCK ACCESS BYPASS (Provisoire) --
+      if (searchParams?.get('mock') === 'true') {
+        setUser({
+          id: 'mock-123',
+          name: 'Expert AgroMaître (Mock)',
+          email: 'mock@herbute.com',
+          role: 'admin',
+          organizationId: 'org-mock-123'
+        });
+        setLoading(false);
+        setIsLoading(false);
+        return;
+      }
+
       const data = await authApi.me();
       // Le backend retourne { user: {...} } ou directement l'objet user
       const userObj = data?.user ?? data;
