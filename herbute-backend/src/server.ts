@@ -46,6 +46,7 @@ import apiKeyRoutes from './routes/api-keys.js';
 import analyticsRoutes from './routes/analytics.js';
 import dashboardRoutes from './routes/dashboard.js';
 import billingRoutes from './routes/billing.routes.js';
+import stripeRoutes from './routes/stripe.js';
 import glpiRoutes from './routes/glpi.routes.js';
 import membersRoutes from './routes/members.js';
 import animalsRoutes from './modules/agro/animals.routes.js';
@@ -88,6 +89,7 @@ const httpServer = createServer(app);
 
 // Webhook de Stripe AVANT express.json()
 app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -137,10 +139,10 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/audit-logs', auditRoutes);
 app.use('/api/admin/security/api-keys', apiKeyRoutes);
-// app.use('/api/notifications', notificationRoutes); // not yet implemented
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ad', adRoutes);
+app.use('/api/stripe', stripeRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/monitoring', monitoringRoutes);

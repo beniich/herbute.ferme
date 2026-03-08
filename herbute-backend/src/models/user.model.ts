@@ -28,6 +28,7 @@ export interface IUser extends Document {
   lastLogin?:          Date;
   avatarUrl?:          string;
   googleId?:           string;
+  firebaseUid?:        string;
   authProvider:        'local' | 'google';
   preferences:         Record<string, unknown>;
   stripeCustomerId?:   string;
@@ -66,6 +67,7 @@ const UserSchema = new Schema<IUser>({
   lastLogin:           { type: Date },
   avatarUrl:           { type: String },
   googleId:            { type: String, sparse: true },
+  firebaseUid:         { type: String, sparse: true },
   authProvider:        { type: String, enum: ['local', 'google'], default: 'local' },
   preferences:         { type: Schema.Types.Mixed, default: {} },
   stripeCustomerId:    { type: String },

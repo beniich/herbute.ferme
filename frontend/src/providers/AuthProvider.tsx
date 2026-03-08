@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, setUser, setIsLoading } = useAuthStore();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(!user); // Ne pas spinner si l'user est déjà en cache
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -54,7 +54,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    checkSession();
+    // Si l'user est déjà en cache Zustand (persist), ne pas refaire l'API call immédiatement
+    // On vérifie quand même en arrière-plan après 100ms pour valider que la session est toujours valide
+    if (user) {
+      setLoading(false);
+      setIsLoading(false);
+      // Validation silencieuse en arrière-plan (sans spinner)
+      const timer = setTimeout(() => {
+        authApi.me().then((data) => {
+          const userObj = data?.user ?? data;
+          if (!userObj) setUser(null);
+          else setUser(userObj);
+        }).catch(() => {
+          setUser(null);
+        });
+      }, 500);
+      
+      const unsubscribe = authEventBus.on('session-expired', () => {
+        setUser(null);
+        router.push('/login');
+      });
+      
+      return () => { clearTimeout(timer); unsubscribe(); };
+    } else {
+      // Pas de session en cache : vérification complète
+      checkSession();
+    }
 
     const unsubscribe = authEventBus.on('session-expired', () => {
       setUser(null);

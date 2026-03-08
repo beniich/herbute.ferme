@@ -23,6 +23,7 @@ import { RefreshToken } from '../models/refresh-token.model.js';
 import { Organization } from '../models/Organization.js';
 import { Membership } from '../models/Membership.js';
 import { HERBUTE_ROUTES } from '@reclamtrack/shared';
+import { adminAuth } from '../config/firebase-admin.js';
 
 const router = Router();
 
@@ -472,3 +473,178 @@ router.get('/verify-email/:token', async (req: Request, res: Response, next: Nex
 });
 
 export default router;
+
+// ════════════════════════════════════════════════════════════════════════
+// POST /api/auth/link-google
+// Lier un compte Firebase/Google au compte Herbute actuel
+// ════════════════════════════════════════════════════════════════════════
+router.post('/link-google', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({ error: 'Token Firebase manquant.', code: 'FIREBASE_TOKEN_MISSING' });
+    }
+
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    const { uid } = decodedToken;
+
+    const user = await User.findById(req.user!.sub);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+
+    // Vérifier si ce compte Google n'est pas déjà lié à un AUTRE compte
+    const existingGoogleUser = await User.findOne({ firebaseUid: uid });
+    if (existingGoogleUser && existingGoogleUser._id.toString() !== user._id.toString()) {
+      return res.status(400).json({ error: 'Ce compte Google est déjà lié à un autre compte Herbute.', code: 'GOOGLE_ALREADY_LINKED' });
+    }
+
+    user.firebaseUid = uid;
+    user.googleId = uid;
+    if (user.authProvider === 'local') {
+        user.authProvider = 'google'; // Optionnel: bascule du provider principal
+    }
+    
+    await user.save();
+
+    res.json({ message: 'Compte Google lié avec succès.', user });
+  } catch (error: any) {
+    console.error('Erreur Link Google:', error);
+    res.status(400).json({ error: 'Erreur lors de la liaison du compte.', details: error.message });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// POST /api/auth/unlink-google
+// Détacher le compte Firebase/Google
+// ════════════════════════════════════════════════════════════════════════
+router.post('/unlink-google', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.findById(req.user!.sub).select('+passwordHash');
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+
+    // Sécurité: Ne pas permettre de délier si c'est le seul moyen de connexion
+    // (L'utilisateur DOIT avoir un mot de passe local)
+    if (!user.passwordHash || user.passwordHash.length < 10) {
+      return res.status(400).json({ error: 'Impossible de délier ce compte car vous n\'avez pas défini de mot de passe local.' });
+    }
+
+    user.firebaseUid = undefined;
+    user.googleId = undefined;
+    user.authProvider = 'local';
+    await user.save();
+
+    res.json({ message: 'Compte Google délié avec succès.' });
+  } catch (error: any) {
+    console.error('Erreur Unlink Google:', error);
+    res.status(500).json({ error: 'Erreur Serveur.' });
+  }
+});
+// ════════════════════════════════════════════════════════════════════════
+// POST /api/auth/firebase
+// Authentification hybride via Firebase (Google Auth)
+// ════════════════════════════════════════════════════════════════════════
+router.post('/firebase', authLimiter as any, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({ error: 'Token Firebase manquant.', code: 'FIREBASE_TOKEN_MISSING' });
+    }
+
+    // 1. Vérifier le JWT Firebase
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    const { uid, email, name } = decodedToken;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email non fourni par Firebase.', code: 'FIREBASE_EMAIL_MISSING' });
+    }
+
+    // 2. Chercher ou créer l'utilisateur MongoDB
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      // Nouvel utilisateur via Google Auth
+      const splitName = name ? name.split(' ') : ['Google User'];
+      const prenom = splitName[0];
+      const nom = splitName.slice(1).join(' ') || 'User';
+      
+      const pwdPlaceholder = crypto.randomBytes(32).toString('hex');
+      const passwordHash = await bcrypt.hash(pwdPlaceholder, 12);
+
+      user = await User.create({
+        email: email.toLowerCase(),
+        passwordHash,
+        nom,
+        prenom,
+        role: 'employe',
+        emailVerified: true, // Garanti par Google
+        firebaseUid: uid,
+        googleId: uid, // Historique
+        authProvider: 'google',
+        plan: 'essai'
+      });
+
+      // Création auto orga
+      const org = await Organization.create({
+        name: `Organisation de ${nom}`,
+        slug: `org-${user._id.toString()}-${Math.random().toString(36).substring(2, 7)}`,
+        ownerId: user._id,
+        subscription: { plan: 'ESSAI', status: 'ACTIVE' }
+      });
+
+      await Membership.create({
+        userId: user._id,
+        organizationId: org._id,
+        roles: ['OWNER', 'ADMIN'],
+        status: 'ACTIVE'
+      });
+
+      user.organizationId = org._id;
+      await user.save();
+    } else if (!user.firebaseUid) {
+      // Utilisateur existant mais qui se connecte via Google pour la 1ère fois
+      user.firebaseUid = uid;
+      user.googleId = uid;
+      user.authProvider = 'google';
+      user.emailVerified = true;
+      await user.save();
+    }
+
+    // 3. Générer les tokens Herbute classiques (Hybride)
+    const { accessToken, refreshToken, refreshTokenHash } = generateTokenPair({
+      id:             user._id.toString(),
+      email:          user.email,
+      role:           user.role,
+      farmId:         user.farmId?.toString(),
+      plan:           user.plan,
+      organizationId: user.organizationId?.toString(),
+    } as any);
+
+    await RefreshToken.create({
+      userId:    user._id,
+      tokenHash: refreshTokenHash,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      userAgent: req.headers['user-agent'],
+      ip:        req.ip,
+    });
+
+    setAuthCookies(res, accessToken, refreshToken);
+
+    res.json({
+      message: 'Connecté avec succès via Google.',
+      user: {
+        id:     user._id,
+        email:  user.email,
+        nom:    user.nom,
+        prenom: user.prenom,
+        role:   user.role,
+        plan:   user.plan,
+        farmId: user.farmId,
+      },
+    });
+
+  } catch (error: any) {
+    console.error('Firebase Auth Error:', error);
+    res.status(401).json({ error: 'Token Firebase invalide ou expiré.', code: 'INVALID_FIREBASE_TOKEN' });
+  }
+});

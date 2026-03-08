@@ -3,7 +3,14 @@ const withNextIntl = require('next-intl/plugin')();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  output: 'standalone',
+  // NOTE: 'standalone' uniquement pour la production (ralentit le dev server)
+  ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+
+  // Active Turbopack via la CLI: npm run dev -- --turbo
+  // Experimental: réduire les compilations inutiles
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
 
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
