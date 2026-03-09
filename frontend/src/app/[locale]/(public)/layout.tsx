@@ -2,23 +2,16 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from '@/i18n/navigation';
+import { useLocale } from 'next-intl';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { 
     Facebook, 
     Twitter, 
     Instagram, 
     Linkedin, 
-    Mail, 
-    Phone, 
-    MapPin, 
     ArrowRight, 
     Sprout, 
-    ShieldCheck, 
-    Zap, 
-    Globe, 
     ChevronRight,
-    PlayCircle,
-    CheckCircle2,
-    Lock,
     LogIn
 } from 'lucide-react';
 
@@ -27,6 +20,8 @@ export default function PublicLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const locale = useLocale();
+    const isRtl = locale === 'ar';
     const [scrolled, setScrolled] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const cursorRef = useRef<HTMLDivElement>(null);
@@ -77,7 +72,7 @@ export default function PublicLayout({
     }, []);
 
     return (
-        <div className={`agro-theme relative min-h-screen flex flex-col font-sans transition-all duration-700 use-custom-cursor selection:bg-[var(--gold)] selection:text-white`}>
+        <div className={`agro-theme relative min-h-screen flex flex-col font-sans transition-all duration-700 use-custom-cursor selection:bg-[var(--gold)] selection:text-white`} dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Premium Overlays */}
             <div className="agro-theme-grain" />
             <div 
@@ -121,13 +116,14 @@ export default function PublicLayout({
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-4">
+                            {isMounted && <LanguageSwitcher />}
                             <Link href="/login" className="hidden sm:flex items-center gap-2 group text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text3)] hover:text-[var(--green)] transition-all italic">
                                 {isMounted && <LogIn size={14} className="group-hover:-translate-x-1 transition-transform" />}
-                                Connexion
+                                Login
                             </Link>
-                            <Link href="/register" className="px-10 py-4 bg-[var(--green)] text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-[var(--green2)] transition-all shadow-2xl shadow-[var(--green)]/20 hover:scale-105 active:scale-95 italic">
-                                Inscription
+                            <Link href="/register" className="px-8 py-4 bg-[var(--green)] text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-[var(--green2)] transition-all shadow-2xl shadow-[var(--green)]/20 hover:scale-105 active:scale-95 italic">
+                                Sign Up
                             </Link>
                         </div>
                     </nav>

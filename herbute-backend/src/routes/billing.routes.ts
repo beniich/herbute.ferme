@@ -29,10 +29,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_to
   apiVersion: '2024-06-20' as any,
 });
 
-// Correspondance plan → Stripe Price ID
+// Correspondance plan → Stripe Price ID (live keys from dashboard)
 const PRICE_IDS: Record<string, string> = {
-  essentiel:     process.env.STRIPE_PRICE_ESSENTIEL     || '',
-  professionnel: process.env.STRIPE_PRICE_PROFESSIONNEL || '',
+  essentiel:     process.env.STRIPE_PRICE_ESSENTIEL     || 'price_1T8trbAH6SDHg3NzbMzHVHQy',
+  professionnel: process.env.STRIPE_PRICE_PROFESSIONNEL || 'price_1T8tsLAH6SDHg3NzSBsohTjr',
+  business:      process.env.STRIPE_PRICE_BUSINESS      || 'price_1T8tsLAH6SDHg3NzSBsohTjr',
 };
 
 const PLAN_AMOUNTS: Record<string, number> = {

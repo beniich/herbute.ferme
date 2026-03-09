@@ -7,6 +7,9 @@ const intlMiddleware = createMiddleware(routing);
 // Routes publiques (accessibles sans être connecté)
 const publicRoutes = ['/login', '/register', '/forgot-password', '/'];
 
+const SUPPORTED_LOCALES = ['en', 'fr', 'ar', 'es', 'pt', 'de', 'tr'];
+const LOCALE_REGEX = new RegExp(`^/(${SUPPORTED_LOCALES.join('|')})`);
+
 // Décode le payload JWT sans vérification de signature (edge runtime safe)
 function parseJwtPayload(token: string): Record<string, any> | null {
     try {
@@ -29,10 +32,10 @@ export default function middleware(request: NextRequest) {
 
     // Extraire la locale depuis l'URL
     const pathLocale = pathname.split('/')[1];
-    const locale = ['fr', 'en'].includes(pathLocale) ? pathLocale : 'en';
+    const locale = SUPPORTED_LOCALES.includes(pathLocale) ? pathLocale : 'en';
 
     // Chemin sans locale pour la comparaison
-    const pathWithoutLocale = pathname.replace(/^\/(fr|en)/, '') || '/';
+    const pathWithoutLocale = pathname.replace(LOCALE_REGEX, '') || '/';
 
     const isPublicRoute = publicRoutes.some(route =>
         pathWithoutLocale === route || pathWithoutLocale.startsWith(route + '/')
@@ -72,6 +75,7 @@ export const config = {
     matcher: [
         '/((?!api|_next|_vercel|.*\\..*).*)',
         '/',
-        '/(fr|en)/:path*'
+        '/(en|fr|ar|es|pt|de|tr)/:path*'
     ]
 };
+
