@@ -34,15 +34,58 @@ export class AIService {
   }
 
   public async generatePrediction(domainId: string, type: 'yield' | 'disease' | 'weather_impact', target: string) {
-    const mockData = this.getMockPredictionData(type, target);
+    let predictionData;
+    let confidence = 85 + Math.random() * 10;
+    let modelUsed = 'agromaitre-mock-v1';
+
+    try {
+      const IA_URL = process.env.INTERNAL_IA_URL || 'http://localhost:5001';
+      // Import axios locally to avoid affecting top-level imports if not needed, or assume it's available.
+      // But we should use typical dynamic import or global fetch to avoid requiring 'axios' if it's not in package.json.
+      
+      const payload = {
+        parcel: {
+            _id: target,
+            cropType: target,
+            cropStage: "development"
+        },
+        weather: {
+            temperature: type === 'weather_impact' ? 35 : 25,
+            daysNoRain: type === 'weather_impact' ? 14 : 3
+        }
+      };
+
+      const response = await fetch(`${IA_URL}/analyze/full`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Python service returned ${response.status}`);
+      }
+
+      const result = await response.json();
+      predictionData = result;
+      confidence = 94.5;
+      modelUsed = 'agromaitre-python-v1';
+
+    } catch (err) {
+      console.warn('⚠️ Python IA service unreachable, falling back to mock data:', err);
+      // Fallback to static mock data if python container is off
+      predictionData = this.getMockPredictionData(type, target);
+      modelUsed = 'agromaitre-fallback-mock';
+    }
     
     const prediction = new AIPrediction({
       domainId,
       type,
       target,
-      predictionData: mockData,
-      confidence: 85 + Math.random() * 10, // 85-95%
-      modelUsed: 'agromaitre-vision-v1',
+      predictionData,
+      confidence,
+      modelUsed,
     });
 
     await prediction.save();
@@ -63,7 +106,7 @@ export class AIService {
     return "Je suis à votre disposition pour vous aider dans la gestion de votre exploitation agricole. Que puis-je faire pour vous aujourd'hui ?";
   }
 
-  private getMockPredictionData(type: string, target: string) {
+  private getMockPredictionData(type: string, _target: string) {
     switch (type) {
       case 'yield':
         return {

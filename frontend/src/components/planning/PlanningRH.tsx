@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { KanbanBoard } from './KanbanBoard';
 import { Calendar, LayoutGrid, Loader2 } from 'lucide-react';
+import { apiClient } from '@/lib/api';
 
 const InterventionCalendar = dynamic(
     () => import('./InterventionCalendar').then((mod) => mod.InterventionCalendar),
@@ -22,17 +23,11 @@ export const PlanningRH: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const headers = { Authorization: `Bearer ${token}` };
-
-            // Fetch events and teams in parallel
-            const [eventsRes, teamsRes] = await Promise.all([
-                fetch('/api/calendar/events', { headers }),
-                fetch('/api/agro-teams', { headers })
+            // Fetch events and teams using apiClient
+            const [eventsData, teamsData] = await Promise.all([
+                apiClient.get('/api/calendar/events'),
+                apiClient.get('/api/agro-teams')
             ]);
-
-            const eventsData = await eventsRes.json();
-            const teamsData = await teamsRes.json();
 
             // Format teams for the calendar
             const formattedTeams = (teamsData.teams || []).map((t: any) => ({

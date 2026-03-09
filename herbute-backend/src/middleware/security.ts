@@ -79,9 +79,15 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
       decoded.id = decoded.sub;
     }
     
-    // Normalize Org ID (org -> orgId)
+    // Normalize Org ID — ensure both organizationId and orgId are populated
     if (decoded.org && !decoded.orgId) {
       decoded.orgId = decoded.org;
+    }
+    if (decoded.organizationId && !decoded.orgId) {
+      decoded.orgId = decoded.organizationId;
+    }
+    if (decoded.orgId && !decoded.organizationId) {
+      decoded.organizationId = decoded.orgId;
     }
 
     req.user = decoded;

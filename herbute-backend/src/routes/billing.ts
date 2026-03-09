@@ -2,10 +2,12 @@
  * routes/billing.ts
  * Stripe billing integration.
  *
- * POST /api/billing/webhook          â†’ Stripe webhook (signature verified, no fallback)
- * POST /api/billing/create-checkout  â†’ Create Stripe checkout session
- * GET  /api/billing/subscription     â†’ Get current org subscription
- * POST /api/billing/cancel           â†’ Cancel subscription
+ * GET  /api/billing/plans             → Available subscription plans
+ * POST /api/billing/webhook           → Stripe webhook (signature verified, no fallback)
+ * POST /api/billing/create-checkout   → Create Stripe checkout session
+ * GET  /api/billing/subscription      → Get current org subscription
+ * POST /api/billing/cancel            → Cancel subscription (at period end)
+ * POST /api/billing/mock-checkout     → Dev mode upgrade without Stripe
  */
 import { Router, Request, Response, raw } from 'express';
 import Stripe from 'stripe';
@@ -15,7 +17,8 @@ import { globalLimiter } from '../middleware/rateLimiters.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
 import { User } from '../models/user.model.js';
-import { AppError, NotFoundAppError } from '../utils/AppError.js';
+import { Organization } from '../models/Organization.js';
+import { AppError } from '../utils/AppError.js';
 import { Subscription, PLAN_FEATURES, PLAN_MAX_USERS } from '../models/Subscription.js';
 import logger from '../utils/logger.js';
 
@@ -26,14 +29,56 @@ const stripe = new Stripe(stripeApiKey, {
   apiVersion: '2023-10-16' as any,
 });
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ─── Helper: get orgId from request user ─────────────────────────────────────
+function getOrgId(req: Request): string | undefined {
+  const user = (req as any).user;
+  return user?.organizationId || user?.orgId || user?.org;
+}
+
+/* ── GET /api/billing/plans ─────────────────────────────────────────────────── */
+// Returns the plan catalogue – used by the frontend pricing page (no auth required)
+router.get('/plans', asyncHandler(async (_req: Request, res: Response) => {
+  const plans = [
+    {
+      id: 'starter',
+      name: 'Essentiel',
+      priceMonthly: 290,
+      priceYearly: 232,   // ~20% discount
+      currency: 'MAD',
+      maxUsers: PLAN_MAX_USERS.starter,
+      features: PLAN_FEATURES.starter,
+    },
+    {
+      id: 'pro',
+      name: 'Professionnel',
+      priceMonthly: 990,
+      priceYearly: 792,
+      currency: 'MAD',
+      maxUsers: PLAN_MAX_USERS.pro,
+      features: PLAN_FEATURES.pro,
+      popular: true,
+    },
+    {
+      id: 'enterprise',
+      name: 'Sur Mesure',
+      priceMonthly: null, // Contact sales
+      priceYearly: null,
+      currency: 'MAD',
+      maxUsers: PLAN_MAX_USERS.enterprise,
+      features: PLAN_FEATURES.enterprise,
+    },
+  ];
+  return sendSuccess(res, plans, 200);
+}));
+
+/* ══════════════════════════════════════════════════════════════════════════════
    POST /api/billing/webhook
-   MUST use raw body â€” express.json() breaks Stripe signature
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   MUST use raw body – express.json() breaks Stripe signature
+══════════════════════════════════════════════════════════════════════════════ */
 router.post(
   '/webhook',
   globalLimiter as any,
-  raw({ type: 'application/json' }), // raw body for signature verification
+  raw({ type: 'application/json' }),
   asyncHandler(async (req: Request, res: Response) => {
     const sig = req.headers['stripe-signature'];
 
@@ -44,7 +89,6 @@ router.post(
 
     let event: Stripe.Event;
     try {
-      // Signature verification â€” NO fallback. Fail hard if invalid.
       event = stripe.webhooks.constructEvent(
         req.body,
         sig,
@@ -60,7 +104,7 @@ router.post(
 
     logger.info('[billing] Webhook received', { requestId: req.id, type: event.type, id: event.id });
 
-    // Handle checkout session completed â€” provision subscription
+    // Handle checkout session completed – provision subscription
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
       const orgId = session.metadata?.orgId;
@@ -69,7 +113,6 @@ router.post(
       if (orgId && session.subscription && session.customer) {
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string) as any;
 
-        // Use dynamic price from DB/metadata â€” NOT hardcoded
         await Subscription.findOneAndUpdate(
           { orgId },
           {
@@ -87,6 +130,12 @@ router.post(
           { upsert: true, new: true },
         );
 
+        // Update the owner's plan field on User model
+        const org = await Organization.findById(orgId);
+        if (org?.ownerId) {
+          await User.findByIdAndUpdate(org.ownerId, { plan });
+        }
+
         logger.info('[billing] Subscription provisioned', { orgId, plan, requestId: req.id });
       }
     } else {
@@ -98,52 +147,69 @@ router.post(
   }),
 );
 
-/* â”€â”€ POST /api/billing/create-checkout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── POST /api/billing/create-checkout ──────────────────────────────────────── */
 router.post(
   '/create-checkout',
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
-    const { plan, successUrl, cancelUrl } = req.body;
+    // Accept both { plan } and legacy { planId } from stripeStore
+    const planRaw = (req.body.plan || req.body.planId || 'starter') as string;
+    const interval: 'month' | 'year' = req.body.interval === 'year' ? 'year' : 'month';
+    const { successUrl, cancelUrl } = req.body;
+
+    // Normalize legacy name 'professional' → 'pro'
+    const plan = planRaw === 'professional' ? 'pro' : planRaw;
 
     if (!['starter', 'pro', 'enterprise'].includes(plan)) {
-      throw new AppError('Invalid plan', 400, 'BILLING_INVALID_PLAN');
+      throw new AppError('Plan invalide', 400, 'BILLING_INVALID_PLAN');
     }
 
-    // Fetch price from Stripe dynamically by plan metadata â€” no hardcoded price IDs
-    const prices = await stripe.prices.list({
-      active: true,
-      expand: ['data.product'],
+    const orgId = getOrgId(req);
+    if (!orgId) {
+      throw new AppError('Organisation introuvable pour cet utilisateur', 400, 'NO_ORG');
+    }
+
+    // Fetch price from Stripe dynamically by plan metadata – no hardcoded price IDs
+    const prices = await stripe.prices.list({ active: true, expand: ['data.product'] });
+
+    const price = prices.data.find(p => {
+      const product = p.product as Stripe.Product;
+      return (
+        product.metadata?.plan === plan &&
+        p.recurring?.interval === interval
+      );
     });
 
-    const price = prices.data.find(
-      p => (p.product as Stripe.Product).metadata?.plan === plan,
-    );
-
     if (!price) {
-      throw new AppError(`No active price found for plan: ${plan}`, 404, 'BILLING_PRICE_NOT_FOUND');
+      throw new AppError(
+        `Aucun tarif actif pour le plan "${plan}" (${interval})`,
+        404,
+        'BILLING_PRICE_NOT_FOUND',
+      );
     }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{ price: price.id as string, quantity: 1 }],
-      success_url: successUrl || `${process.env.FRONTEND_URL}/billing/success`,
-      cancel_url: cancelUrl || `${process.env.FRONTEND_URL}/billing/cancel`,
-      metadata: {
-        orgId: req.user!.orgId,
-        plan,
-      },
+      success_url: successUrl || `${process.env.FRONTEND_URL}/checkout/success`,
+      cancel_url: cancelUrl || `${process.env.FRONTEND_URL}/pricing`,
+      metadata: { orgId, plan },
     } as any);
 
     return sendSuccess(res, { url: session.url }, 200, req.id);
   }),
 );
 
-/* â”€â”€ GET /api/billing/subscription â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── GET /api/billing/subscription ─────────────────────────────────────────── */
 router.get(
   '/subscription',
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
-    const subscription = await subscriptionService.getSubscription(req.user!.orgId as string);
+    const orgId = getOrgId(req);
+    if (!orgId) {
+      return sendSuccess(res, { plan: 'starter', status: 'none', features: PLAN_FEATURES.starter }, 200, req.id);
+    }
+    const subscription = await subscriptionService.getSubscription(orgId);
     if (!subscription) {
       return sendSuccess(
         res,
@@ -156,43 +222,26 @@ router.get(
   }),
 );
 
-/* ── POST /api/billing/mock-checkout ────────────────────────── */
-// Route to manually upgrade the organization to Enterprise plan without real Stripe payments
+/* ── POST /api/billing/cancel ───────────────────────────────────────────────── */
+// Cancels at period end (not immediately)
 router.post(
-  '/mock-checkout',
+  '/cancel',
   authenticate,
-  asyncHandler(async (req: any, res: Response) => {
-    const orgId = req.user!.organizationId || req.user!.orgId;
+  asyncHandler(async (req: Request, res: Response) => {
+    const orgId = getOrgId(req);
+    if (!orgId) throw new AppError('Organisation introuvable', 400, 'NO_ORG');
 
-    if (!orgId) {
-      throw new AppError('No organization found for this user', 400, 'NO_ORG');
+    const sub = await subscriptionService.getSubscription(orgId);
+    if (!sub?.stripeSubscriptionId) {
+      throw new AppError('Aucun abonnement Stripe actif trouvé', 404, 'NO_SUBSCRIPTION');
     }
 
-    const plan = 'enterprise';
+    await stripe.subscriptions.update(sub.stripeSubscriptionId, {
+      cancel_at_period_end: true,
+    });
 
-    // 1. Update the Subscription collection
-    await Subscription.findOneAndUpdate(
-      { orgId },
-      {
-        orgId,
-        plan,
-        status: 'active',
-        stripeSubscriptionId: 'mock_sub_12345',
-        stripePriceId: 'mock_price_12345',
-        stripeCustomerId: 'mock_cus_12345',
-        maxUsers: PLAN_MAX_USERS[plan],
-        features: PLAN_FEATURES[plan],
-        currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-        cancelAtPeriodEnd: false,
-      },
-      { upsert: true, new: true }
-    );
-
-    // 2. Update User Plan
-    await User.findByIdAndUpdate(req.user!.id || req.user!._id, { plan: 'entreprise' });
-
-    return sendSuccess(res, { message: 'Plan upgraded to Enterprise (Mock mode)', plan: 'enterprise' }, 200, req.id);
-  })
+    return sendSuccess(res, { message: 'Abonnement annulé à la fin de la période en cours.' }, 200, req.id);
+  }),
 );
 
 export default router;

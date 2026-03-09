@@ -41,7 +41,7 @@ export interface IInventoryItem extends Document {
   expiryDate?: Date;
   serialNumber?: string;
   photos?: string[];
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
 }
 
@@ -141,9 +141,9 @@ const inventoryItemSchema = new Schema<IInventoryItem>(
     expiryDate: Date,
     serialNumber: String,
     photos: [String],
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {

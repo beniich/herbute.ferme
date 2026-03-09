@@ -17,7 +17,7 @@ export interface IAttendance extends Document {
     checkIn: { lat: number; lng: number };
     checkOut: { lat: number; lng: number };
   };
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,9 +72,9 @@ const attendanceSchema = new Schema<IAttendance>(
         lng: Number,
       },
     },
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
   },
@@ -85,6 +85,6 @@ const attendanceSchema = new Schema<IAttendance>(
 
 // Indexes
 attendanceSchema.index({ worker: 1, date: 1 }, { unique: true });
-attendanceSchema.index({ domain: 1, date: 1 });
+attendanceSchema.index({ organizationId: 1, date: 1 });
 
 export default mongoose.models.Attendance || mongoose.model<IAttendance>('Attendance', attendanceSchema);

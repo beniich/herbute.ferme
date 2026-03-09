@@ -12,6 +12,7 @@ import { FarmKPI, FarmTransaction } from '../modules/agro/finance.model.js';
 import { IrrigationLog } from '../modules/agro/irrigation.model.js';
 import ITAsset from '../models/ITAsset.js';
 import ITTicket from '../models/ITTicket.js';
+import KnowledgeArticle from '../models/KnowledgeArticle.js';
 import bcrypt from 'bcryptjs';
 import { logger } from '../utils/logger.js';
 
@@ -39,7 +40,8 @@ const seedDatabase = async () => {
             FarmTransaction.deleteMany({}),
             IrrigationLog.deleteMany({}),
             ITAsset.deleteMany({}),
-            ITTicket.deleteMany({})
+            ITTicket.deleteMany({}),
+            KnowledgeArticle.deleteMany({})
         ]);
 
         // Hash password
@@ -64,6 +66,10 @@ const seedDatabase = async () => {
                 status: 'ACTIVE'
             }
         });
+        
+        // Update Admin with OrganizationId
+        admin.organizationId = org._id;
+        await admin.save();
 
         await Membership.create({
             userId: admin._id,
@@ -148,6 +154,32 @@ const seedDatabase = async () => {
         ]);
 
         logger.info('💻 Seeding IT/GLPI: OK');
+
+        // --- SEED KNOWLEDGE BASE ---
+        await KnowledgeArticle.create([
+            {
+                title: 'Guide d\'irrigation du Menthe Nanah',
+                slug: 'guide-irrigation-menthe-nanah',
+                content: 'La menthe Nanah nécessite une irrigation régulière par goutte-à-goutte. Il est recommandé d\'arroser le matin tôt pour éviter l\'évaporation excessive...',
+                category: 'guide',
+                tags: ['Irrigation', 'Menthe', 'Guide'],
+                author: admin._id,
+                status: 'published',
+                organizationId: org._id
+            },
+            {
+                title: 'Protocole de vaccination Bovins',
+                slug: 'protocole-vaccination-bovins',
+                content: 'Le calendrier de vaccination pour les vaches Holstein doit être suivi rigoureusement. Les vaccins contre la fièvre aphteuse sont prioritaires...',
+                category: 'procedure',
+                tags: ['Santé', 'Vaches', 'Vaccination'],
+                author: admin._id,
+                status: 'published',
+                organizationId: org._id
+            }
+        ]);
+
+        logger.info('📚 Seeding Knowledge Base: OK');
 
         process.exit(0);
     } catch (error) {

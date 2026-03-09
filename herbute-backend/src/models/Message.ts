@@ -1,6 +1,7 @@
 ﻿import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IMessage extends Document {
+    organizationId: mongoose.Types.ObjectId;
     senderId: mongoose.Types.ObjectId; // ou "system"
     senderName: string;
     recipientId?: mongoose.Types.ObjectId;
@@ -12,6 +13,7 @@ export interface IMessage extends Document {
 }
 
 const MessageSchema = new Schema({
+    organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
     senderId: { type: Schema.Types.Mixed, required: true }, // ObjectId ou String ("system")
     senderName: { type: String, required: true },
     recipientId: { type: Schema.Types.ObjectId, ref: 'User' },

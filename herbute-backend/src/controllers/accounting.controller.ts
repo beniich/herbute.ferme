@@ -4,9 +4,9 @@ import mongoose from 'mongoose';
 import AccountingEntry from '../models/AccountingEntry.js';
 import { reportGenerator } from '../services/reportGenerator.js';
 
-// Helper: resolve the organization/domain ID from the request user
-function getDomainId(req: any): mongoose.Types.ObjectId | null {
-  const id = req.user?.organizationId || req.user?.domain;
+// Helper: resolve the organization ID from the request user
+function getOrgId(req: any): mongoose.Types.ObjectId | null {
+  const id = req.user?.orgId || req.user?.organizationId || req.user?.domain;
   if (!id) return null;
   try {
     return new mongoose.Types.ObjectId(id);
@@ -17,8 +17,8 @@ function getDomainId(req: any): mongoose.Types.ObjectId | null {
 
 export const getEntries = async (req: any, res: Response) => {
   try {
-    const domainId = getDomainId(req);
-    if (!domainId) return res.status(400).json({ success: false, message: 'Organization non définie' });
+    const orgId = getOrgId(req);
+    if (!orgId) return res.status(400).json({ success: false, message: 'Organization non définie' });
 
     const {
       fiscalYear,
@@ -30,7 +30,7 @@ export const getEntries = async (req: any, res: Response) => {
       endDate,
     } = req.query;
 
-    const query: any = { domain: domainId };
+    const query: any = { organizationId: orgId };
 
     if (fiscalYear) query.fiscalYear = parseInt(fiscalYear as string);
     if (fiscalPeriod) query.fiscalPeriod = parseInt(fiscalPeriod as string);
@@ -63,15 +63,15 @@ export const getEntries = async (req: any, res: Response) => {
 
 export const createEntry = async (req: any, res: Response) => {
   try {
-    const domainId = getDomainId(req);
-    if (!domainId) return res.status(400).json({ success: false, message: 'Organization non définie' });
+    const orgId = getOrgId(req);
+    if (!orgId) return res.status(400).json({ success: false, message: 'Organization non définie' });
 
     const date = req.body.date ? new Date(req.body.date) : new Date();
     const year = date.getFullYear();
 
     // Generate reference
     const count = await AccountingEntry.countDocuments({
-      domain: domainId,
+      organizationId: orgId,
       fiscalYear: year,
     });
     const reference = `REF-${year}-${String(count + 1).padStart(4, '0')}`;
@@ -80,7 +80,7 @@ export const createEntry = async (req: any, res: Response) => {
       ...req.body,
       date,
       reference,
-      domain: domainId,
+      organizationId: orgId,
       createdBy: req.user.userId || req.user.id,
       fiscalYear: year,
       fiscalPeriod: date.getMonth() + 1,
@@ -137,14 +137,14 @@ export const getGeneralLedger = async (req: any, res: Response) => {
 
 export const downloadBalanceSheet = async (req: any, res: Response) => {
     try {
-        const domainId = getDomainId(req);
-        if (!domainId) return res.status(400).json({ success: false, message: 'Organization non définie' });
+        const orgId = getOrgId(req);
+        if (!orgId) return res.status(400).json({ success: false, message: 'Organization non définie' });
 
         const { fiscalYear } = req.query;
         const year = parseInt(fiscalYear as string) || new Date().getFullYear();
 
         const entries = await AccountingEntry.find({
-            domain: domainId,
+            organizationId: orgId,
             fiscalYear: year,
             status: 'validated',
         });
@@ -201,8 +201,8 @@ export const getStats = async (req: any, res: Response) => {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-    // If no domain, return empty stats instead of crashing
-    if (!domainId) {
+    // If no org, return empty stats instead of crashing
+    if (!orgId) {
       return res.json({
         success: true,
         month: { income: 0, expense: 0, balance: 0 },

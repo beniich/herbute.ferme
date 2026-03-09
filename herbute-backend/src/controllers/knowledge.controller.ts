@@ -6,7 +6,7 @@ import slugify from 'slugify';
 export const getArticles = async (req: any, res: Response) => {
   try {
     const { category, search, status } = req.query;
-    const query: any = { domain: req.user.domain };
+    const query: any = { organizationId: req.user.orgId || req.user.organizationId };
 
     if (category) query.category = category;
     if (status) query.status = status;
@@ -32,7 +32,7 @@ export const createArticle = async (req: any, res: Response) => {
     const article = await KnowledgeArticle.create({
       ...req.body,
       slug,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       author: req.user.id,
     });
     res.status(201).json({ success: true, article });
@@ -44,7 +44,8 @@ export const createArticle = async (req: any, res: Response) => {
 export const getArticleBySlug = async (req: any, res: Response) => {
   try {
     const { slug } = req.params;
-    const article = await KnowledgeArticle.findOne({ slug, domain: req.user.domain })
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const article = await KnowledgeArticle.findOne({ slug, organizationId })
       .populate('author', 'firstName lastName')
       .populate('relatedArticles', 'title slug');
 

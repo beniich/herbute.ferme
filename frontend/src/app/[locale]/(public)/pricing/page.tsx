@@ -39,7 +39,7 @@ export default function PricingPage() {
             popular: false
         },
         {
-            id: "professional",
+            id: "pro",
             name: "Professionnel",
             price: isYearly ? "790" : "990",
             description: "Pour une gestion optimisée de moyennes et grandes exploitations.",

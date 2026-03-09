@@ -11,6 +11,8 @@ import {
   ArrowUpCircle,
   ArrowDownCircle,
 } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 export const InventoryManagement: React.FC = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -29,17 +31,21 @@ export const InventoryManagement: React.FC = () => {
 
   const fetchInventory = async () => {
     try {
-      const response = await fetch('/api/inventory', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
-      setItems(data.items || []);
-      calculateStats(data.items || []);
+      const data = await apiClient.get('/api/inventory');
+      if (data) {
+        const inventoryItems = Array.isArray(data) ? data : data.items || [];
+        setItems(inventoryItems);
+        calculateStats(inventoryItems);
+      }
     } catch (error) {
       console.error('Error fetching inventory:', error);
+      toast.error("Impossible de charger l'inventaire");
     }
+  };
+
+  const handleAddArticle = () => {
+    toast.success("Ouverture du formulaire d'ajout d'article...");
+    // TODO: Implémenter le modal ou la navigation
   };
 
   const calculateStats = (items: any[]) => {
@@ -174,7 +180,10 @@ export const InventoryManagement: React.FC = () => {
               Export
             </button>
 
-            <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors">
+            <button 
+              onClick={handleAddArticle}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+            >
               <Plus size={20} />
               Ajouter Article
             </button>

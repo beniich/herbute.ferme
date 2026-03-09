@@ -9,28 +9,37 @@ const router = Router();
 router.get('/', auth, async (req: any, res: Response) => {
     try {
         const userId = req.user.id;
+        const orgId = req.user.organizationId;
         const { type, unreadOnly } = req.query;
 
+        if (!orgId) {
+            return res.status(400).json({ success: false, message: 'Organisation requise' });
+        }
+
         const query: any = {
+            organizationId: orgId,
             $or: [
                 { recipientId: userId },
                 { senderId: userId },
                 { groupId: 'general' }
-                // TODO: Ajouter logique pour les groupes d'équipe (ex: team-1) si stocké dans User
             ]
         };
 
         if (type) query.type = type;
         if (unreadOnly === 'true') {
             query.read = false;
-            query.recipientId = userId; // Uniquement mes messages non lus
+            query.recipientId = userId;
         }
 
         const messages = await Message.find(query)
             .sort({ createdAt: -1 })
-            .limit(100); // Limiter aux 100 derniers
+            .limit(100);
 
-        const unreadCount = await Message.countDocuments({ recipientId: userId, read: false });
+        const unreadCount = await Message.countDocuments({ 
+            organizationId: orgId,
+            recipientId: userId, 
+            read: false 
+        });
 
         res.json({
             success: true,
@@ -49,12 +58,18 @@ router.post('/', auth, async (req: any, res: Response) => {
         const { recipientId, groupId, content, type } = req.body;
         const senderId = req.user.id;
         const senderName = req.user.name;
+        const organizationId = req.user.organizationId;
+
+        if (!organizationId) {
+            return res.status(400).json({ success: false, message: 'Organisation requise' });
+        }
 
         if (!content) {
             return res.status(400).json({ success: false, message: 'Contenu requis' });
         }
 
         const newMessage = new Message({
+            organizationId,
             senderId,
             senderName,
             recipientId,

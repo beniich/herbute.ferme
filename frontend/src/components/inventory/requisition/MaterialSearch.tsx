@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Package, DollarSign, Warehouse } from 'lucide-react';
+import { Search, Package, DollarSign, Warehouse, Loader2 } from 'lucide-react';
 import { Material } from '@/types/material-requisition';
-import { searchMaterials } from '@/lib/inventory/mockData';
+import { apiHelpers } from '@/lib/api';
 import { formatCurrency, cn } from '@/lib/inventory/utils';
 
 interface MaterialSearchProps {
@@ -18,20 +18,57 @@ export const MaterialSearch: React.FC<MaterialSearchProps> = ({
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Material[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (query.length >= 2) {
-            const filtered = searchMaterials(query).filter(
-                m => !excludeIds.includes(m.id)
-            );
-            setResults(filtered);
-            setIsOpen(filtered.length > 0);
-        } else {
-            setResults([]);
-            setIsOpen(false);
-        }
+        const fetchMaterials = async () => {
+            if (query.length >= 2) {
+                setIsLoading(true);
+                try {
+                    // Adapt query logic depending on how the backend handles search terms
+                    const response = await apiHelpers.agroInventory.getAll({ search: query, limit: 10 });
+                    
+                    // The backend returns an array of IInventoryItem or a paginated response.
+                    // Assuming standard behavior where data is either the array or `{ items: [] }`
+                    const items = Array.isArray(response) ? response : (response?.data || response?.items || []);
+                    
+                    // Map backend schema (code -> sku, quantity -> currentStock, minQuantity -> minStockLevel)
+                    const mappedMaterials = items.map((item: any) => ({
+                        id: item._id || item.id,
+                        sku: item.code || item.sku || 'N/A',
+                        name: item.name,
+                        category: item.category || 'N/A',
+                        unit: item.unit || 'unit',
+                        currentStock: item.quantity || 0,
+                        unitPrice: item.unitPrice || 0,
+                        preferredSupplier: item.supplier || '',
+                        imageUrl: item.photos?.[0],
+                        description: item.description,
+                        minStockLevel: item.minQuantity || 0,
+                        reorderTime: 7 // Default if missing
+                    }));
+
+                    const filtered = mappedMaterials.filter(
+                        (m: Material) => !excludeIds.includes(m.id)
+                    );
+                    setResults(filtered);
+                    setIsOpen(filtered.length > 0);
+                } catch (error) {
+                    console.error('Error fetching materials:', error);
+                    setResults([]);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                setResults([]);
+                setIsOpen(false);
+            }
+        };
+
+        const timer = setTimeout(fetchMaterials, 300); // Debounce
+        return () => clearTimeout(timer);
     }, [query, excludeIds]);
 
     useEffect(() => {

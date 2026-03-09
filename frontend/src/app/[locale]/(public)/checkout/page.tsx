@@ -26,9 +26,18 @@ export default function CheckoutPage() {
     const handleCheckout = async () => {
         try {
             setLoading(true);
-            await authApi.mockUpgradePlan();
-            toast.success('Paiement validé. Votre domaine est maintenant en formule Pro Écosystème !');
-            router.push('/checkout/success');
+            const { apiHelpers } = await import('@/lib/api');
+            const data = await apiHelpers.billing.createCheckout({ 
+                plan: 'pro', 
+                interval: 'year' 
+            });
+
+            if (data && data.url) {
+                window.location.href = data.url; // Redirection vers Stripe
+            } else {
+                toast.success('Paiement initié avec succès.');
+                router.push('/checkout/success');
+            }
         } catch (error) {
             console.error('Erreur lors du paiement:', error);
             toast.error('Une erreur est survenue lors du paiement.');

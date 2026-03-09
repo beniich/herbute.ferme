@@ -16,10 +16,15 @@ export const connectDB = async (): Promise<void> => {
       maxPoolSize:               10,      // Max connexions dans le pool
       minPoolSize:               5,       // Connexions maintenues actives
       maxIdleTimeMS:             45_000,  // Fermer les connexions inactives > 45s
-      serverSelectionTimeoutMS:  5_000,   // Timeout sélection serveur
+      serverSelectionTimeoutMS:  10_000,  // Augmenté à 10s pour plus de marge
       socketTimeoutMS:           45_000,  // Timeout socket
       retryWrites:               true,
       retryReads:                true,
+      serverApi: {
+        version:           '1' as any,
+        strict:            true,
+        deprecationErrors: true,
+      }
     });
     logger.info('✅ MongoDB connecté (pool: 5–10 connexions)');
   } catch (err) {

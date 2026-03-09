@@ -231,19 +231,4 @@ services:
       mongo: { condition: service_healthy }
       mqtt:  { condition: service_healthy }
 
-  # ── 9. IOT SIMULATOR (dev seulement) ─────────────────────
-  iot-simulator:
-    build:
-      context: ./backend-ia
-      dockerfile: Dockerfile.simulator
-    container_name: herbute-iot-sim
-    restart: unless-stopped
-    environment:
-      MQTT_HOST: mqtt
-      MQTT_PORT: 1883
-      MQTT_USER: ${MQTT_USER:-herbute}
-      MQTT_PASS: ${MQTT_PASS:-herbute2025}
-    networks:
-      - herbute-net
-    depends_on: [mqtt]
-    profiles: [dev]   # docker compose --profile dev up
+

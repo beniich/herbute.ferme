@@ -4,7 +4,8 @@ import Task from '../models/Task.js';
 export const getTasks = async (req: any, res: Response) => {
   try {
     const { status, priority, type } = req.query;
-    const query: any = { domain: req.user.domain };
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const query: any = { organizationId };
 
     if (status) query.status = status;
     if (priority) query.priority = priority;
@@ -24,7 +25,8 @@ export const getTasks = async (req: any, res: Response) => {
 
 export const getTaskById = async (req: any, res: Response) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, domain: req.user.domain })
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const task = await Task.findOne({ _id: req.params.id, organizationId })
       .populate('assignedTo', 'firstName lastName')
       .populate('team')
       .populate('plot')
@@ -40,7 +42,8 @@ export const getTaskById = async (req: any, res: Response) => {
 
 export const createTask = async (req: any, res: Response) => {
   try {
-    const taskData = { ...req.body, domain: req.user.domain, createdBy: req.user.id };
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const taskData = { ...req.body, organizationId, createdBy: req.user.id };
     const task = await Task.create(taskData);
     res.status(201).json({ success: true, task, message: 'Task created' });
   } catch (error: any) {
@@ -50,8 +53,9 @@ export const createTask = async (req: any, res: Response) => {
 
 export const updateTask = async (req: any, res: Response) => {
   try {
+    const organizationId = req.user.orgId || req.user.organizationId;
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, domain: req.user.domain },
+      { _id: req.params.id, organizationId },
       req.body,
       { new: true, runValidators: true }
     );
@@ -64,7 +68,8 @@ export const updateTask = async (req: any, res: Response) => {
 
 export const deleteTask = async (req: any, res: Response) => {
   try {
-    const task = await Task.findOneAndDelete({ _id: req.params.id, domain: req.user.domain });
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const task = await Task.findOneAndDelete({ _id: req.params.id, organizationId });
     if (!task) return res.status(404).json({ success: false, message: 'Task not found' });
     res.json({ success: true, message: 'Task deleted' });
   } catch (error: any) {

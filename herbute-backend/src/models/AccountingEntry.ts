@@ -32,7 +32,7 @@ export interface IAccountingEntry extends Document {
   validatedAt?: Date;
   attachments?: string[];
   notes?: string;
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
 }
 
@@ -128,9 +128,9 @@ const accountingEntrySchema = new Schema<IAccountingEntry>(
     validatedAt: Date,
     attachments: [String],
     notes: String,
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {
@@ -145,7 +145,7 @@ const accountingEntrySchema = new Schema<IAccountingEntry>(
 );
 
 // Indexes
-accountingEntrySchema.index({ domain: 1, fiscalYear: 1, fiscalPeriod: 1 });
+accountingEntrySchema.index({ organizationId: 1, fiscalYear: 1, fiscalPeriod: 1 });
 accountingEntrySchema.index({ date: 1 });
 
 // Pre-save hook to calculate balance

@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Users, UserPlus, Filter, ShieldCheck, Activity, Search, Edit2, Trash2 } from 'lucide-react';
+import { Users, UserPlus, Filter, ShieldCheck, Activity, Search, Edit2, Trash2, Plus } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 export default function TeamsManagement() {
   const [teams, setTeams] = useState<any[]>([]);
@@ -18,38 +20,30 @@ export default function TeamsManagement() {
 
   const fetchTeams = async () => {
     try {
-      let qs = '?';
-      if (filters.type) qs += `type=${filters.type}&`;
-      if (filters.status) qs += `status=${filters.status}`;
-
-      const res = await fetch(`http://localhost:4000/api/agro-teams${qs}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setTeams(data.teams);
+      const data = await apiClient.get('/api/agro-teams', { params: filters });
+      if (data) {
+        setTeams(Array.isArray(data) ? data : data.teams || []);
       }
     } catch (err) {
       console.error("Erreur lors de la récupération des équipes", err);
+      toast.error("Impossible de charger les équipes");
     }
   };
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/api/agro-teams/stats/overview`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStats(data.stats);
+      const data = await apiClient.get('/api/agro-teams/stats/overview');
+      if (data) {
+        setStats(data.stats || data);
       }
     } catch (err) {
       console.error("Erreur stats équipes", err);
     }
+  };
+
+  const handleCreateTeam = () => {
+    toast.success("Fonctionnalité en cours de déploiement — Ouverture du formulaire...");
+    // TODO: Ouvrir un modal de création
   };
 
   const getTeamTypeColor = (type: string) => {
@@ -63,7 +57,7 @@ export default function TeamsManagement() {
   };
 
   const filteredTeams = teams.filter(t => 
-    t.name.toLowerCase().includes(search.toLowerCase()) || 
+    t.name?.toLowerCase().includes(search.toLowerCase()) || 
     (t.description && t.description.toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -77,7 +71,10 @@ export default function TeamsManagement() {
           <h1 className="text-2xl font-bold font-inter text-gray-900 dark:text-white">Gestion des Équipes</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Gérez vos équipes d'ouvriers, leurs spécialisations et leurs performances.</p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
+        <button 
+          onClick={handleCreateTeam}
+          className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+        >
           <UserPlus className="w-5 h-5 mr-2" />
           Nouvelle Équipe
         </button>

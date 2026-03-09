@@ -28,7 +28,7 @@ export interface IAgriTeam extends Document {
     breakDuration: number; // minutes
   };
   assignedPlots: mongoose.Types.ObjectId[];
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -124,9 +124,9 @@ const agriTeamSchema = new Schema<IAgriTeam>(
         ref: 'Plot',
       },
     ],
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {
@@ -141,7 +141,7 @@ const agriTeamSchema = new Schema<IAgriTeam>(
 );
 
 // Indexes
-agriTeamSchema.index({ domain: 1, status: 1 });
+agriTeamSchema.index({ organizationId: 1, status: 1 });
 agriTeamSchema.index({ type: 1 });
 
 export default mongoose.models.AgriTeam || mongoose.model<IAgriTeam>('AgriTeam', agriTeamSchema);

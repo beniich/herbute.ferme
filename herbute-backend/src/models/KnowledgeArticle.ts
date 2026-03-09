@@ -26,7 +26,7 @@ export interface IKnowledgeArticle extends Document {
   };
   lastReviewedAt?: Date;
   reviewedBy?: mongoose.Types.ObjectId;
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
 }
 
 const knowledgeArticleSchema = new Schema<IKnowledgeArticle>(
@@ -96,9 +96,9 @@ const knowledgeArticleSchema = new Schema<IKnowledgeArticle>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
   },

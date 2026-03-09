@@ -6,7 +6,7 @@ export const getTeams = async (req: any, res: Response) => {
     const { type, status } = req.query;
 
     const query: any = {
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
     };
 
     if (type) query.type = type;
@@ -33,7 +33,7 @@ export const getTeams = async (req: any, res: Response) => {
 
 export const getTeamById = async (req: any, res: Response) => {
   try {
-    const team = await Team.findOne({ _id: req.params.id, domain: req.user.domain })
+    const team = await Team.findOne({ _id: req.params.id, organizationId: req.user.orgId || req.user.organizationId })
       .populate('leader', 'firstName lastName email phone')
       .populate('members.worker', 'firstName lastName specialization')
       .populate('assignedPlots', 'name surface');
@@ -52,7 +52,7 @@ export const createTeam = async (req: any, res: Response) => {
   try {
     const teamData = {
       ...req.body,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       createdBy: req.user.id,
       currentSize: req.body.members?.length || 0,
     };
@@ -75,7 +75,7 @@ export const createTeam = async (req: any, res: Response) => {
 export const updateTeam = async (req: any, res: Response) => {
   try {
     const team = await Team.findOneAndUpdate(
-      { _id: req.params.id, domain: req.user.domain },
+      { _id: req.params.id, organizationId: req.user.orgId || req.user.organizationId },
       req.body,
       { new: true, runValidators: true }
     );
@@ -92,7 +92,7 @@ export const updateTeam = async (req: any, res: Response) => {
 
 export const deleteTeam = async (req: any, res: Response) => {
   try {
-    const team = await Team.findOneAndDelete({ _id: req.params.id, domain: req.user.domain });
+    const team = await Team.findOneAndDelete({ _id: req.params.id, organizationId: req.user.orgId || req.user.organizationId });
     if (!team) {
       return res.status(404).json({ success: false, message: 'Team not found' });
     }
@@ -110,7 +110,7 @@ export const addMember = async (req: any, res: Response) => {
     const team = await Team.findOneAndUpdate(
       {
         _id: req.params.id,
-        domain: req.user.domain,
+        organizationId: req.user.orgId || req.user.organizationId,
       },
       {
         $push: {
@@ -150,7 +150,7 @@ export const removeMember = async (req: any, res: Response) => {
     const { workerId } = req.params;
     
     const team = await Team.findOneAndUpdate(
-      { _id: req.params.id, domain: req.user.domain },
+      { _id: req.params.id, organizationId: req.user.orgId || req.user.organizationId },
       {
         $pull: { members: { worker: workerId } },
         $inc: { currentSize: -1 },
@@ -169,7 +169,7 @@ export const removeMember = async (req: any, res: Response) => {
 export const updatePerformance = async (req: any, res: Response) => {
   try {
     const team = await Team.findOneAndUpdate(
-      { _id: req.params.id, domain: req.user.domain },
+      { _id: req.params.id, organizationId: req.user.orgId || req.user.organizationId },
       { $set: { performance: req.body, 'performance.lastUpdated': new Date() } },
       { new: true }
     );
@@ -186,7 +186,7 @@ export const getTeamStats = async (req: any, res: Response) => {
   try {
     const stats = await Team.aggregate([
       {
-        $match: { domain: req.user.domain },
+        $match: { organizationId: req.user.orgId || req.user.organizationId },
       },
       {
         $group: {
@@ -200,7 +200,7 @@ export const getTeamStats = async (req: any, res: Response) => {
 
     const typeStats = await Team.aggregate([
       {
-        $match: { domain: req.user.domain },
+        $match: { organizationId: req.user.orgId || req.user.organizationId },
       },
       {
         $group: {

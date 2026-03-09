@@ -94,7 +94,6 @@ export const authApi = {
   me: () => apiClient.get(HERBUTE_ROUTES.auth.me),
   refresh: () => apiClient.post(HERBUTE_ROUTES.auth.refresh),
   googleLogin: (credential: string) => apiClient.post('/api/auth/google', { credential }),
-  mockUpgradePlan: () => apiClient.post('/api/billing/mock-checkout'),
 };
 
 export const organizationsApi = {
@@ -318,7 +317,6 @@ export const apiHelpers = {
   },
   datasources: datasourceHelpers,
   billing: {
-    mockCheckout: () => apiClient.post('/api/billing/mock-checkout'),
     getSubscription: () => apiClient.get('/api/billing/subscription'),
     createCheckout: (data: any) => apiClient.post('/api/billing/create-checkout', data),
     createSubscription: (data: any) => apiClient.post('/api/billing/create-subscription', data),

@@ -1,14 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import api from '../lib/api';
+import { apiClient } from '../lib/api';
 
 interface Plan {
     id: string;
     name: string;
-    price: number;
+    priceMonthly: number | null;
+    priceYearly: number | null;
     currency: string;
-    interval: 'month' | 'year';
+    maxUsers: number;
     features: string[];
+    popular?: boolean;
 }
 
 interface StripeState {
@@ -29,10 +31,12 @@ export const useStripeStore = create<StripeState>()(
             fetchPlans: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await api.get('/billing/plans');
-                    set({ plans: response.data?.data || [] });
+                    const data = await apiClient.get('/api/billing/plans');
+                    // apiClient.get unwraps { success, data } automatically
+                    const plans = Array.isArray(data) ? data : (data?.data ?? []);
+                    set({ plans });
                 } catch (error) {
-                    const message = error instanceof Error ? error.message : 'Failed to fetch plans';
+                    const message = error instanceof Error ? error.message : 'Impossible de charger les plans';
                     set({ error: message });
                 } finally {
                     set({ isLoading: false });
@@ -42,13 +46,16 @@ export const useStripeStore = create<StripeState>()(
             createCheckoutSession: async (planId, interval) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await api.post('/billing/create-checkout-session', { planId, interval });
-                    if (response.data && response.data.url) {
-                        return response.data.url;
-                    }
-                    throw new Error('No checkout URL returned');
+                    // Use /api/billing/create-checkout with { plan, interval }
+                    const data = await apiClient.post('/api/billing/create-checkout', {
+                        plan: planId,
+                        interval,
+                    });
+                    const url = data?.url || data?.data?.url;
+                    if (url) return url;
+                    throw new Error('URL de paiement manquante');
                 } catch (error) {
-                    const message = error instanceof Error ? error.message : 'Failed to initiate checkout';
+                    const message = error instanceof Error ? error.message : 'Impossible de créer la session de paiement';
                     set({ error: message });
                     return null;
                 } finally {
@@ -58,7 +65,7 @@ export const useStripeStore = create<StripeState>()(
         }),
         {
             name: 'stripe-storage',
-            partialize: (state) => ({ plans: state.plans }), // Only persist plans
+            partialize: (state) => ({ plans: state.plans }),
         }
     )
 );

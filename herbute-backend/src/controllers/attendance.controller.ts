@@ -7,7 +7,7 @@ export const getAttendance = async (req: any, res: Response) => {
     const { startDate, endDate, workerId, status } = req.query;
 
     const query: any = {
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
     };
 
     if (startDate && endDate) {
@@ -75,7 +75,7 @@ export const checkIn = async (req: any, res: Response) => {
           checkIn: checkInTime,
           status: isLate ? 'late' : 'present',
           'location.checkIn': location,
-          domain: req.user.domain,
+          organizationId: req.user.orgId || req.user.organizationId,
         },
       },
       {

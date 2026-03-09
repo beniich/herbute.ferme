@@ -8,6 +8,7 @@ export interface IOrganization extends Document {
   settings: {
     theme?: string;
     locale?: string;
+    currency?: string;
     timezone?: string;
     exportStorage?: 'local' | 'google_drive';
     googleDriveFolderId?: string;
@@ -61,9 +62,13 @@ const OrganizationSchema = new Schema<IOrganization>(
         type: String,
         default: 'fr',
       },
+      currency: {
+        type: String,
+        default: 'MAD',
+      },
       timezone: {
         type: String,
-        default: 'Europe/Paris',
+        default: 'Africa/Casablanca',
       },
       exportStorage: {
         type: String,

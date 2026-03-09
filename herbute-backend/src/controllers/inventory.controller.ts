@@ -5,7 +5,8 @@ import InventoryItem from '../models/InventoryItem.js';
 export const getInventory = async (req: any, res: Response) => {
   try {
     const { category, condition, location } = req.query;
-    const query: any = { domain: req.user.domain };
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const query: any = { organizationId };
 
     if (category) query.category = category;
     if (condition) query.condition = condition;
@@ -20,13 +21,14 @@ export const getInventory = async (req: any, res: Response) => {
 
 export const createInventoryItem = async (req: any, res: Response) => {
   try {
-    const count = await InventoryItem.countDocuments({ domain: req.user.domain });
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const count = await InventoryItem.countDocuments({ organizationId });
     const code = `INV-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`;
 
     const item = await InventoryItem.create({
       ...req.body,
       code,
-      domain: req.user.domain,
+      organizationId,
       createdBy: req.user.id,
     });
     res.status(201).json({ success: true, item });
@@ -69,8 +71,9 @@ export const updateMovement = async (req: any, res: Response) => {
 
 export const getLowStockItems = async (req: any, res: Response) => {
   try {
+    const organizationId = req.user.orgId || req.user.organizationId;
     const items = await InventoryItem.find({
-      domain: req.user.domain,
+      organizationId,
       $expr: { $lte: ['$quantity', '$minQuantity'] }
     });
     res.json({ success: true, items });

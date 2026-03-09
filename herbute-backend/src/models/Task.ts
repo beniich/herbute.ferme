@@ -31,7 +31,7 @@ export interface ITask extends Document {
   }>;
   photos?: string[];
   tags: string[];
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
 }
 
@@ -107,9 +107,9 @@ const taskSchema = new Schema<ITask>(
     ],
     photos: [String],
     tags: [String],
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {
@@ -124,7 +124,7 @@ const taskSchema = new Schema<ITask>(
 );
 
 // Indexes
-taskSchema.index({ domain: 1, status: 1 });
+taskSchema.index({ organizationId: 1, status: 1 });
 taskSchema.index({ dueDate: 1 });
 taskSchema.index({ assignedTo: 1 });
 

@@ -27,7 +27,7 @@ export interface IBudget extends Document {
     triggered: boolean;
     date?: Date;
   }>;
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
 }
 
@@ -94,9 +94,9 @@ const budgetSchema = new Schema<IBudget>(
         date: Date,
       },
     ],
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {

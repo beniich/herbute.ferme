@@ -32,27 +32,6 @@ router.post('/create-checkout-session', authenticate, async (req: Request, res: 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
 
-    // En mode test / mock (Puisque vous n'avez pas encore fourni de vraie clé Stripe + Price IDs)
-    // On simule une URL de succès directe si les clés sont factices (commence par sk_test_51Mock)
-    if ((process.env.STRIPE_SECRET_KEY || '').includes('MockStripeKey')) {
-      console.log(`[Stripe Mock] Simulation de paiement pour le plan ${planId}`);
-      
-      // Simulation: on met à jour direct en base de données pour le confort du développement
-      user.plan = planId as any;
-      await user.save();
-      
-      if (user.organizationId) {
-        await Organization.findByIdAndUpdate(user.organizationId, {
-          'subscription.plan': planId.toUpperCase(),
-          'subscription.status': 'ACTIVE',
-        });
-      }
-
-      return res.json({ 
-        url: `${process.env.STRIPE_SUCCESS_URL || 'http://localhost:3000/settings/subscription?success=true'}&mock_plan=${planId}` 
-      });
-    }
-
     // --- VRAIE LOGIQUE STRIPE ---
     // 1. Récupérer ou créer le Stripe Customer
     let customerId = user.stripeCustomerId;
@@ -110,12 +89,10 @@ router.post('/webhook', async (req: Request, res: Response) => {
 
   try {
     // Si req.body est un Buffer (raw), on peut vérifier la signature
-    if (Buffer.isBuffer(req.body) && webhookSecret && !webhookSecret.includes('MockWebhookSecret')) {
+    if (Buffer.isBuffer(req.body) && webhookSecret) {
         event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     } else {
-        // Fallback / Dev local: on parse l'event directement sans vérif stricte.
-        // Ce cas arrive si body-parser JSON a pris le dessus, ce qui est déconseillé pour Stripe.
-        event = req.body;
+        throw new Error('Req.body must be an unparsed buffer to verify Stripe signature. Reconfigure express.raw()');
     }
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);

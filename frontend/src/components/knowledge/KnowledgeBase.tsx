@@ -11,6 +11,7 @@ import {
   ThumbsDown,
   Download,
 } from 'lucide-react';
+import { apiClient } from '@/lib/api';
 
 export const KnowledgeBase: React.FC = () => {
   const [articles, setArticles] = useState<any[]>([]);
@@ -27,20 +28,27 @@ export const KnowledgeBase: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const params = selectedCategory !== 'all' ? `?category=${selectedCategory}` : '';
-      const response = await fetch(`/api/knowledge${params}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const data = await apiClient.get('/api/knowledge', {
+        params: selectedCategory !== 'all' ? { category: selectedCategory } : {}
       });
-      const data = await response.json();
-      setArticles(data.articles || []);
+      setArticles(data.articles || data || []);
     } catch (e) {
       console.error('Error fetching knowledge articles:', e);
     }
   };
 
-  const fetchCategories = () => {
+  const fetchCategories = async () => {
+    // Tentative de récupération dynamique ou fallback mock amélioré
+    try {
+        const data = await apiClient.get('/api/knowledge/categories');
+        if (data && data.length > 0) {
+            setCategories(data);
+            return;
+        }
+    } catch (e) {
+        // Fallback
+    }
+
     setCategories([
       { name: 'Guides', count: 12, icon: Book },
       { name: 'Procédures', count: 8, icon: FileText },

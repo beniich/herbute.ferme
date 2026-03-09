@@ -18,8 +18,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user, setUser, setIsLoading } = useAuthStore();
-  const [isLoading, setLoading] = useState(!user); // Ne pas spinner si l'user est déjà en cache
+  const { user, setUser, setIsLoading: setStoreLoading } = useAuthStore();
+  const [isLoading, setLoading] = useState(true); // Always true on first render to avoid mismatch
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           organizationId: 'org-mock-123'
         });
         setLoading(false);
-        setIsLoading(false);
+        setStoreLoading(false);
         return;
       }
 
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } finally {
       setLoading(false);
-      setIsLoading(false);
+      setStoreLoading(false);
     }
   };
 
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // On vérifie quand même en arrière-plan après 100ms pour valider que la session est toujours valide
     if (user) {
       setLoading(false);
-      setIsLoading(false);
+      setStoreLoading(false);
       // Validation silencieuse en arrière-plan (sans spinner)
       const timer = setTimeout(() => {
         authApi.me().then((data) => {

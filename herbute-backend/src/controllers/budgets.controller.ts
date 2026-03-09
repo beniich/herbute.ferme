@@ -7,7 +7,8 @@ import { reportGenerator } from '../services/reportGenerator.js';
 export const getBudgets = async (req: any, res: Response) => {
   try {
     const { status, type, fiscalYear } = req.query;
-    const query: any = { domain: req.user.domain };
+    const organizationId = req.user.orgId || req.user.organizationId;
+    const query: any = { organizationId };
 
     if (status) query.status = status;
     if (type) query.type = type;
@@ -24,7 +25,7 @@ export const createBudget = async (req: any, res: Response) => {
   try {
     const budget = await Budget.create({
       ...req.body,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       createdBy: req.user.id,
     });
     res.status(201).json({ success: true, budget });
@@ -35,9 +36,9 @@ export const createBudget = async (req: any, res: Response) => {
 
 export const getActiveBudget = async (req: any, res: Response) => {
   try {
-    // Find the current active budget
+    const organizationId = req.user.orgId || req.user.organizationId;
     const budget = await Budget.findOne({
-      domain: req.user.domain,
+      organizationId,
       status: 'active',
       startDate: { $lte: new Date() },
       endDate: { $gte: new Date() },
@@ -65,8 +66,9 @@ export const syncBudgetSpend = async (req: any, res: Response) => {
     // For each category, calculate spend from AccountingEntry
     let totalSpent = 0;
     for (const category of budget.categories) {
+        const organizationId = req.user.orgId || req.user.organizationId;
         const spentEntries = await AccountingEntry.find({
-            domain: req.user.domain,
+            organizationId,
             category: category.name,
             type: 'expense',
             status: 'validated',

@@ -59,7 +59,7 @@ export interface IAgriEvent extends Document {
   };
   
   // Méta
-  domain: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
   color: string; // Pour le calendrier
   tags: string[];
@@ -162,9 +162,9 @@ const agriEventSchema = new Schema<IAgriEvent>(
       },
     },
     
-    domain: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'Domain',
+      ref: 'Organization',
       required: true,
     },
     createdBy: {
@@ -186,7 +186,7 @@ const agriEventSchema = new Schema<IAgriEvent>(
 );
 
 // Indexes
-agriEventSchema.index({ domain: 1, startDate: 1 });
+agriEventSchema.index({ organizationId: 1, startDate: 1 });
 agriEventSchema.index({ type: 1, startDate: 1 });
 agriEventSchema.index({ 'task.assignedTo': 1 });
 

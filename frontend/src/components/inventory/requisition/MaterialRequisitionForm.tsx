@@ -35,15 +35,7 @@ import {
     Material,
     StockAlert
 } from '@/types/material-requisition';
-import {
-    mockComplaints,
-    mockDepartments,
-    mockSites,
-    mockUsers,
-    getMaterialById,
-    getComplaintById,
-    checkStockAvailability
-} from '@/lib/inventory/mockData';
+import { apiHelpers, apiClient } from '@/lib/api';
 import {
     formatCurrency,
     generateRequisitionId,
@@ -76,6 +68,45 @@ export const MaterialRequisitionForm: React.FC = () => {
     const [approvalLevel, setApprovalLevel] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
+
+    // Dynamic data states
+    const [departments, setDepartments] = useState<any[]>([]);
+    const [sites, setSites] = useState<any[]>([]);
+    const [managers, setManagers] = useState<any[]>([]);
+    const [complaints, setComplaints] = useState<any[]>([]);
+
+    useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                // Fetch HR departments / staff for the select
+                apiHelpers.hr.getStaff().then((res: any) => {
+                    const data = Array.isArray(res) ? res : (res?.data || []);
+                    setDepartments(data);
+                }).catch(console.error);
+
+                // Fetch physical sites
+                apiHelpers.teams.getLocations().then((res: any) => {
+                    const data = Array.isArray(res) ? res : (res?.data || []);
+                    setSites(data);
+                }).catch(console.error);
+
+                // Fetch Users to serve as Managers
+                apiHelpers.adminApi.getUsers().then((res: any) => {
+                    const data = Array.isArray(res) ? res : (res?.data || []);
+                    setManagers(data.filter((u: any) => u.role === 'manager' || u.role === 'admin'));
+                }).catch(console.error);
+
+                // Fetch Active complaints
+                apiHelpers.complaintsApi.getAll().then((res: any) => {
+                    const data = Array.isArray(res) ? res : (res?.data || []);
+                    setComplaints(data);
+                }).catch(console.error);
+            } catch (err) {
+                console.error("Failed to load initial form data", err);
+            }
+        };
+        loadInitialData();
+    }, []);
 
     const {
         register,
@@ -111,16 +142,18 @@ export const MaterialRequisitionForm: React.FC = () => {
         const newAlerts: StockAlert[] = [];
 
         watchedItems?.forEach((item) => {
-            if (item.materialId) {
-                const material = getMaterialById(item.materialId);
-                if (material && item.quantity) {
+            if (item.materialId && item.material) {
+                const material = item.material;
+                if (item.quantity) {
                     const itemTotal = material.unitPrice * item.quantity;
                     total += itemTotal;
 
                     // Check stock availability
-                    const stockCheck = checkStockAvailability(item.materialId, item.quantity);
-                    if (!stockCheck.available) {
-                        if (stockCheck.currentStock === 0) {
+                    const currentStock = material.currentStock || 0;
+                    const isAvailable = currentStock >= item.quantity;
+                    
+                    if (!isAvailable) {
+                        if (currentStock === 0) {
                             newAlerts.push({
                                 type: 'out_of_stock',
                                 message: `${material.name} est en rupture de stock. Stock actuel: 0`,
@@ -130,7 +163,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                         } else {
                             newAlerts.push({
                                 type: 'low_stock',
-                                message: `Stock insuffisant pour ${material.name}. Disponible: ${stockCheck.currentStock}, Demandé: ${item.quantity}`,
+                                message: `Stock insuffisant pour ${material.name}. Disponible: ${currentStock}, Demandé: ${item.quantity}`,
                                 severity: 'warning',
                                 materialId: material.id
                             });
@@ -171,16 +204,16 @@ export const MaterialRequisitionForm: React.FC = () => {
 
     // Load complaint details when selected
     useEffect(() => {
-        if (watchedComplaintId) {
-            const complaint = getComplaintById(watchedComplaintId);
+        if (watchedComplaintId && complaints.length > 0) {
+            const complaint = complaints.find(c => c.id === watchedComplaintId || c._id === watchedComplaintId);
             setSelectedComplaint(complaint);
-            if (complaint) {
+            if (complaint && complaint.address) {
                 setValue('deliveryAddress', complaint.address);
             }
         } else {
             setSelectedComplaint(null);
         }
-    }, [watchedComplaintId, setValue]);
+    }, [watchedComplaintId, setValue, complaints]);
 
     const handleAddMaterial = (material: Material) => {
         append({
@@ -221,11 +254,11 @@ export const MaterialRequisitionForm: React.FC = () => {
                 submittedAt: isDraft ? undefined : new Date(),
             };
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Send to actual backend
+            await apiClient.post('/api/inventory/requisitions', requisition);
 
             console.log('Requisition submitted:', requisition);
-            alert(`Réquisition ${isDraft ? 'sauvegardée en brouillon' : 'soumise'} avec succès! ID: ${requisition.id}`);
+            alert(`Réquisition ${isDraft ? 'sauvegardée en brouillon' : 'soumise'} avec succès!`);
 
         } catch (error) {
             console.error('Error submitting requisition:', error);
@@ -264,7 +297,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                             <span className="size-2 bg-primary rounded-full animate-pulse"></span>
                             Nouvelle Réquisition
                         </div>
-                        <h2 className="text-2xl font-black italic uppercase tracking-tight leading-none mb-1">RT-Material-<span className="text-primary italic">Sync</span></h2>
+                        <h2 className="text-2xl font-black italic uppercase tracking-tight leading-none mb-1">RT-Material-<span className="text-primary">Sync</span></h2>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Système de gestion des flux critiques</p>
                     </div>
                     <div className="flex items-center gap-6 relative z-10">
@@ -301,7 +334,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                                     icon={<Building2 className="h-4 w-4" />}
                                     {...register('department', { required: 'Ce champ est requis' })}
                                     error={errors.department?.message}
-                                    options={mockDepartments.map(d => ({ value: d.id, label: d.name }))}
+                                    options={departments.map(d => ({ value: d._id || d.id, label: d.name || d.code || 'Département Inconnu' }))}
                                     placeholder="Choisir..."
                                     required
                                 />
@@ -311,7 +344,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                                     icon={<MapPin className="h-4 w-4" />}
                                     {...register('site', { required: 'Ce champ est requis' })}
                                     error={errors.site?.message}
-                                    options={mockSites.map(s => ({ value: s.id, label: s.name }))}
+                                    options={sites.map(s => ({ value: s._id || s.id, label: s.name || s.address || 'Site Inconnu' }))}
                                     placeholder="Choisir un dépôt..."
                                     required
                                 />
@@ -345,9 +378,9 @@ export const MaterialRequisitionForm: React.FC = () => {
                                     icon={<User className="h-4 w-4" />}
                                     {...register('approverId', { required: 'Ce champ est requis' })}
                                     error={errors.approverId?.message}
-                                    options={mockUsers.filter(u => u.role === 'manager').map(u => ({
-                                        value: u.id,
-                                        label: u.name
+                                    options={managers.map(u => ({
+                                        value: u._id || u.id,
+                                        label: u.name || `${u.prenom || ''} ${u.nom || ''}`.trim() || 'Manager Inconnu'
                                     }))}
                                     placeholder="Choisir l'autorité..."
                                     required
@@ -365,9 +398,9 @@ export const MaterialRequisitionForm: React.FC = () => {
                                 <Select
                                     label="Ticket ReclamTrack"
                                     {...register('complaintId')}
-                                    options={mockComplaints.map(c => ({
-                                        value: c.id,
-                                        label: `${c.id} - ${c.title}`
+                                    options={complaints.map(c => ({
+                                        value: c._id || c.id,
+                                        label: `${c.id || c._id} - ${c.title || c.subject || 'Ticket'}`
                                     }))}
                                     placeholder="Sélectionner une réclamation (optionnel)"
                                 />
@@ -446,12 +479,12 @@ export const MaterialRequisitionForm: React.FC = () => {
                             ) : (
                                 <div className="space-y-4">
                                     {fields.map((field, index) => {
-                                        const material = getMaterialById(field.materialId);
+                                        const material = watchedItems[index]?.material;
                                         if (!material) return null;
 
                                         const quantity = watchedItems[index]?.quantity || 0;
                                         const itemTotal = material.unitPrice * quantity;
-                                        const stockCheck = checkStockAvailability(material.id, quantity);
+                                        const isAvailable = material.currentStock >= quantity;
 
                                         return (
                                             <div
@@ -467,7 +500,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                                                                 {material.name}
                                                             </h4>
                                                             <span className="text-[9px] font-black text-primary px-2 py-0.5 bg-primary/5 rounded-full border border-primary/10 tracking-widest">{material.sku}</span>
-                                                            {!stockCheck.available && (
+                                                            {!isAvailable && (
                                                                 <span className="text-[9px] font-black text-rose-500 px-2 py-0.5 bg-rose-50 rounded-full border border-rose-100 tracking-widest animate-pulse">ALERTE STOCK</span>
                                                             )}
                                                         </div>
@@ -479,6 +512,8 @@ export const MaterialRequisitionForm: React.FC = () => {
                                                     </div>
                                                     <button
                                                         type="button"
+                                                        title="Supprimer l'article"
+                                                        aria-label="Supprimer cet article"
                                                         onClick={() => handleRemoveItem(index)}
                                                         className="size-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
                                                     >
@@ -560,7 +595,7 @@ export const MaterialRequisitionForm: React.FC = () => {
                                         <TrendingUp className="size-4" />
                                         Monitoring Analytics
                                     </div>
-                                    <h3 className="text-xl font-black italic uppercase italic tracking-tight mb-6">Résumé Global</h3>
+                                    <h3 className="text-xl font-black italic uppercase tracking-tight mb-6">Résumé Global</h3>
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">

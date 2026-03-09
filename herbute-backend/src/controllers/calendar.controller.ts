@@ -18,7 +18,7 @@ export const getEvents = async (req: any, res: Response) => {
 
     // Build query
     const query: any = {
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
     };
 
     // Date range filter
@@ -75,7 +75,7 @@ export const getEventById = async (req: any, res: Response) => {
   try {
     const event = await AgriEvent.findOne({
       _id: req.params.id,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
     })
       .populate('task.assignedTo', 'firstName lastName email phone')
       .populate('culture.plotId')
@@ -107,7 +107,7 @@ export const createEvent = async (req: any, res: Response) => {
   try {
     const eventData = {
       ...req.body,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       createdBy: req.user.id, // Auth middleware puts user inside req.user
     };
 
@@ -136,7 +136,7 @@ export const updateEvent = async (req: any, res: Response) => {
     const event = await AgriEvent.findOneAndUpdate(
       {
         _id: req.params.id,
-        domain: req.user.domain,
+        organizationId: req.user.orgId || req.user.organizationId,
       },
       req.body,
       { new: true, runValidators: true }
@@ -169,7 +169,7 @@ export const deleteEvent = async (req: any, res: Response) => {
   try {
     const event = await AgriEvent.findOneAndDelete({
       _id: req.params.id,
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
     });
 
     if (!event) {
@@ -199,7 +199,7 @@ export const getUpcomingTasks = async (req: any, res: Response) => {
     const { days = 7 } = req.query;
 
     const tasks = await AgriEvent.find({
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       type: 'worker_task',
       startDate: {
         $gte: new Date(),
@@ -232,7 +232,7 @@ export const getCultureCalendar = async (req: any, res: Response) => {
     const { year = new Date().getFullYear() } = req.query;
 
     const cultures = await AgriEvent.find({
-      domain: req.user.domain,
+      organizationId: req.user.orgId || req.user.organizationId,
       type: 'culture_cycle',
       startDate: {
         $gte: new Date(`${year}-01-01`),
@@ -270,7 +270,7 @@ export const getEventStats = async (req: any, res: Response) => {
     const stats = await AgriEvent.aggregate([
       {
         $match: {
-          domain: req.user.domain,
+          organizationId: req.user.orgId || req.user.organizationId,
         },
       },
       {
@@ -285,7 +285,7 @@ export const getEventStats = async (req: any, res: Response) => {
     const taskStats = await AgriEvent.aggregate([
       {
         $match: {
-          domain: req.user.domain,
+          organizationId: req.user.orgId || req.user.organizationId,
           type: 'worker_task',
         },
       },

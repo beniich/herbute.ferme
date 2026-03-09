@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Clock, AlertCircle, PlayCircle, Plus, Search, Filter } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 export default function TasksManagement() {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -22,22 +24,22 @@ export default function TasksManagement() {
 
   const fetchTasks = async () => {
     try {
-      let qs = '?';
-      if (filters.status) qs += `status=${filters.status}&`;
-      if (filters.priority) qs += `priority=${filters.priority}`;
-
-      const res = await fetch(`http://localhost:4000/api/tasks${qs}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await apiClient.get('/api/tasks', { params: filters });
       
-      if (data.success) {
-        setTasks(data.tasks);
-        calculateStats(data.tasks);
+      if (data) {
+        const taskList = Array.isArray(data) ? data : data.tasks || [];
+        setTasks(taskList);
+        calculateStats(taskList);
       }
     } catch (err) {
       console.error("Erreur tasks", err);
+      toast.error("Impossible de charger les tâches");
     }
+  };
+
+  const handleCreateTask = () => {
+    toast.success("Ouverture du formulaire de nouvelle tâche...");
+    // TODO: Implémenter le modal ou la navigation
   };
 
   const calculateStats = (allTasks: any[]) => {
@@ -86,7 +88,10 @@ export default function TasksManagement() {
           <h1 className="text-2xl font-bold font-inter text-gray-900 dark:text-white">Opérations & Tâches</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Gérez vos missions, interventions et opérations de maintenance.</p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+        <button 
+          onClick={handleCreateTask}
+          className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-sm"
+        >
           <Plus className="w-5 h-5 mr-2" />
           Nouvelle Tâche
         </button>
