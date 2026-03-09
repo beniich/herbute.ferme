@@ -116,5 +116,53 @@
     "in_progress": "En Progreso",
     "resolved": "Resuelto",
     "closed": "Cerrado"
+  },
+  "Education": {
+    "heroTitle": "Empoderando a Educadores, Involucrando a Padres.",
+    "heroSubtitle": "La plataforma todo-en-uno para simplificar la administración escolar y rastrear el éxito estudiantil.",
+    "ctaStart": "Iniciar Prueba Gratuita",
+    "ctaDemo": "Ver Demo",
+    "feature1Title": "Seguimiento de Estudiantes",
+    "feature1Desc": "Rastreo de asistencia en tiempo real y análisis de comportamiento.",
+    "feature2Title": "Sistemas de Calificación",
+    "feature2Desc": "Libros de calificaciones automáticos con tendencias de rendimiento visual.",
+    "feature3Title": "Portal de Padres",
+    "feature3Desc": "Mensajería segura y notificaciones automáticas."
+  },
+  "Healthcare": {
+    "heroTitle": "El Futuro de la Coordinación Médica.",
+    "heroSubtitle": "Optimiza flujos de pacientes, gestiona recursos en tiempo real y mejora la atención.",
+    "ctaStart": "Explorar Solución",
+    "ctaDemo": "Lanzar Demo",
+    "feature1Title": "Gestión de Flujos",
+    "feature1Desc": "Optimización en tiempo real de la admisión y orientación de pacientes.",
+    "feature2Title": "Recursos Críticos",
+    "feature2Desc": "Seguimiento preciso de ocupación de camas y disponibilidad del personal.",
+    "feature3Title": "Analítica Sanitaria",
+    "feature3Desc": "Paneles predictivos para anticipar picos de actividad."
+  },
+  "Infrastructure": {
+    "heroTitle": "Infraestructura de Alto Rendimiento e IA.",
+    "heroSubtitle": "Despliega tus aplicaciones en infraestructura soberana, segura y optimizada.",
+    "ctaStart": "Configurar Servidor",
+    "ctaDemo": "Acceder al Panel",
+    "feature1Title": "Cloud Soberano",
+    "feature1Desc": "Datos alojados al 100% en territorio nacional con seguridad Tier-IV.",
+    "feature2Title": "GPU e IA Ready",
+    "feature2Desc": "Acceso instantáneo a las últimas arquitecturas NVIDIA para tus modelos ML.",
+    "feature3Title": "Auto-Escalado",
+    "feature3Desc": "Ajuste dinámico de recursos basado en la carga real."
+  },
+  "Hospitality": {
+    "heroTitle": "Excelencia al Servicio de tus Huéspedes.",
+    "heroSubtitle": "Optimiza la gestión de tu establecimiento, desde el check-in automatizado hasta la personalización de la experiencia del huésped.",
+    "ctaStart": "Modernizar mi Hotel",
+    "ctaDemo": "Explorar PMS",
+    "feature1Title": "Experiencia 360 del Huésped",
+    "feature1Desc": "Perfiles unificados de huéspedes y personalización con IA para estancias memorables.",
+    "feature2Title": "Gestión Operacional",
+    "feature2Desc": "Optimización en tiempo real de housekeeping, servicio de habitaciones y mantenimiento.",
+    "feature3Title": "Canales de Reserva",
+    "feature3Desc": "Sincronización instantánea con OTAs y motor de reserva directa sin comisión."
   }
 }

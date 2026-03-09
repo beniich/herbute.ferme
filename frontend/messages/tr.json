@@ -116,5 +116,53 @@
     "in_progress": "Devam Ediyor",
     "resolved": "Çözüldü",
     "closed": "Kapatıldı"
+  },
+  "Education": {
+    "heroTitle": "Eğitimcileri Güçlendirin, Velileri Dahil Edin.",
+    "heroSubtitle": "Okul yönetimini basitleştirmek ve öğrenci başarısını takip etmek için hepsi bir arada platform.",
+    "ctaStart": "Ücretsiz Denemeyi Başlat",
+    "ctaDemo": "Demo İzle",
+    "feature1Title": "Öğrenci Takibi",
+    "feature1Desc": "Gerçek zamanlı devam takibi ve davranışsal analizler.",
+    "feature2Title": "Sınıflandırma Sistemleri",
+    "feature2Desc": "Görsel performans trendleriyle otomatik not defterleri.",
+    "feature3Title": "Veli Portalı",
+    "feature3Desc": "Güvenli mesajlaşma ve otomatik bildirimler."
+  },
+  "Healthcare": {
+    "heroTitle": "Tıbbi Koordinasyonun Geleceği.",
+    "heroSubtitle": "Hasta akışlarını optimize edin, kaynakları gerçek zamanlı yönetin ve bakımı geliştirin.",
+    "ctaStart": "Çözümü Keşfet",
+    "ctaDemo": "Demo Başlat",
+    "feature1Title": "Akış Yönetimi",
+    "feature1Desc": "Hasta kabulü ve yönlendirmesinin gerçek zamanlı optimizasyonu.",
+    "feature2Title": "Kritik Kaynaklar",
+    "feature2Desc": "Yatak doluluk oranı ve personel müsaitliğinin hassas takibi.",
+    "feature3Title": "Sağlık Analitiği",
+    "feature3Desc": "Aktivite zirvelerini öngörmek için tahmine dayalı panolar."
+  },
+  "Infrastructure": {
+    "heroTitle": "Yüksek Performanslı Altyapı ve Yapay Zeka.",
+    "heroSubtitle": "Uygulamalarınızı egemenlik sahibi, güvenli ve optimize edilmiş altyapıya dağıtın.",
+    "ctaStart": "Sunucu Yapılandır",
+    "ctaDemo": "Panele Eriş",
+    "feature1Title": "Egemenlik Bulutu",
+    "feature1Desc": "Veriler ulusal topraklarda %100 Katman-IV güvenliğiyle barındırılır.",
+    "feature2Title": "GPU ve Yapay Zeka Hazır",
+    "feature2Desc": "ML modelleriniz için en yeni NVIDIA mimarilerine anında erişim.",
+    "feature3Title": "Otomatik Ölçeklendirme",
+    "feature3Desc": "Gerçek yüke göre dinamik kaynak ayarlaması."
+  },
+  "Hospitality": {
+    "heroTitle": "Misafirlerinize Hizmetin Mükemmelliği.",
+    "heroSubtitle": "Otomatik check-in'den yapay zeka destekli misafir deneyimi kişiselleştirmesine kadar tesisiğinizin yönetimini optimize edin.",
+    "ctaStart": "Oteli Modernize Et",
+    "ctaDemo": "PMS'i Keşfet",
+    "feature1Title": "360° Misafir Deneyimi",
+    "feature1Desc": "Birleşik misafir profilleri ve unutulmaz konaklamalar için yapay zeka kişiselleştirme.",
+    "feature2Title": "Operasyonel Yönetim",
+    "feature2Desc": "Kat hizmetleri, oda servisi ve bakımın gerçek zamanlı optimizasyonu.",
+    "feature3Title": "Rezervasyon Kanalları",
+    "feature3Desc": "OTA'larla anında senkronizasyon ve komisyonsuz doğrudan rezervasyon motoru."
   }
 }

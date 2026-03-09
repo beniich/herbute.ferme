@@ -116,5 +116,53 @@
     "in_progress": "In Bearbeitung",
     "resolved": "Gelöst",
     "closed": "Geschlossen"
+  },
+  "Education": {
+    "heroTitle": "Lehrkräfte stärken, Eltern einbinden.",
+    "heroSubtitle": "Die All-in-One-CRM-Plattform für Schulverwaltung und Schülerfortschrittsverfolgung.",
+    "ctaStart": "Kostenlose Testversion starten",
+    "ctaDemo": "Demo ansehen",
+    "feature1Title": "Schülerverfolgung",
+    "feature1Desc": "Echtzeit-Anwesenheitsverfolgung und Verhaltensanalysen.",
+    "feature2Title": "Benotungssysteme",
+    "feature2Desc": "Automatisierte Notenbücher mit visuellen Leistungstrends.",
+    "feature3Title": "Elternportal",
+    "feature3Desc": "Sichere Nachrichtenübermittlung und automatisierte Benachrichtigungen."
+  },
+  "Healthcare": {
+    "heroTitle": "Die Zukunft der medizinischen Koordination.",
+    "heroSubtitle": "Optimieren Sie Patientenströme, verwalten Sie Ressourcen in Echtzeit und verbessern Sie die Versorgung.",
+    "ctaStart": "Lösung erkunden",
+    "ctaDemo": "Demo starten",
+    "feature1Title": "Flussverwaltung",
+    "feature1Desc": "Echtzeit-Optimierung der Patientenaufnahme und -weiterleitung.",
+    "feature2Title": "Kritische Ressourcen",
+    "feature2Desc": "Genaue Verfolgung der Bettenbelegung und Personalverfügbarkeit.",
+    "feature3Title": "Gesundheitsanalytik",
+    "feature3Desc": "Prognose-Dashboards zur Antizipation von Aktivitätsspitzen."
+  },
+  "Infrastructure": {
+    "heroTitle": "Hochleistungsinfrastruktur & KI.",
+    "heroSubtitle": "Stellen Sie Ihre Anwendungen auf souveräner, sicherer und optimierter Infrastruktur bereit.",
+    "ctaStart": "Server konfigurieren",
+    "ctaDemo": "Panel aufrufen",
+    "feature1Title": "Souveräne Cloud",
+    "feature1Desc": "Daten zu 100% auf nationalem Territorium mit Tier-IV-Sicherheit gehostet.",
+    "feature2Title": "GPU & KI-bereit",
+    "feature2Desc": "Sofortiger Zugriff auf die neuesten NVIDIA-Architekturen für Ihre ML-Modelle.",
+    "feature3Title": "Auto-Skalierung",
+    "feature3Desc": "Dynamische Ressourcenanpassung basierend auf der tatsächlichen Last."
+  },
+  "Hospitality": {
+    "heroTitle": "Exzellenz im Dienst Ihrer Gäste.",
+    "heroSubtitle": "Optimieren Sie die Verwaltung Ihres Betriebs, vom automatisierten Check-in bis zur KI-gestützten Gasterlebnispersonalisierung.",
+    "ctaStart": "Mein Hotel modernisieren",
+    "ctaDemo": "PMS erkunden",
+    "feature1Title": "360° Gasterlebnis",
+    "feature1Desc": "Einheitliche Gastprofile und KI-Personalisierung für unvergessliche Aufenthalte.",
+    "feature2Title": "Betriebsmanagement",
+    "feature2Desc": "Echtzeit-Optimierung von Housekeeping, Zimmerservice und Wartung.",
+    "feature3Title": "Buchungskanäle",
+    "feature3Desc": "Sofortige Synchronisierung mit OTAs und provisionsfreiem Direktbuchungsmotor."
   }
 }
