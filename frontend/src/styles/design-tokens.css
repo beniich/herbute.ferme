@@ -64,17 +64,9 @@
   --shadow-premium: 0 10px 40px -10px rgba(33, 94, 97, 0.1);
 }
 
-/* ── Reset Base ── */
-body {
-  background-color: var(--color-global-bg);
-  color: var(--color-brand-navy);
-  font-family: var(--font-sans);
-}
 
-h1, h2, h3, h4, h5, h6 {
-  color: var(--color-brand-orange);
-  font-family: var(--font-display);
-}
+/* ── Reset Base ── */
+/* Styles removed to avoid conflict with globals.css. Only tokens kept here. */
 
 /* ─────────────────────────────────────────
    DARK MODE OVERRIDES (Ngrok Inspired)

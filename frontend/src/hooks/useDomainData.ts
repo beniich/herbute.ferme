@@ -32,7 +32,8 @@ export function useDomainData(
   endpoint: string,
   cacheTime: number = 60_000
 ): UseDomainDataResult {
-  const { data, isLoading, error, mutate, isValidating } = useFetch<DomainData>(
+  // Use any because backend response formats vary (array or object in .data)
+  const { data, isLoading, error, mutate, isValidating } = useFetch<any>(
     endpoint,
     {
       dedupingInterval: cacheTime,
@@ -40,10 +41,21 @@ export function useDomainData(
     }
   );
 
+  // Normalize mapping: 
+  // 1. If data is an array (already unwrapped by apiClient), use it as items
+  // 2. If data has a .data property that is an array, use that
+  // 3. Fallback to .items or empty array
+  const items = Array.isArray(data) 
+    ? data 
+    : (Array.isArray((data as any)?.data) ? (data as any).data : ((data as any)?.items || []));
+  
+  // Stats mapping:
+  const stats = !Array.isArray(data) ? ((data as any)?.data || (data as any)?.stats || data) : undefined;
+
   return {
     data,
-    stats: data?.stats,
-    items: data?.items,
+    stats,
+    items,
     isLoading,
     error,
     mutate,

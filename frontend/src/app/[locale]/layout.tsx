@@ -10,7 +10,7 @@ import '@/styles/agro-theme.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Inter, Sora, Playfair_Display, Outfit, JetBrains_Mono } from 'next/font/google';
+import { Inter, Sora, Playfair_Display, Outfit, JetBrains_Mono, Anton } from 'next/font/google';
 import { notFound } from 'next/navigation';
 
 const inter = Inter({
@@ -38,6 +38,12 @@ const outfit = Outfit({
 const jetbrains = JetBrains_Mono({
     subsets: ['latin'],
     variable: '--font-mono'
+});
+
+const anton = Anton({
+    weight: '400',
+    subsets: ['latin'],
+    variable: '--font-anton'
 });
 
 export function generateStaticParams() {
@@ -71,7 +77,7 @@ export default async function LocaleLayout({
                     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
                 />
             </head>
-            <body suppressHydrationWarning className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} font-sans antialiased agro-theme`}>
+            <body suppressHydrationWarning className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} ${anton.variable} font-sans antialiased`}>
                 <ThemeProvider>
                     <NextIntlClientProvider messages={messages} locale={locale}>
                         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>

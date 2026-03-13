@@ -7,6 +7,7 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 import { StatCard } from '@/components/shared/StatCard';
 import Skeleton from '@/components/shared/Skeleton';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
+import { useTranslations } from 'next-intl';
 import { 
   TrendingUp, TrendingDown, Tractor, AlertTriangle,
   Users, LineChart, Server, RefreshCw, Trees
@@ -23,12 +24,9 @@ interface AlertItem {
   href: string;
 }
 
-const STATIC_ALERTS: AlertItem[] = [
-  { level: 'warning', icon: <AlertTriangle size={14} />, text: 'Vaccination bovins — Échéance Proche', time: 'Demain', section: 'Élevage', href: '/fr/elevage' },
-  { level: 'info', icon: <Tractor size={14} />, text: 'Tracteur JD-8R — Maintenance programmée', time: 'Dans 5 jours', section: 'Équipements', href: '/fr/fleet' },
-];
-
 export default function DashboardPage() {
+  const t = useTranslations('Dashboard');
+  const tCommon = useTranslations('Common');
   const { activeOrganization } = useOrgStore();
   const [now, setNow] = useState('');
   const {
@@ -36,6 +34,11 @@ export default function DashboardPage() {
     loading, refresh, error
   } = useDashboardData();
   const { format } = useCurrencyStore();
+
+  const STATIC_ALERTS: AlertItem[] = [
+    { level: 'warning', icon: <AlertTriangle size={14} />, text: 'Vaccination bovins — Échéance Proche', time: 'Demain', section: 'Élevage', href: '/fr/elevage' },
+    { level: 'info', icon: <Tractor size={14} />, text: 'Tracteur JD-8R — Maintenance programmée', time: 'Dans 5 jours', section: 'Équipements', href: '/fr/fleet' },
+  ];
 
   useEffect(() => {
     const d = new Date();
@@ -45,7 +48,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="p-8">
-        <ErrorFallback error={error} onRetry={refresh} message="Impossible de charger le tableau de bord" />
+        <ErrorFallback error={error} onRetry={refresh} message={tCommon('error')} />
       </div>
     );
   }
@@ -58,7 +61,7 @@ export default function DashboardPage() {
         <div>
           <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">Résumé Consolide · {now}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-            {activeOrganization?.name || 'Tableau de Bord'}
+            {activeOrganization?.name || t('title')}
           </h1>
           <p className="text-sm text-zinc-400">Analyse consolidée de votre exploitation en temps réel.</p>
         </div>
@@ -164,9 +167,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* TEAM PERFORMANCE */}
-        <div className="lg:col-span-2 bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
+        <div className="lg:col-span-2 bg-[var(--panel)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-zinc-950/50">
-            <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span> Charge des Équipes
             </h3>
             <Link href="/teams" className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">
@@ -205,9 +208,9 @@ export default function DashboardPage() {
         </div>
 
         {/* ALERTS SECTION */}
-        <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
-          <div className="p-6 border-b border-zinc-900 bg-zinc-950/50">
-            <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+        <div className="bg-[var(--panel)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
+          <div className="p-6 border-b border-[var(--border)] bg-[var(--panel-active)]">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]"></span> Système d'Alerte
             </h3>
           </div>
@@ -217,7 +220,7 @@ export default function DashboardPage() {
                 <div className="flex gap-4">
                   <div className={`mt-1 w-2 h-2 rounded-full shrink-0 ${a.level === 'warning' ? 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]'}`} />
                   <div>
-                    <div className="text-xs font-bold text-zinc-100 mb-1 group-hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <div className="text-xs font-bold text-[var(--text)] mb-1 group-hover:text-blue-400 transition-colors flex items-center gap-2">
                       {a.icon} {a.text}
                     </div>
                     <div className="text-[10px] text-zinc-500 uppercase font-mono tracking-wider">

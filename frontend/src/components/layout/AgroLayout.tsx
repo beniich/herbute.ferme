@@ -48,11 +48,11 @@ export default function AgroLayout({ children }: { children: React.ReactNode }) 
       <div className="agro-theme-grain" />
       <div 
         ref={cursorRef} 
-        className={`agro-custom-cursor ${isHovering ? 'scale-150 w-4 h-4' : 'scale-100 w-3 h-3'} pointer-events-none hidden lg:block`}
+        className={`agro-custom-cursor ${isHovering ? 'scale-150 w-4 h-4' : 'scale-100 w-3 h-3'} pointer-events-none`}
       />
       <div 
         ref={ringRef} 
-        className={`agro-custom-cursor-ring ${isHovering ? 'w-16 h-16 border-[var(--gold)] border-2' : 'w-10 h-10'} pointer-events-none transition-all duration-300 hidden lg:block`}
+        className={`agro-custom-cursor-ring ${isHovering ? 'w-16 h-16 border-[var(--gold)] border-2' : 'w-10 h-10'} pointer-events-none transition-all duration-300`}
       />
 
       <AgroTopBar />
