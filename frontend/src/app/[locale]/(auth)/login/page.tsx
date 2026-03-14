@@ -40,11 +40,8 @@ export default function LoginPage() {
 
     useEffect(() => {
         setIsMounted(true);
-        // Load a tech/agro-industrial animation
-        fetch('https://assets9.lottiefiles.com/packages/lf20_m6cu97.json') // High-speed digital network / growth
-            .then(res => res.json())
-            .then(data => setLottieData(data))
-            .catch(err => console.error("Lottie load error:", err));
+        // L'animation Lottie externe LottieFiles est désactivée car l'URL renvoie du XML/403 et fait planter l'application.
+        // Utilisation d'icônes statiques/animées à la place dans le rendu.
     }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -121,14 +118,11 @@ export default function LoginPage() {
                         </p>
                     </div>
 
-                    <div className="w-full max-w-md aspect-square relative">
-                        {lottieData && (
-                            <Lottie 
-                                animationData={lottieData} 
-                                loop={true} 
-                                className="w-full h-full drop-shadow-[0_0_30px_rgba(34,197,94,0.3)]" 
-                            />
-                        )}
+                    <div className="w-full max-w-md aspect-square relative flex items-center justify-center">
+                        <div className="relative w-64 h-64 border border-[var(--green)]/30 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite] shadow-[0_0_50px_rgba(34,197,94,0.2)]">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--green)]/10 to-transparent rounded-full"></div>
+                            <Globe size={120} className="text-[var(--green)] animate-[spin_10s_linear_infinite_reverse]" strokeWidth={1} />
+                        </div>
                         <div className="absolute -bottom-4 -right-4 p-6 bg-[#0a1215] border border-[var(--border)] rounded-2xl shadow-2xl backdrop-blur-md">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-[var(--green)]/20 rounded-xl text-[var(--green)]">
