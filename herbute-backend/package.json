@@ -53,6 +53,7 @@
     "stripe": "^17.7.0",
     "strong-soap": "^5.0.7",
     "swagger-ui-express": "^5.0.1",
+    "@supabase/supabase-js": "^2.48.5",
     "uuid": "^8.3.2",
     "winston": "^3.19.0",
     "xss-clean": "^0.1.4",

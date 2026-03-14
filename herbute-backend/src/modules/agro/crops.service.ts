@@ -1,5 +1,7 @@
 import { Crop, ICrop } from './crops.model.js';
 import mongoose from 'mongoose';
+import { auditService } from '../../services/auditService.js';
+
 
 export interface CropFilters {
   category?: string;
@@ -54,17 +56,44 @@ export class CropService {
   }
 
   async create(organizationId: string, dto: CreateCropDTO): Promise<ICrop> {
-    return (Crop as any).create({ ...dto, organizationId: new mongoose.Types.ObjectId(organizationId) });
+    const crop = await (Crop as any).create({ ...dto, organizationId: new mongoose.Types.ObjectId(organizationId) });
+    
+    // Sync to Supabase
+    await auditService.logModification(
+      undefined, // Context depends on who calls the service, usually handled in controller but service is safer for core logic
+      organizationId,
+      'CROP',
+      crop._id.toString(),
+      'CREATE',
+      crop.toJSON()
+    );
+
+    return crop;
   }
+
 
   async update(id: string, organizationId: string, updates: Partial<CreateCropDTO>): Promise<ICrop | null> {
     const { ...safeUpdates } = updates;
-    return (Crop as any).findOneAndUpdate(
+    const crop = await (Crop as any).findOneAndUpdate(
       { _id: id, organizationId: new mongoose.Types.ObjectId(organizationId) },
       { $set: safeUpdates },
       { new: true, runValidators: true }
     ).lean() as unknown as ICrop | null;
+
+    if (crop) {
+      await auditService.logModification(
+        undefined,
+        organizationId,
+        'CROP',
+        id,
+        'UPDATE',
+        crop
+      );
+    }
+
+    return crop;
   }
+
 
   async harvest(id: string, organizationId: string, dto: HarvestDTO): Promise<ICrop | null> {
     const crop = await Crop.findOne({ _id: id, organizationId: new mongoose.Types.ObjectId(organizationId) });
@@ -74,7 +103,7 @@ export class CropService {
       throw new Error('Cette culture a déjà été récoltée');
     }
 
-    return (Crop as any).findOneAndUpdate(
+    const updatedCrop = await (Crop as any).findOneAndUpdate(
       { _id: id, organizationId: new mongoose.Types.ObjectId(organizationId) },
       {
         $set: {
@@ -86,12 +115,41 @@ export class CropService {
       },
       { new: true }
     ).lean() as unknown as ICrop;
+
+    if (updatedCrop) {
+      await auditService.logModification(
+        undefined,
+        organizationId,
+        'CROP',
+        id,
+        'UPDATE', // Harvest is an update
+        updatedCrop,
+        crop.toJSON()
+      );
+    }
+
+    return updatedCrop;
   }
+
 
   async delete(id: string, organizationId: string): Promise<boolean> {
     const result = await (Crop as any).findOneAndDelete({ _id: id, organizationId: new mongoose.Types.ObjectId(organizationId) });
+    
+    if (result) {
+      await auditService.logModification(
+        undefined,
+        organizationId,
+        'CROP',
+        id,
+        'DELETE',
+        undefined,
+        result.toJSON ? result.toJSON() : result
+      );
+    }
+
     return result !== null;
   }
+
 
   async getStats(organizationId: string, filters: Pick<CropFilters, 'category'> = {}): Promise<CropStats> {
     const matchFilter: Record<string, unknown> = { organizationId: new mongoose.Types.ObjectId(organizationId) };

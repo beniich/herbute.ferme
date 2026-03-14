@@ -4,6 +4,8 @@ import { authenticate, requireOrganization } from '../../middleware/security.js'
 import { authorize, Permission } from '../../middleware/authorize.js';
 import { validator } from '../../middleware/validator.js';
 import { Animal } from './animals.model.js';
+import { auditService } from '../../services/auditService.js';
+
 
 const router = Router();
 
@@ -107,7 +109,19 @@ router.post('/',
         ...req.body,
         organizationId: (req as any).organizationId,
       });
+
+      // Sync to Supabase
+      await auditService.logModification(
+        (req as any).user?.id,
+        (req as any).organizationId,
+        'ANIMAL',
+        animal._id.toString(),
+        'CREATE',
+        animal.toJSON()
+      );
+
       res.status(201).json({ success: true, data: animal });
+
     } catch (err) { next(err); }
   }
 );
@@ -127,7 +141,19 @@ router.put('/:id',
         { new: true, runValidators: true }
       );
       if (!animal) return res.status(404).json({ success: false, message: 'Animal introuvable' });
+
+      // Sync to Supabase
+      await auditService.logModification(
+        (req as any).user?.id,
+        (req as any).organizationId,
+        'ANIMAL',
+        animal._id.toString(),
+        'UPDATE',
+        animal.toJSON()
+      );
+
       res.json({ success: true, data: animal });
+
     } catch (err) { next(err); }
   }
 );
@@ -146,7 +172,20 @@ router.delete('/:id',
         organizationId: (req as any).organizationId,
       });
       if (!animal) return res.status(404).json({ success: false, message: 'Animal introuvable' });
+
+      // Sync to Supabase
+      await auditService.logModification(
+        (req as any).user?.id,
+        (req as any).organizationId,
+        'ANIMAL',
+        animal._id.toString(),
+        'DELETE',
+        undefined,
+        animal.toJSON()
+      );
+
       res.json({ success: true, message: 'Supprimé avec succès' });
+
     } catch (err) { next(err); }
   }
 );

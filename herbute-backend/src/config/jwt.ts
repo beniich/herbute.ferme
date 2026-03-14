@@ -55,11 +55,14 @@ export function generateToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): string 
   return jwt.sign(
     {
       ...payload,
+      sub: payload.sub || payload.userId,
     },
     jwtConfig.privateKey,
     {
       algorithm: jwtConfig.algorithm as any,
       expiresIn: jwtConfig.accessTokenTtl as any,
+      issuer: jwtConfig.issuer,
+      audience: jwtConfig.audience,
     }
   );
 }

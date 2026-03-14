@@ -1,14 +1,23 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
+import mongoose from 'mongoose';
 // @ts-ignore
 import { app } from './server.js';
 import { generateToken } from './config/jwt.js';
+import { connectDB } from './config/db.js';
 
 /**
  * Test de validation de la sécurité (E2E API)
  * Vérifie le RBAC (Role Based Access Control) et l'isolation multi-tenancy.
  */
 describe('Security & Authorization Validation', () => {
+  beforeAll(async () => {
+    await connectDB();
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect();
+  });
   const orgA = '657c6b8c9c4c4e001f000001'; // Dummy IDs
   const orgB = '657c6b8c9c4c4e001f000002';
 
