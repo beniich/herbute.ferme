@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -68,6 +68,7 @@ import agriInventoryRoutes from './routes/inventory.routes.js';
 import agriKnowledgeRoutes from './routes/knowledge.routes.js';
 import { scheduleRecurringJobs } from './services/agent/queue.service.js';
 import { initSocket } from './services/socketService.js';
+import './services/dailySummary.service.js'; // <-- Activation automatique du CRON IA Quotidien
 import adRoutes from './routes/ad.js';
 import securityRoutes from './routes/security.js';
 import networkRoutes from './routes/network.js';

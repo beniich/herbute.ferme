@@ -11,7 +11,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.28.0.0/16
 
 volumes:
   mongo-data:
@@ -20,6 +20,7 @@ volumes:
   models-data:
   mqtt-data:
   nginx-certs:
+  ollama-data:
 
 services:
 
@@ -39,7 +40,7 @@ services:
       - "27017:27017"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.10
+        ipv4_address: 172.28.0.10
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -65,7 +66,7 @@ services:
       - "6379:6379"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.11
+        ipv4_address: 172.28.0.11
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-herbute2025}", "ping"]
       interval: 10s
@@ -86,7 +87,7 @@ services:
       - "9001:9001"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.12
+        ipv4_address: 172.28.0.12
     healthcheck:
       test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "health",
              "-m", "ping", "-u", "${MQTT_USER:-herbute}", "-P", "${MQTT_PASS:-herbute2025}"]
@@ -112,13 +113,14 @@ services:
       MQTT_HOST:       mqtt
       MQTT_PORT:       1883
       INTERNAL_IA_URL: http://backend-ia:5001
+      OLLAMA_URL:      http://ollama:11434/v1
     volumes:
       - uploads-data:/app/uploads
     ports:
       - "2065:2065"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.20
+        ipv4_address: 172.28.0.20
     depends_on:
       mongo: { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -153,7 +155,7 @@ services:
       - "5001:5001"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.30
+        ipv4_address: 172.28.0.30
     depends_on:
       mongo: { condition: service_healthy }
       mqtt:  { condition: service_healthy }
@@ -184,7 +186,7 @@ services:
       - "3000:3000"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.40
+        ipv4_address: 172.28.0.40
     depends_on:
       backend: { condition: service_healthy }
     healthcheck:
@@ -209,7 +211,7 @@ services:
       - "443:443"
     networks:
       herbute-net:
-        ipv4_address: 172.20.0.50
+        ipv4_address: 172.28.0.50
     depends_on: [frontend, backend, backend-ia]
 
   # ── 8. MQTT → MONGO BRIDGE ────────────────────────────────
@@ -231,4 +233,21 @@ services:
       mongo: { condition: service_healthy }
       mqtt:  { condition: service_healthy }
 
-
+  # ── 9. OLLAMA LOCAL LLM (BLINDÉ / SÉCURISÉ) ───────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: herbute-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    # ❌ AUCUN PORT EXPOSÉ VERS L'EXTÉRIEUR : SÉCURITÉ MAXIMALE
+    # ports:
+    #   - "11434:11434"
+    networks:
+      herbute-net:
+        ipv4_address: 172.28.0.60
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
