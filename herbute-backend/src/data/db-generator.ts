@@ -6,8 +6,8 @@ function randInt(min: number, max: number): number {
 }
 
 /**
- * Retourne un objet contenant les mÃ©triques agrÃ©gÃ©es.
- * Les valeurs changent lÃ©gÃ¨rement Ã  chaque appel, ce qui simule du rÃ©el.
+ * Retourne un objet contenant les métriques agrégées.
+ * Les valeurs changent légèrement à chaque appel, ce qui simule du réel.
  */
 export function generateMetrics() {
     // Lag moyen (ms) = sum(lag) * 1000 + jitter
@@ -15,7 +15,7 @@ export function generateMetrics() {
         .filter((c) => c.role === "replica")
         .reduce((sum, c) => sum + (c.lag || 0) * 1000, 0);
 
-    const jitter = randInt(-20, 30); // Â± ms pour le "live"
+    const jitter = randInt(-20, 30); // ± ms pour le "live"
 
     return {
         replicationLagMs: Math.max(0, Math.round(avgLagMs + jitter)),
@@ -25,14 +25,14 @@ export function generateMetrics() {
             const success = Math.random() > 0.2;
             return success
                 ? `${randInt(1, 30)} min ago`
-                : "failed â€“ see logs";
+                : "failed — see logs";
         })(),
         activeNodes: randInt(10, 15),
     };
 }
 
 /**
- * GÃ©nÃ¨re des donnÃ©es dynamiques pour le dashboard NetViz
+ * Génère des données dynamiques pour le dashboard NetViz
  */
 export function generateNetVizMetrics() {
     return {
@@ -44,7 +44,7 @@ export function generateNetVizMetrics() {
 }
 
 /**
- * GÃ©nÃ¨re des donnÃ©es dynamiques pour le dashboard Q-Manager
+ * Génère des données dynamiques pour le dashboard Q-Manager
  */
 export function generateQueueMetrics() {
     return queues.map(q => ({
@@ -55,7 +55,7 @@ export function generateQueueMetrics() {
 }
 
 /**
- * GÃ©nÃ¨re des donnÃ©es dynamiques pour DBA Sentinel
+ * Génère des données dynamiques pour DBA Sentinel
  */
 export function generateDBAMetrics() {
     return {
