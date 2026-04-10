@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file errorHandler.ts
  * @description Centralized, type-aware global error handler for Express.
  *              Handles: AppError, Mongoose ValidationError, Mongoose CastError,
@@ -41,7 +41,7 @@ const buildResponse = (
 });
 
 /**
- * Global Express error handler â€” must be the LAST middleware registered.
+ * Global Express error handler — must be the LAST middleware registered.
  */
 const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunction): void => {
   const requestId = req.id;
@@ -68,7 +68,7 @@ const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunc
     res
       .status(401)
       .json(
-        buildResponse('Token expirÃ© â€” rafraÃ®chissez votre session', 'AUTH_TOKEN_EXPIRED', requestId)
+        buildResponse('Token expiré — rafraîchissez votre session', 'AUTH_TOKEN_EXPIRED', requestId)
       );
     return;
   }
@@ -88,7 +88,7 @@ const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunc
     res
       .status(422)
       .json(
-        buildResponse('Erreur de validation des donnÃ©es', 'VALIDATION_ERROR', requestId, details)
+        buildResponse('Erreur de validation des données', 'VALIDATION_ERROR', requestId, details)
       );
     return;
   }
@@ -114,7 +114,7 @@ const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunc
     res
       .status(409)
       .json(
-        buildResponse(`La valeur du champ '${field}' est dÃ©jÃ  utilisÃ©e`, 'CONFLICT', requestId)
+        buildResponse(`La valeur du champ '${field}' est déjà utilisée`, 'CONFLICT', requestId)
       );
     return;
   }
@@ -124,13 +124,13 @@ const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunc
     logger.warn(`[ErrorHandler] Malformed JSON body`, { requestId });
     res
       .status(400)
-      .json(buildResponse('Corps de requÃªte JSON invalide', 'INVALID_JSON', requestId));
+      .json(buildResponse('Corps de requête JSON invalide', 'INVALID_JSON', requestId));
     return;
   }
 
-  // â”€â”€ 7. Unknown / programming error â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 7. Unknown / programming error ──────────────────────────────────────────
   const unknownErr = err as Error;
-  logger.error(`[ErrorHandler] âŒ Unhandled server error: ${unknownErr?.message ?? 'Unknown'}`, {
+  logger.error(`[ErrorHandler] ❌ Unhandled server error: ${unknownErr?.message ?? 'Unknown'}`, {
     requestId,
     stack: isDev ? unknownErr?.stack : undefined,
     path: req.path,

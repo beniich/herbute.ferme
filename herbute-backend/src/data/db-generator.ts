@@ -1,4 +1,4 @@
-﻿// db-generator.ts â€“ gÃ©nÃ¨re des mÃ©triques dynamiques pour l'administration de base de donnÃ©es
+// db-generator.ts - génère des métriques dynamiques pour l'administration de base de données
 import { clusters, queues } from './db-fixtures.js';
 
 function randInt(min: number, max: number): number {

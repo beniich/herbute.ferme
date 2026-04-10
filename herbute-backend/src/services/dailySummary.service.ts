@@ -66,7 +66,7 @@ export class DailySummaryService {
         const fakeUserId = "cron-system";
         const promptAgent = `Je suis le superviseur automatisé. Voici les statistiques brutes du jour : "${rawData}". Rédige-moi une brève synthèse professionnelle de 3 lignes en HTML (sans les balises \`\`\`html) adressée au Directeur de Herbute. Termine par une petite recommandation bienveillante de direction.`;
         
-        let conversation = await aiAgent.generateChatResponse(fakeUserId, promptAgent);
+        const conversation = await aiAgent.generateChatResponse(fakeUserId, promptAgent);
         synthesisHtml = conversation.messages[conversation.messages.length - 1].content;
       } catch (e) {
         console.warn("L'IA n'a pas pu générer la synthèse :", e);

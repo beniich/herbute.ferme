@@ -45,7 +45,10 @@ const writeCache = async (key: string, value: unknown, ttl: number): Promise<voi
   try {
     if (redis) await redis.setEx(key, ttl, JSON.stringify(value));
     else memStore.set(key, { data: value, expiresAt: Date.now() + ttl * 1000 });
-  } catch {}
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('[Cache] write error', err);
+  }
 };
 
 export const cacheMiddleware = (ttlSeconds: number = CACHE_TTL.default) =>
@@ -72,5 +75,8 @@ export const invalidateCache = async (urlPrefix: string): Promise<void> => {
     } else {
       for (const k of memStore.keys()) if (k.startsWith(prefix)) memStore.delete(k);
     }
-  } catch {}
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('[Cache] invalidate error', err);
+  }
 };

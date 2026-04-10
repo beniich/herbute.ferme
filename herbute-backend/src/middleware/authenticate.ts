@@ -12,7 +12,6 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
-import type { JwtPayload } from '@reclamtrack/shared';
 
 // ─────────────────────────────────────────────
 // Extraction du token depuis la requête
@@ -53,7 +52,7 @@ export const authenticate = (
 
   try {
     const payload = verifyAccessToken(token);
-    // @ts-ignore - Le payload contient roles[] au lieu de role
+    // @ts-expect-error - Conformité JWTPayload vs JwtPayload (payload contains roles[] instead of role)
     req.user = payload;
     next();
   } catch (err: any) {
