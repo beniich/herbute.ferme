@@ -12,6 +12,42 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Inter, Sora, Playfair_Display, Outfit, JetBrains_Mono, Anton } from 'next/font/google';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: {
+        default: 'Herbute ERP | Gestion Agricole, Industrielle & RH Intelligente',
+        template: '%s | Herbute ERP'
+    },
+    description: 'Le premier ERP dopé à l\'IA locale (Llama3) conçu pour l\'agriculture moderne et la gestion industrielle. Suivez vos stocks, vos équipes, vos récoltes et vos budgets.',
+    keywords: ['ERP agricole', 'logiciel de gestion de ferme', 'Sénégal', 'Maroc', 'CRM agriculture', 'gestion RH', 'IA locale', 'Agro-industrie', 'logiciel SaaS'],
+    authors: [{ name: 'Herbute Tech', url: 'https://herbute.com' }],
+    creator: 'Herbute',
+    openGraph: {
+        type: 'website',
+        locale: 'fr_FR',
+        url: 'https://herbute.com/',
+        title: 'Herbute ERP - La révolution intelligente',
+        description: 'Pilotez votre ferme ou entreprise industrielle avec une Intelligence Artificielle intégrée et un système de recouvrement automatisé.',
+        siteName: 'Herbute ERP'
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Herbute ERP',
+        description: 'Pilotez vos opérations avec notre IA de Direction.',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-video-preview': -1,
+            'max-snippet': -1,
+        },
+    },
+};
 
 const inter = Inter({
     subsets: ['latin'],
