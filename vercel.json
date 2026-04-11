@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build -w shared && npm run build -w frontend",
+  "buildCommand": "npm run vercel-build",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "frontend/.next",
-  "framework": "nextjs"
+  "framework": null
 }
