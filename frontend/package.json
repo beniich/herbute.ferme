@@ -60,6 +60,7 @@
     "next": "15.1.12",
     "next-auth": "^4.24.13",
     "next-intl": "^4.8.2",
+    "next-pwa": "^5.6.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "react": "19.0.0",
     "react-big-calendar": "^1.19.4",

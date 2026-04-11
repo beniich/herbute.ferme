@@ -1,58 +1,68 @@
-import { supabaseAdmin } from '../config/supabase.js';
+import { AuditLog, AuditAction } from '../models/AuditLog.js';
 import { logger } from '../utils/logger.js';
 
-export interface AuditLogEntry {
+interface AuditOptions {
+  organizationId: string;
   userId?: string;
-  organizationId?: string;
-  action: string;
+  userEmail: string;
+  userName?: string;
+  action: AuditAction;
   resource: string;
   resourceId?: string;
-  oldData?: any;
-  newData?: any;
-  metadata?: any;
+  description?: string;
+  changes?: { before: Record<string, any>; after: Record<string, any> };
+  metadata?: Record<string, any>;
+  ipAddress?: string;
+  userAgent?: string;
+  severity?: 'info' | 'warning' | 'critical';
 }
 
-/**
- * Service to sync audit logs and modifications to Supabase.
- */
 export class AuditService {
   /**
-   * Logs an action to Supabase.
-   * This allows real-time sync of modifications for external reporting/LLM usage.
+   * Create an audit log entry (fire-and-forget)
    */
-  static async log(entry: AuditLogEntry): Promise<void> {
+  static async log(opts: AuditOptions): Promise<void> {
     try {
-      if (!supabaseAdmin) {
-        logger.debug('[AuditSync] ⏭️ Supabase sync skipped (not configured)');
-        return;
-      }
-
-      const { error } = await supabaseAdmin
-        .from('audit_logs')
-        .insert([{
-          user_id: entry.userId,
-          org_id: entry.organizationId,
-          action: entry.action,
-          resource_type: entry.resource,
-          resource_id: entry.resourceId,
-          old_data: entry.oldData,
-          new_data: entry.newData,
-          metadata: entry.metadata || {},
-          timestamp: new Date().toISOString()
-        }]);
-
-      if (error) {
-        logger.error(`[AuditSync] ❌ Failed to sync to Supabase: ${error.message}`);
-      } else {
-        logger.debug(`[AuditSync] ✅ Synced ${entry.action} on ${entry.resource} to Supabase`);
-      }
+      const severity = opts.severity ?? this.inferSeverity(opts.action);
+      await AuditLog.create({ ...opts, severity, timestamp: new Date() });
     } catch (err: any) {
-      logger.error(`[AuditSync] ⛈️ Unexpected error during Supabase sync: ${err.message}`);
+      logger.error('[AuditService] Failed to write audit log:', err.message);
     }
   }
 
   /**
-   * Helper for standard modification logging.
+   * Extract user & IP from Express request and log
+   */
+  static async logFromRequest(
+    req: any,
+    action: AuditAction,
+    resource: string,
+    opts: Partial<Omit<AuditOptions, 'action' | 'resource' | 'organizationId' | 'userEmail'>> = {}
+  ): Promise<void> {
+    const organizationId = req.organizationId || req.user?.organizationId || req.params?.orgId;
+    if (!organizationId) return;
+
+    const ipAddress =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      req.socket?.remoteAddress ||
+      req.ip;
+
+    return this.log({
+      organizationId,
+      userId: req.user?._id?.toString() || req.user?.id,
+      userEmail: req.user?.email || 'system',
+      userName: req.user?.name || req.user?.prenom,
+      action,
+      resource,
+      resourceId: opts.resourceId || req.params?.id,
+      ipAddress,
+      userAgent: req.headers['user-agent'],
+      ...opts,
+    });
+  }
+
+  /**
+   * Shorthand to log a modification (create/update/delete) with before/after diff
    */
   static async logModification(
     userId: string | undefined,
@@ -63,16 +73,28 @@ export class AuditService {
     newData?: any,
     oldData?: any
   ) {
+    if (!orgId) return;
     return this.log({
-      userId,
       organizationId: orgId,
+      userId,
+      userEmail: 'system',
       action,
       resource,
       resourceId: id,
-      newData,
-      oldData
+      changes: oldData || newData ? { before: oldData || {}, after: newData || {} } : undefined,
     });
+  }
+
+  private static inferSeverity(action: AuditAction): 'info' | 'warning' | 'critical' {
+    if (['DELETE', 'MEMBER_REMOVED', 'PASSWORD_CHANGED', 'PERMISSION_CHANGED', 'LOGIN_FAILED'].includes(action)) {
+      return 'critical';
+    }
+    if (['QUOTA_EXCEEDED', 'LOGOUT', 'EXPORT', 'IMPORT', 'INVOICE_SENT', 'WHATSAPP_SENT'].includes(action)) {
+      return 'warning';
+    }
+    return 'info';
   }
 }
 
 export const auditService = AuditService;
+

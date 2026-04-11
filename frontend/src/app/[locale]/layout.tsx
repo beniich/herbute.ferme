@@ -24,6 +24,16 @@ export const metadata: Metadata = {
     keywords: ['ERP agricole', 'logiciel de gestion de ferme', 'Sénégal', 'Maroc', 'CRM agriculture', 'gestion RH', 'IA locale', 'Agro-industrie', 'logiciel SaaS'],
     authors: [{ name: 'Herbute Tech', url: 'https://herbute.com' }],
     creator: 'Herbute',
+    manifest: '/manifest.json',
+    themeColor: '#1a1209',
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: 'default',
+        title: 'Herbute ERP',
+    },
+    formatDetection: {
+        telephone: false,
+    },
     openGraph: {
         type: 'website',
         locale: 'fr_FR',

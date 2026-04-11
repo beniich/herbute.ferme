@@ -1,18 +1,32 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export type AuditAction =
+  | 'CREATE' | 'UPDATE' | 'DELETE'
+  | 'LOGIN' | 'LOGOUT' | 'LOGIN_FAILED'
+  | 'EXPORT' | 'IMPORT'
+  | 'AI_GENERATION' | 'AI_ALERT'
+  | 'INVOICE_GENERATED' | 'INVOICE_SENT'
+  | 'QUOTA_EXCEEDED'
+  | 'MEMBER_INVITED' | 'MEMBER_REMOVED'
+  | 'PASSWORD_CHANGED' | 'PERMISSION_CHANGED'
+  | 'WHATSAPP_SENT' | 'PDF_GENERATED';
+
 export interface IAuditLog extends Document {
   organizationId: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
   userEmail: string;
-  action: 'CREATE' | 'UPDATE' | 'DELETE' | 'LOGIN' | 'LOGOUT' | 'EXPORT' | 'AI_GENERATION';
+  userName?: string;
+  action: AuditAction;
   resource: string;
   resourceId?: string;
+  description?: string;  // Human-readable description
   changes?: {
     before: Record<string, any>;
     after: Record<string, any>;
   };
-  ipAddress: string;
-  userAgent: string;
+  metadata?: Record<string, any>; // Any extra context
+  ipAddress?: string;
+  userAgent?: string;
   timestamp: Date;
   severity: 'info' | 'warning' | 'critical';
 }
@@ -28,37 +42,36 @@ const AuditLogSchema: Schema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
       index: true,
     },
-    userEmail: {
-      type: String,
-      required: true,
-    },
+    userEmail: { type: String, required: true },
+    userName:  { type: String },
     action: {
       type: String,
       required: true,
-      enum: ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'EXPORT', 'AI_GENERATION'],
-    },
-    resource: {
-      type: String,
-      required: true,
       index: true,
+      enum: [
+        'CREATE', 'UPDATE', 'DELETE',
+        'LOGIN', 'LOGOUT', 'LOGIN_FAILED',
+        'EXPORT', 'IMPORT',
+        'AI_GENERATION', 'AI_ALERT',
+        'INVOICE_GENERATED', 'INVOICE_SENT',
+        'QUOTA_EXCEEDED',
+        'MEMBER_INVITED', 'MEMBER_REMOVED',
+        'PASSWORD_CHANGED', 'PERMISSION_CHANGED',
+        'WHATSAPP_SENT', 'PDF_GENERATED',
+      ],
     },
-    resourceId: {
-      type: String,
-      default: null,
-    },
+    resource:   { type: String, required: true, index: true },
+    resourceId: { type: String, default: null },
+    description: { type: String },
     changes: {
       before: { type: Schema.Types.Mixed },
-      after: { type: Schema.Types.Mixed },
+      after:  { type: Schema.Types.Mixed },
     },
-    ipAddress: {
-      type: String,
-    },
-    userAgent: {
-      type: String,
-    },
+    metadata: { type: Schema.Types.Mixed },
+    ipAddress: { type: String },
+    userAgent:  { type: String },
     severity: {
       type: String,
       enum: ['info', 'warning', 'critical'],
@@ -70,13 +83,17 @@ const AuditLogSchema: Schema = new Schema(
       index: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// TTL index to automatically archive logs after 1 year (365 days)
+// Compound index for efficient org-scoped queries
+AuditLogSchema.index({ organizationId: 1, timestamp: -1 });
+AuditLogSchema.index({ organizationId: 1, action: 1 });
+AuditLogSchema.index({ organizationId: 1, severity: 1 });
+
+// TTL: auto-archive after 1 year
 AuditLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
 
 export const AuditLog = mongoose.model<IAuditLog>('AuditLog', AuditLogSchema);
+
 
