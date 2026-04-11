@@ -10,5 +10,7 @@ router.use(authenticate as any, requireOrganization as any);
 router.post('/', authorize(Permission.BILLING_MANAGE), invoiceController.create);
 router.get('/', authorize(Permission.BILLING_READ), invoiceController.findAll);
 router.get('/:id/pdf', authorize(Permission.BILLING_READ), invoiceController.downloadPDF);
+router.get('/transaction/:transactionId', authorize(Permission.BILLING_READ), invoiceController.findByTransaction);
 
 export default router;
+

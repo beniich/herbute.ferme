@@ -8,15 +8,46 @@ import { logger } from '../utils/logger.js';
 
 export class InvoiceController {
   /**
-   * Create a new invoice
+   * Create a new invoice with server-side validation/calculation
    */
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const organizationId = (req as any).organizationId;
-      const data = { ...req.body, organizationId };
+      const { items, taxRate = 0, currency = 'XOF', ...rest } = req.body;
       
-      const invoice = await Invoice.create(data);
+      // Server-side calculation to ensure totals are correct
+      const subtotal = items.reduce((acc: number, item: any) => acc + (item.quantity * item.unitPrice), 0);
+      const taxAmount = subtotal * (taxRate / 100);
+      const total = subtotal + taxAmount;
+      
+      const invoice = await Invoice.create({
+        ...rest,
+        items,
+        subtotal,
+        taxRate,
+        taxAmount,
+        total,
+        currency,
+        organizationId
+      });
+
+      logger.info(`✅ Invoice ${invoice.invoiceNumber} created for Org ${organizationId}`);
       res.status(201).json({ success: true, data: invoice });
+    } catch (err) { next(err); }
+  }
+
+  /**
+   * Find invoice by linked transaction
+   */
+  async findByTransaction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { transactionId } = req.params;
+      const organizationId = (req as any).organizationId;
+      
+      const invoice = await Invoice.findOne({ transactionId, organizationId });
+      if (!invoice) return res.json({ success: false, message: 'Aucune facture liée' });
+      
+      res.json({ success: true, data: invoice });
     } catch (err) { next(err); }
   }
 
@@ -30,6 +61,7 @@ export class InvoiceController {
       res.json({ success: true, data: invoices });
     } catch (err) { next(err); }
   }
+
 
   /**
    * Generate and stream PDF

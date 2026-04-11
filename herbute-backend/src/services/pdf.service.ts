@@ -59,6 +59,7 @@ export class PDFService {
 
       // --- Items ---
       let i = 0;
+      const currency = invoice.currency || 'XOF';
       for (i = 0; i < invoice.items.length; i++) {
         const item = invoice.items[i];
         const position = tableTop + (i + 1) * 30;
@@ -67,22 +68,25 @@ export class PDFService {
           position,
           item.description,
           item.quantity.toString(),
-          `${item.unitPrice.toFixed(2)} MAD`,
-          `${item.total.toFixed(2)} MAD`
+          `${item.unitPrice.toFixed(2)} ${currency}`,
+          `${item.total.toFixed(2)} ${currency}`
         );
         this.generateHr(doc, position + 20);
       }
 
       // --- Totals ---
       const subtotalPosition = tableTop + (i + 1) * 30 + 30;
-      this.generateTableRow(doc, subtotalPosition, '', '', 'Sous-total', `${invoice.subtotal.toFixed(2)} MAD`);
+      this.generateTableRow(doc, subtotalPosition, '', '', 'Sous-total', `${invoice.subtotal.toFixed(2)} ${currency}`);
 
       const taxPosition = subtotalPosition + 20;
-      this.generateTableRow(doc, taxPosition, '', '', 'TVA (20%)', `${invoice.tax.toFixed(2)} MAD`);
+      const taxRate = invoice.taxRate || 0;
+      const taxAmount = invoice.taxAmount || 0;
+      this.generateTableRow(doc, taxPosition, '', '', `TVA (${taxRate}%)`, `${taxAmount.toFixed(2)} ${currency}`);
 
       const totalPosition = taxPosition + 25;
       doc.font('Helvetica-Bold').fontSize(12);
-      this.generateTableRow(doc, totalPosition, '', '', 'TOTAL', `${invoice.total.toFixed(2)} MAD`);
+      this.generateTableRow(doc, totalPosition, '', '', 'TOTAL', `${invoice.total.toFixed(2)} ${currency}`);
+
 
       // --- Footer ---
       doc

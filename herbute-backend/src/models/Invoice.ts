@@ -18,19 +18,24 @@ export interface IInvoice extends Document {
   dueDate: Date;
   items: IInvoiceItem[];
   subtotal: number;
-  tax: number;
+  taxRate: number; // Percentage (e.g. 20 for 20%)
+  taxAmount: number;
   total: number;
+  currency: string;
   status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
   notes?: string;
+  paymentTerms?: string;
+  transactionId?: mongoose.Types.ObjectId; // Link to finance transaction
   createdAt: Date;
   updatedAt: Date;
 }
 
 const InvoiceSchema: Schema = new Schema({
   organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true, index: true },
-  invoiceNumber: { type: String, required: true, unique: true },
+  invoiceNumber: { type: String, required: true, unique: true, index: true },
   clientName: { type: String, required: true },
   clientEmail: { type: String, required: true },
+  clientPhone: { type: String },
   clientAddress: { type: String },
   date: { type: Date, default: Date.now },
   dueDate: { type: Date, required: true },
@@ -41,16 +46,24 @@ const InvoiceSchema: Schema = new Schema({
     total: { type: Number, required: true }
   }],
   subtotal: { type: Number, required: true },
-  tax: { type: Number, default: 0 },
+  taxRate: { type: Number, default: 0 },
+  taxAmount: { type: Number, default: 0 },
   total: { type: Number, required: true },
+  currency: { type: String, default: 'XOF' },
   status: { 
     type: String, 
     enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'], 
     default: 'draft' 
   },
-  notes: { type: String }
+  notes: { type: String },
+  paymentTerms: { type: String },
+  transactionId: { type: Schema.Types.ObjectId, ref: 'Finance' }
 }, {
   timestamps: true
 });
 
+// Added index for faster search
+InvoiceSchema.index({ clientName: 'text', invoiceNumber: 'text' });
+
 export const Invoice = mongoose.model<IInvoice>('Invoice', InvoiceSchema);
+
