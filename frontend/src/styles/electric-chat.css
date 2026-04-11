@@ -1,10 +1,10 @@
 .electric-border-container {
     position: relative;
-    padding: 3px;
-    border-radius: 1rem;
-    background: #111;
+    padding: 2px;
+    border-radius: 1.25rem;
+    background: #000;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
 }
 
 .electric-border-container::before {
@@ -21,18 +21,18 @@
         #00ffea, 
         #ffea00, 
         #00ffea,
-        transparent
+        transparent 50%
     );
-    animation: rotate-electric 4s linear infinite;
+    animation: rotate-electric 3s linear infinite;
     z-index: 0;
 }
 
 .electric-border-container::after {
     content: '';
     position: absolute;
-    inset: 3px;
+    inset: 2px;
     background: #1a1209;
-    border-radius: calc(1rem - 3px);
+    border-radius: calc(1.25rem - 2px);
     z-index: 1;
 }
 

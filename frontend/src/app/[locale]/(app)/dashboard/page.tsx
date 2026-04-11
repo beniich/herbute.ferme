@@ -66,6 +66,17 @@ export default function DashboardPage() {
           <p className="text-sm text-zinc-400">Analyse consolidée de votre exploitation en temps réel.</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
+          {process.env.NODE_ENV === 'development' && (
+            <button 
+              onClick={() => {
+                // Manually trigger a test notification for visual validation
+                window.dispatchEvent(new CustomEvent('test-ai-alert'));
+              }}
+              className="px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-primary hover:bg-primary/10 transition-all text-xs font-bold"
+            >
+              Test IA Alert
+            </button>
+          )}
           <button 
             onClick={refresh} 
             title="Actualiser"
