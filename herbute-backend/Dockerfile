@@ -1,56 +1,46 @@
 # ════════════════════════════════════════════════
-#  Herbute Backend — Multi-stage Dockerfile
-#  Stage 1: deps     → install production deps
-#  Stage 2: builder  → compile TypeScript
-#  Stage 3: production → image minimale
+#  Herbute Backend — Multi-stage Dockerfile (Monorepo Context)
 # ════════════════════════════════════════════════
 
-# ── Stage 1: Dépendances ──────────────────────
-FROM node:20-alpine AS deps
-WORKDIR /app
-
-# Cache npm efficace : copier d'abord les manifestes
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps --only=production && \
-    cp -R node_modules /prod_node_modules && \
-    npm install --legacy-peer-deps
-
-# ── Stage 2: Build TypeScript ─────────────────
+# ── Stage 1: Build ────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Copier les manifestes racine
+COPY package.json package-lock.json* ./
 
-RUN npm run build
+# Copier les dossiers nécessaires
+COPY shared ./shared
+COPY herbute-backend ./herbute-backend
 
-# ── Stage 3: Production ───────────────────────
+# Installation des dépendances (inclut les workspaces)
+RUN npm install --legacy-peer-deps
+
+# Build du package shared puis du backend
+RUN npm run build -w @reclamtrack/shared
+RUN npm run build -w herbute-backend
+
+# ── Stage 2: Production ────────────────────────
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Sécurité : installation de wget pour le healthcheck et création utilisateur
 RUN apk add --no-cache wget && \
     addgroup -g 1001 -S herbute && \
     adduser  -u 1001 -S herbute -G herbute
 
-# Copier les fichiers de build et dépendances prod
-COPY --from=deps     --chown=herbute:herbute /prod_node_modules ./node_modules
-COPY --from=builder  --chown=herbute:herbute /app/dist          ./dist
-COPY --from=builder  --chown=herbute:herbute /app/package.json  ./
+# Copier node_modules (optimisé par npm workspaces) et les fichiers buildés
+COPY --from=builder --chown=herbute:herbute /app/node_modules ./node_modules
+COPY --from=builder --chown=herbute:herbute /app/herbute-backend/dist ./dist
+COPY --from=builder --chown=herbute:herbute /app/herbute-backend/package.json ./
+COPY --from=builder --chown=herbute:herbute /app/herbute-backend/keys ./keys
 
-# IMPORTANT : Copier les clés pour RS256 (doivent être générées/présentes)
-# En production, il est recommandé de monter ce dossier via un volume secret ou Kubernetes Secrets
-COPY --chown=herbute:herbute keys/ ./keys/
-
-# Dossiers pour les données et logs
+# Créer les dossiers nécessaires
 RUN mkdir -p uploads logs && \
     chown -R herbute:herbute uploads logs
 
 USER herbute
-
 ENV NODE_ENV=production
 ENV PORT=2065
-
 EXPOSE 2065
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

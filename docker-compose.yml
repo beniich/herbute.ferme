@@ -98,8 +98,8 @@ services:
   # ── 4. BACKEND NODE.JS ────────────────────────────────────
   backend:
     build:
-      context: ./herbute-backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: herbute-backend/Dockerfile
       target: production
     container_name: herbute-backend
     restart: unless-stopped
@@ -169,8 +169,8 @@ services:
   # ── 6. FRONTEND NEXT.JS ───────────────────────────────────
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
       target: production
       args:
         NEXT_PUBLIC_API_URL:          ${NEXT_PUBLIC_API_URL:-http://localhost:2065}
