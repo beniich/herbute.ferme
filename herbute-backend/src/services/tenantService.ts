@@ -22,11 +22,12 @@ export class TenantService {
     let current = 0;
 
     switch (resource) {
-      case 'users':
+      case 'users': {
         limit = quotas.maxUsers;
         current = await User.countDocuments({ organizationId });
         break;
-      case 'animals':
+      }
+      case 'animals': {
         limit = quotas.maxAnimals || 0;
         const animalData = await Animal.aggregate([
           { $match: { organizationId: new mongoose.Types.ObjectId(organizationId.toString()) } },
@@ -34,19 +35,22 @@ export class TenantService {
         ]);
         current = animalData[0]?.total || 0;
         break;
-      case 'crops':
+      }
+      case 'crops': {
         limit = quotas.maxCrops || 0;
         current = await Crop.countDocuments({ organizationId });
         break;
-      case 'aiRequests':
+      }
+      case 'aiRequests': {
         limit = quotas.aiRequestsPerDay;
-        // Tracking via some log or counter (simulated for now)
-        current = 0; 
+        current = 0;
         break;
-      case 'storage':
+      }
+      case 'storage': {
         limit = quotas.maxStorage;
-        current = 0; // Measurement of uploads directory usually
+        current = 0;
         break;
+      }
     }
 
     return {
