@@ -33,14 +33,18 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
 RUN addgroup -g 1001 -S herbute && \
     adduser  -u 1001 -S herbute -G herbute
 
-# Copier les artefacts Next.js
-COPY --from=builder --chown=herbute:herbute /app/frontend/public ./public
+# Copier les artefacts Next.js standalone
+# La racine du tracing étant projet/, les fichiers du workspace se retrouvent dans frontend/
 COPY --from=builder --chown=herbute:herbute /app/frontend/.next/standalone ./
+# Les fichiers statiques doivent être dans .next/static et public
 COPY --from=builder --chown=herbute:herbute /app/frontend/.next/static ./frontend/.next/static
+COPY --from=builder --chown=herbute:herbute /app/frontend/public ./frontend/public
 
 USER herbute
 EXPOSE 3000
@@ -48,5 +52,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=20s --timeout=5s --start-period=60s --retries=3 \
     CMD wget -qO- http://localhost:3000 || exit 1
 
-# Note: In standalone mode, Next.js expects files to be in certain places
+# En mode standalone avec outputFileTracingRoot = '../', le script exécutable est dans frontend/server.js
 CMD ["node", "frontend/server.js"]
