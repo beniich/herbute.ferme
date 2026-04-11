@@ -16,46 +16,48 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
 
   useEffect(() => {
     if (!user) return;
+    if (typeof window === 'undefined') return;
 
-    const URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-    const socketUrl = URL.replace(/\/api\/?$/, '');
+    let socket: Socket | null = null;
+    try {
+      const URL = process.env.NEXT_PUBLIC_API_URL || '';
+      const socketUrl = URL ? URL.replace(/\/api\/?$/, '') : window.location.origin;
 
-    const socket = io(socketUrl, {
-      path: '/socket.io/',
-      withCredentials: true,
-      transports: ['websocket']
-    });
+      socket = io(socketUrl, {
+        path: '/socket.io/',
+        withCredentials: true,
+        transports: ['websocket', 'polling']
+      });
 
-    socketRef.current = socket;
+      socketRef.current = socket;
 
-    socket.on('connect', () => {
-      console.log('🔔 Notification Socket Connected');
-      // Join general user room and organization room
-      socket.emit('join-rooms', [`user:${user.id}`, `org:${user.organizationId}`]);
-    });
+      socket.on('connect', () => {
+        console.log('🔔 Notification Socket Connected');
+        socket?.emit('join-rooms', [`user:${user.id}`, `org:${user.organizationId}`]);
+      });
 
-    socket.on('notification', (payload: any) => {
-      console.log('📩 New Notification:', payload);
+      socket.on('notification', (payload: any) => {
+        if (payload.type === 'ai_alert') {
+          showAIAlert(payload);
+        } else {
+          showGeneralNotification(payload);
+        }
+      });
+    } catch (e) {
+      console.error('Socket initialization failed', e);
+    }
 
-      if (payload.type === 'ai_alert') {
-        showAIAlert(payload);
-      } else {
-        showGeneralNotification(payload);
-      }
-    });
-
-    // Test listener for local debugging
     const handleTestAlert = () => {
       showAIAlert({
         type: 'ai_alert',
-        message: 'Alerte IA: Analyse critique du sol recommandÃ©e pour le secteur MaraÃ®chage (Risque de stress hydrique Ã©levÃ©).',
-        data: { actionRequired: 'VÃ©rifier le systÃ¨me d\'irrigation et augmenter l\'apport en azote.' }
+        message: 'Alerte IA: Analyse critique du sol recommandée pour le secteur Maraîchage.',
+        data: { actionRequired: 'Vérifier le système d\'irrigation.' }
       });
     };
     window.addEventListener('test-ai-alert', handleTestAlert);
 
     return () => {
-      socket.disconnect();
+      if (socket) socket.disconnect();
       window.removeEventListener('test-ai-alert', handleTestAlert);
     };
   }, [user]);

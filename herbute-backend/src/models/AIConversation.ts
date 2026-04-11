@@ -13,7 +13,7 @@ export interface IAIConversation extends Document {
   userId: mongoose.Types.ObjectId;
   title: string;
   messages: IChatMessage[];
-  model: string;
+  aiModel: string;
   contextType?: string;
   isPinned: boolean;
   tokensUsed: number;
@@ -37,7 +37,7 @@ const aiConversationSchema = new Schema<IAIConversation>(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     title: { type: String, required: true },
     messages: [chatMessageSchema],
-    model: { type: String, default: 'llama3.1' },
+    aiModel: { type: String, default: 'llama3.1' },
     contextType: { type: String },
     isPinned: { type: Boolean, default: false },
     tokensUsed: { type: Number, default: 0 },
@@ -49,4 +49,3 @@ const aiConversationSchema = new Schema<IAIConversation>(
 aiConversationSchema.index({ userId: 1, updatedAt: -1 });
 
 export default mongoose.model<IAIConversation>('AIConversation', aiConversationSchema);
-

@@ -97,5 +97,6 @@ AuditLogSchema.index({ organizationId: 1, severity: 1 });
 AuditLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
 
 export const AuditLog = mongoose.model<IAuditLog>('AuditLog', AuditLogSchema);
+export default AuditLog;
 
 

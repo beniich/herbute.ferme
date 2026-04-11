@@ -12,7 +12,8 @@ export class ExcelService {
     const worksheet = workbook.addWorksheet(sheetName);
 
     if (data.length === 0) {
-      return Buffer.from(await workbook.xlsx.writeBuffer());
+      const emptyBuffer = await workbook.xlsx.writeBuffer();
+      return Buffer.from(emptyBuffer as ArrayBuffer);
     }
 
     // Smart Column detection
@@ -22,10 +23,10 @@ export class ExcelService {
       const header = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
       
       // Auto-formatting based on data type
-      let numFmt = undefined;
+      let numFmt: string | undefined = undefined;
       if (typeof firstRow[key] === 'number') {
         if (key.toLowerCase().includes('amount') || key.toLowerCase().includes('total') || key.toLowerCase().includes('debit') || key.toLowerCase().includes('credit')) {
-          numFmt = '#,##0.00'
+          numFmt = '#,##0.00';
         }
       }
 
@@ -37,7 +38,7 @@ export class ExcelService {
       };
     });
 
-    worksheet.columns = columns;
+    worksheet.columns = columns as any;
 
     // Add rows with date handling
     data.forEach(item => {
@@ -69,8 +70,8 @@ export class ExcelService {
       to: { row: 1, column: columns.length }
     };
 
-    const buffer = await workbook.xlsx.writeBuffer();
-    return Buffer.from(buffer);
+    const resultBuffer = await workbook.xlsx.writeBuffer();
+    return Buffer.from(resultBuffer as ArrayBuffer);
   }
 
 
@@ -79,7 +80,8 @@ export class ExcelService {
    */
   static async parseExcel(buffer: Buffer): Promise<any[]> {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    // Use any cast to avoid type conflicts with different Buffer versions in NodeNext
+    await workbook.xlsx.load(buffer as any);
     const worksheet = workbook.getWorksheet(1);
     
     if (!worksheet) return [];
@@ -88,7 +90,8 @@ export class ExcelService {
     const headers: string[] = [];
 
     worksheet.getRow(1).eachCell((cell, colNumber) => {
-      headers[colNumber] = cell.value?.toString().toLowerCase() || `column${colNumber}`;
+      const val = cell.value;
+      headers[colNumber] = val ? val.toString().toLowerCase() : `column${colNumber}`;
     });
 
     worksheet.eachRow((row, rowNumber) => {

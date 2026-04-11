@@ -44,7 +44,7 @@ export class DailySummaryService {
 
       // Inventaire matériel : Nombre d'articles en stock critique
       const lowStockItems = await InventoryItem.countDocuments({
-        currentStock: { $lt: 10 } // exemple: alerte si sous 10 unités
+        quantity: { $lt: 10 } // alerte si sous 10 unités
       });
 
       // Pannes / Réclamations IT : Nouveaux signalements
@@ -62,11 +62,12 @@ export class DailySummaryService {
       console.log('2. Analyse et rédaction par le modèle Ollama Llama3.1...');
       let synthesisHtml = "";
       try {
-        // On demande à notre "Agent IA Blindé" d'écrire un compte-rendu pro
+        // On demande à notre "Agent IA" d'écrire un compte-rendu pro
         const fakeUserId = "cron-system";
+        const systemOrgId = "000000000000000000000000"; // Dummy ID pour le système
         const promptAgent = `Je suis le superviseur automatisé. Voici les statistiques brutes du jour : "${rawData}". Rédige-moi une brève synthèse professionnelle de 3 lignes en HTML (sans les balises \`\`\`html) adressée au Directeur de Herbute. Termine par une petite recommandation bienveillante de direction.`;
         
-        const conversation = await aiAgent.generateChatResponse(fakeUserId, promptAgent);
+        const conversation = await aiAgent.generateChatResponse(fakeUserId, systemOrgId, promptAgent);
         synthesisHtml = conversation.messages[conversation.messages.length - 1].content;
       } catch (e) {
         console.warn("L'IA n'a pas pu générer la synthèse :", e);
@@ -81,8 +82,8 @@ export class DailySummaryService {
         port: parseInt(process.env.SMTP_PORT || '587'),
         secure: process.env.SMTP_PORT === '465',
         auth: {
-          user: process.env.SMTP_USER, // Votre adresse gmail (ex: herbute.erp@gmail.com)
-          pass: process.env.SMTP_PASS, // Le Mots de passe d'application généré sur le compte Google
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
         },
       });
 

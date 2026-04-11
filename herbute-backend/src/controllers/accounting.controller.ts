@@ -1,12 +1,12 @@
 // backend/controllers/accounting.controller.ts
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import AccountingEntry from '../models/AccountingEntry.js';
 import { reportGenerator } from '../services/reportGenerator.js';
 
 // Helper: resolve the organization ID from the request user
 function getOrgId(req: any): mongoose.Types.ObjectId | null {
-  const id = req.user?.orgId || req.user?.organizationId || req.user?.domain;
+  const id = req.user?.orgId || req.user?.organizationId || req.user?.domain || req.user?._id;
   if (!id) return null;
   try {
     return new mongoose.Types.ObjectId(id);
@@ -81,7 +81,7 @@ export const createEntry = async (req: any, res: Response) => {
       date,
       reference,
       organizationId: orgId,
-      createdBy: req.user.userId || req.user.id,
+      createdBy: req.user.userId || req.user.id || req.user._id,
       fiscalYear: year,
       fiscalPeriod: date.getMonth() + 1,
     });
@@ -98,13 +98,13 @@ export const createEntry = async (req: any, res: Response) => {
 
 export const getGeneralLedger = async (req: any, res: Response) => {
   try {
-    const domainId = getDomainId(req);
-    if (!domainId) return res.status(400).json({ success: false, message: 'Organization non définie' });
+    const orgId = getOrgId(req);
+    if (!orgId) return res.status(400).json({ success: false, message: 'Organization non définie' });
 
     const { fiscalYear, accountNumber } = req.query;
 
     const query: any = {
-      domain: domainId,
+      organizationId: orgId,
       status: 'validated',
     };
 
@@ -116,7 +116,9 @@ export const getGeneralLedger = async (req: any, res: Response) => {
     // Calculate cumulative balance
     let cumulativeBalance = 0;
     const ledger = entries.map((entry) => {
-      cumulativeBalance += entry.balance;
+      // Calculate balance on the fly if needed or use entry.balance
+      const entryBalance = entry.debit - entry.credit;
+      cumulativeBalance += entryBalance;
       return {
         ...entry.toObject(),
         cumulativeBalance,
@@ -168,7 +170,7 @@ export const downloadBalanceSheet = async (req: any, res: Response) => {
             const data = groupedMap.get(num);
             data.debit += entry.debit;
             data.credit += entry.credit;
-            data.balance += entry.balance;
+            data.balance += (entry.debit - entry.credit);
             totalDebit += entry.debit;
             totalCredit += entry.credit;
         });
@@ -194,7 +196,7 @@ export const downloadBalanceSheet = async (req: any, res: Response) => {
 
 export const getStats = async (req: any, res: Response) => {
   try {
-    const domainId = getDomainId(req);
+    const orgId = getOrgId(req);
 
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -215,7 +217,7 @@ export const getStats = async (req: any, res: Response) => {
     const [monthStats, yearStats, byCategory, recentEntries] = await Promise.all([
       // Monthly Stats
       AccountingEntry.aggregate([
-        { $match: { domain: domainId, date: { $gte: startOfMonth, $lte: endOfMonth } } },
+        { $match: { organizationId: orgId, date: { $gte: startOfMonth, $lte: endOfMonth } } },
         { 
           $group: { 
             _id: null, 
@@ -226,7 +228,7 @@ export const getStats = async (req: any, res: Response) => {
       ]),
       // Yearly Stats
       AccountingEntry.aggregate([
-        { $match: { domain: domainId, date: { $gte: startOfYear } } },
+        { $match: { organizationId: orgId, date: { $gte: startOfYear } } },
         { 
           $group: { 
             _id: null, 
@@ -237,7 +239,7 @@ export const getStats = async (req: any, res: Response) => {
       ]),
       // By Category (Yearly)
       AccountingEntry.aggregate([
-        { $match: { domain: domainId, date: { $gte: startOfYear } } },
+        { $match: { organizationId: orgId, date: { $gte: startOfYear } } },
         { 
           $group: { 
             _id: '$category', 
@@ -247,7 +249,7 @@ export const getStats = async (req: any, res: Response) => {
         }
       ]),
       // Recent Entries
-      AccountingEntry.find({ domain: domainId })
+      AccountingEntry.find({ organizationId: orgId })
         .sort({ date: -1 })
         .limit(10)
     ]);

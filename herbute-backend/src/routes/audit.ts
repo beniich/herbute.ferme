@@ -11,7 +11,7 @@ router.use(auth as any, requireOrganization as any);
 // ─────────────────────────────────────────────
 // GET /api/audit-logs  — Paginated logs list
 // ─────────────────────────────────────────────
-router.get('/', authorize(Permission.AUDIT_READ), async (req: any, res: Response) => {
+router.get('/', authorize(Permission.ADMIN_AUDIT), async (req: any, res: Response) => {
     try {
         const { limit = '50', page = '1', action, userId, resource, severity, search, from, to } = req.query;
         const organizationId = req.organizationId;
@@ -58,7 +58,7 @@ router.get('/', authorize(Permission.AUDIT_READ), async (req: any, res: Response
 // ─────────────────────────────────────────────
 // GET /api/audit-logs/stats — KPIs for dashboard
 // ─────────────────────────────────────────────
-router.get('/stats', authorize(Permission.AUDIT_READ), async (req: any, res: Response) => {
+router.get('/stats', authorize(Permission.ADMIN_AUDIT), async (req: any, res: Response) => {
     try {
         const organizationId = req.organizationId;
         const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
@@ -94,7 +94,7 @@ router.get('/stats', authorize(Permission.AUDIT_READ), async (req: any, res: Res
 // ─────────────────────────────────────────────
 // GET /api/audit-logs/export.csv — CSV Export
 // ─────────────────────────────────────────────
-router.get('/export.csv', authorize(Permission.AUDIT_READ), async (req: any, res: Response) => {
+router.get('/export.csv', authorize(Permission.ADMIN_AUDIT), async (req: any, res: Response) => {
     try {
         const organizationId = req.organizationId;
         const logs = await AuditLog.find({ organizationId }).sort({ timestamp: -1 }).limit(1000).lean();

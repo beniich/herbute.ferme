@@ -1,4 +1,4 @@
-﻿import { Router, Response } from 'express';
+import { Router, Response } from 'express';
 import { body } from 'express-validator';
 import { validator } from '../middleware/validator.js';
 import { authenticate as protect } from '../middleware/security.js';
@@ -79,7 +79,7 @@ router.post(
                 status: { $in: ['ACTIVE', 'INVITED'] }
             });
 
-            if (memberCount >= (organization.subscription.maxUsers || 5)) {
+            if (memberCount >= (organization.subscription.quotas.maxUsers || 5)) {
                 return res.status(403).json({
                     message: 'Limite d\'utilisateurs atteinte pour votre plan'
                 });

@@ -6,6 +6,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { CallProvider } from '@/providers/CallProvider';
 import { NotificationProvider } from '@/providers/NotificationProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import '@/styles/globals.css';
 import '@/styles/agro-theme.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -102,10 +103,6 @@ export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
 }
 
-import { ThemeProvider } from '@/providers/ThemeProvider';
-
-// ... (previous imports)
-
 export default async function LocaleLayout({
     children,
     params
@@ -131,7 +128,7 @@ export default async function LocaleLayout({
             </head>
             <body suppressHydrationWarning className={`${inter.variable} ${sora.variable} ${playfair.variable} ${outfit.variable} ${jetbrains.variable} ${anton.variable} font-sans antialiased`}>
                 <ThemeProvider>
-                    <NextIntlClientProvider messages={messages} locale={locale}>
+                    <NextIntlClientProvider messages={messages || {}} locale={locale}>
                         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
                             <QueryProvider>
                                 <AuthProvider>
@@ -152,4 +149,3 @@ export default async function LocaleLayout({
         </html>
     );
 }
-

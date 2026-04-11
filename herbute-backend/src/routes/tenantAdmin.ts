@@ -28,7 +28,7 @@ router.get('/info', auth, requireAdmin, async (req: any, res: Response) => {
       expiresAt: org.subscription.expiresAt
     });
   } catch (error: any) {
-    sendError(res, error.message);
+    sendError(res, error.message, 'INTERNAL_ERROR', 500);
   }
 });
 
@@ -49,7 +49,7 @@ router.patch('/settings', auth, requireAdmin, auditAction('Organization', 'UPDAT
 
     sendSuccess(res, org);
   } catch (error: any) {
-    sendError(res, error.message);
+    sendError(res, error.message, 'UPDATE_ERROR', 400);
   }
 });
 

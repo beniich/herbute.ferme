@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken, JWTPayload } from '../config/jwt.js';
 
-// Define custom user interface
-interface AuthRequest extends Omit<Request, 'user'> {
-  user?: JWTPayload;
-}
-
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+/**
+ * Modernized authenticate middleware
+ * Harmonized with global Request type extension
+ */
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
@@ -20,7 +19,9 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 
-  // Attach user info to request
-  req.user = payload;
+  // Attach user info to request (merged via global Express.Request in security.ts or local cast)
+  (req as any).user = payload;
   next();
 };
+
+export default authenticate;

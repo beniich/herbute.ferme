@@ -10,7 +10,11 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "baseUrl": ".",
+        "paths": {
+            "@reclamtrack/shared": ["../shared/src/index.ts"]
+        }
     },
     "include": [
         "src/**/*.ts"

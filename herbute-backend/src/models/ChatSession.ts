@@ -14,7 +14,7 @@ export interface IChatSession extends Document {
   messages: IChatMessage[];
   context?: string; // e.g., 'inventory', 'hr', 'finance'
   isPinned: boolean;
-  model: string; // e.g., 'llama3.1', 'gpt-4'
+  aiModel: string; // e.g., 'llama3.1', 'gpt-4'
   createdAt: Date;
   updatedAt: Date;
 }
@@ -55,7 +55,7 @@ const ChatSessionSchema = new Schema<IChatSession>(
       type: Boolean,
       default: false,
     },
-    model: {
+    aiModel: {
       type: String,
       default: 'llama3.1',
     },

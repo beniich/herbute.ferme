@@ -74,7 +74,7 @@ export class AIService {
         messageHistory.push(aiMessage as any); // On ajoute l'intention de l'IA à l'historique interne
 
         // L'IA peut appeler plusieurs outils en même temps
-        for (const toolCall of aiMessage.tool_calls) {
+        for (const toolCall of aiMessage.tool_calls as any[]) {
           console.log(`🔌 Agent IA exécute l'outil interne : ${toolCall.function.name}`);
           let functionResponse = '';
 
@@ -84,7 +84,7 @@ export class AIService {
           } 
           else if (toolCall.function.name === 'get_inventory_status') {
             // on cible potentiellement les stocks critiques
-            const items = await InventoryItem.find({ currentStock: { $lt: 10 } }).limit(10);
+            const items = await InventoryItem.find({ quantity: { $lt: 10 } }).limit(10);
             functionResponse = JSON.stringify(items.length ? items : "Inventaire nominal, pas d'alertes en dessous de 10 unités.");
           }
 
@@ -134,8 +134,6 @@ export class AIService {
 
     try {
       const IA_URL = process.env.INTERNAL_IA_URL || 'http://localhost:5001';
-      // Import axios locally to avoid affecting top-level imports if not needed, or assume it's available.
-      // But we should use typical dynamic import or global fetch to avoid requiring 'axios' if it's not in package.json.
       
       const payload = {
         parcel: {

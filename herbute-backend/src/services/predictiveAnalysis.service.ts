@@ -20,14 +20,14 @@ export class PredictiveAnalysisService {
     const [crops, animals, inventory, attendances] = await Promise.all([
       Crop.find({ organizationId }).sort({ updatedAt: -1 }).limit(20).lean(),
       Animal.find({ organizationId }).sort({ updatedAt: -1 }).limit(20).lean(),
-      InventoryItem.find({ organizationId, currentStock: { $lt: 20 } }).limit(15).lean(),
+      InventoryItem.find({ organizationId, quantity: { $lt: 20 } }).limit(15).lean(),
       Attendance.find({ organizationId }).sort({ createdAt: -1 }).limit(30).lean(),
     ]);
 
     const context = {
       crops: crops.map(c => ({ name: c.name, status: c.status, yield: c.estimatedYield })),
       animals: animals.map(a => ({ type: a.type, status: a.status, count: a.count })),
-      lowStocks: inventory.map(i => ({ name: i.name, qty: i.currentStock, min: i.minThreshold })),
+      lowStocks: inventory.map(i => ({ name: i.name, qty: (i as any).quantity, min: (i as any).minQuantity })),
       recentAttendances: attendances.map(a => ({ status: a.status, date: a.date })),
     };
 

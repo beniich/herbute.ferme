@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file security.ts
  * @description Single source of truth for all Express security middleware.
  *              Handles authentication, organization context, RBAC, API key
@@ -26,10 +26,12 @@ export interface JwtPayload {
   id?: string;
   _id?: string;
   sub?: string;
+  userId?: string;
   organizationId?: string;
   orgId?: string;
   org?: string;
   role: string;
+  roles?: string[];
   email?: string;
   plan?: string;
   farmId?: string;
