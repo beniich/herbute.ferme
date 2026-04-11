@@ -330,6 +330,7 @@ export default function ComptabilitePage() {
                         {t.type === 'income' ? '+' : '-'}{format(t.debit || t.credit || 0)}
                       </td>
                       <td className="px-3 py-3">
+                        <div className="flex items-center gap-2">
                           {t.type === 'income' && (
                             <button onClick={() => generateInvoice(t)} className="p-1.5 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400" title="Facture PDF">
                                <FileText size={13} />

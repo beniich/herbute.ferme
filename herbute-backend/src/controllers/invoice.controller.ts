@@ -86,9 +86,11 @@ export class InvoiceController {
           invoice.clientPhone, 
           invoice.invoiceNumber, 
           invoice.total, 
-          `${process.env.FRONTEND_URL}/public/invoice/${invoice._id}`
+          `${process.env.FRONTEND_URL}/public/invoice/${invoice._id}`,
+          invoice.currency
         );
       }
+
       
       logger.info(`📄 PDF Generated for invoice ${invoice.invoiceNumber}`);
 

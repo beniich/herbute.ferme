@@ -38,8 +38,9 @@ export class WhatsAppService {
   /**
    * Sends an automated PDF invoice link via WhatsApp
    */
-  static async sendInvoiceAlert(to: string, invoiceNumber: string, amount: number, pdfUrl: string) {
-    const message = `*🤖 HERBUTE AI Alert*\n\nBonjour,\nVotre facture *${invoiceNumber}* d'un montant de *${amount} MAD* a été générée.\n\n📄 Vous pouvez la consulter ici : ${pdfUrl}\n\nMerci de votre confiance !`;
+  static async sendInvoiceAlert(to: string, invoiceNumber: string, amount: number, pdfUrl: string, currency: string = 'XOF') {
+    const message = `*🌿 HERBUTE - Facturation*\n\nBonjour,\nVotre facture *${invoiceNumber}* d'un montant de *${amount.toFixed(2)} ${currency}* est disponible.\n\n📄 Consulter le PDF : ${pdfUrl}\n\nL'équipe Herbute vous remercie !`;
     return this.sendMessage(to, message);
   }
+
 }
