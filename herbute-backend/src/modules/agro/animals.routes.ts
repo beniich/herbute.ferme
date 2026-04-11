@@ -5,6 +5,7 @@ import { authorize, Permission } from '../../middleware/authorize.js';
 import { validator } from '../../middleware/validator.js';
 import { Animal } from './animals.model.js';
 import { auditService } from '../../services/auditService.js';
+import { quotaGuard } from '../../middleware/quotaGuard.js';
 
 
 const router = Router();
@@ -92,7 +93,9 @@ router.get('/:id',
 // ──────────────────────────────────────────
 router.post('/',
   authorize(Permission.ANIMALS_CREATE),
+  quotaGuard('animals'),
   [
+
     body('type').notEmpty().withMessage('Type requis'),
     body('breed').notEmpty().withMessage('Race requise'),
     body('count').isInt({ min: 1 }).withMessage('Nombre invalide'),

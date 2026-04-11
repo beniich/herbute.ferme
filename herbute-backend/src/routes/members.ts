@@ -6,6 +6,8 @@ import { Membership } from '../models/Membership.js';
 import { User } from '../models/user.model.js';
 import { Organization } from '../models/Organization.js';
 import { logger } from '../utils/logger.js';
+import { quotaGuard } from '../middleware/quotaGuard.js';
+
 
 const router = Router();
 
@@ -81,6 +83,7 @@ router.post(
     '/organizations/:orgId/members',
     protect,
     requireAdmin,
+    quotaGuard('users'),
     [
         body('email').isEmail().withMessage('Email invalide'),
         body('role').isIn(['ADMIN', 'MEMBER', 'TECHNICIAN']).withMessage('Rôle invalide')

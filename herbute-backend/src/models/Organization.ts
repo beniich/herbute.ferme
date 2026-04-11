@@ -1,4 +1,4 @@
-﻿import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IOrganization extends Document {
   name: string;
@@ -15,12 +15,22 @@ export interface IOrganization extends Document {
     googleDriveRefreshToken?: string;
   };
   subscription: {
-    plan: 'FREE' | 'PRO' | 'ENTERPRISE';
-    status: 'ACTIVE' | 'TRIAL' | 'PAST_DUE' | 'CANCELED';
+    plan: 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE';
+    status: 'ACTIVE' | 'TRIAL' | 'PAST_DUE' | 'CANCELED' | 'SUSPENDED';
     stripeCustomerId?: string;
     expiresAt?: Date;
-    maxUsers?: number;
-    maxTickets?: number;
+    quotas: {
+      maxUsers: number;
+      maxStorage: number; // En Mo
+      aiRequestsPerDay: number;
+      maxAnimals?: number;
+      maxCrops?: number;
+    };
+  };
+  billing: {
+    lastBillingDate?: Date;
+    nextBillingDate?: Date;
+    paymentMethodLinked: boolean;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -81,12 +91,12 @@ const OrganizationSchema = new Schema<IOrganization>(
     subscription: {
       plan: {
         type: String,
-        enum: ['FREE', 'PRO', 'ENTERPRISE'],
+        enum: ['FREE', 'STARTER', 'PRO', 'ENTERPRISE'],
         default: 'FREE',
       },
       status: {
         type: String,
-        enum: ['ACTIVE', 'TRIAL', 'PAST_DUE', 'CANCELED'],
+        enum: ['ACTIVE', 'TRIAL', 'PAST_DUE', 'CANCELED', 'SUSPENDED'],
         default: 'TRIAL',
       },
       stripeCustomerId: {
@@ -97,14 +107,18 @@ const OrganizationSchema = new Schema<IOrganization>(
         type: Date,
         default: null,
       },
-      maxUsers: {
-        type: Number,
-        default: 5, // FREE plan limit
+      quotas: {
+        maxUsers: { type: Number, default: 3 },
+        maxStorage: { type: Number, default: 100 },
+        aiRequestsPerDay: { type: Number, default: 5 },
+        maxAnimals: { type: Number, default: 20 },
+        maxCrops: { type: Number, default: 10 },
       },
-      maxTickets: {
-        type: Number,
-        default: 100, // FREE plan limit
-      },
+    },
+    billing: {
+      lastBillingDate: { type: Date },
+      nextBillingDate: { type: Date },
+      paymentMethodLinked: { type: Boolean, default: false },
     },
   },
   {

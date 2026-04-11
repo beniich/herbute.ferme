@@ -55,6 +55,10 @@ import financeRoutes from './modules/agro/finance.routes.js';
 import irrigationRoutes from './modules/agro/irrigation.routes.js';
 import infrastructureRoutes from './routes/infrastructure.js';
 import agentReportsRoutes from './routes/reports.agent.js';
+import tenantAdminRoutes from './routes/tenantAdmin.js';
+import invoiceRoutes from './routes/invoice.routes.js';
+
+
 
 // AgroMaître Calendar & Operations Modules routes
 import agriCalendarRoutes from './routes/calendar.routes.js';
@@ -140,6 +144,7 @@ app.use('/api', membersRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/audit-logs', auditRoutes);
+app.use('/api/tenant', tenantAdminRoutes);
 app.use('/api/admin/security/api-keys', apiKeyRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -163,6 +168,7 @@ app.use('/api/upload', uploadRoutes);
 
 // Billing & Subscriptions
 app.use('/api/billing', billingRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // GLPI integration
 app.use('/api/glpi', glpiRoutes);

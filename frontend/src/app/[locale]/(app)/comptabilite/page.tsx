@@ -9,8 +9,9 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
 import {
   TrendingUp, TrendingDown, Wallet, BarChart3, Plus, Minus,
-  RefreshCw, Search, Edit2, Trash2, X, ChevronDown, Layers, DollarSign
+  RefreshCw, Search, Edit2, Trash2, X, ChevronDown, Layers, DollarSign, Upload, FileText, Download, MessageSquare
 } from 'lucide-react';
+
 import { agroAccountingApi, agroReportsApi } from '@/lib/api';
 
 import { useCurrencyStore } from '@/store/currencyStore';
@@ -149,6 +150,41 @@ export default function ComptabilitePage() {
     }
   };
 
+  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      toast.loading('Importation des données...', { id: 'import' });
+      await apiClient.post('/api/agro-accounting/import-excel', formData);
+      toast.success('Données importées avec succès !', { id: 'import' });
+      refresh();
+    } catch {
+      toast.error('Erreur lors de l\'importation', { id: 'import' });
+    }
+  };
+
+  const generateInvoice = async (t: any) => {
+    try {
+      toast.loading('Génération de la facture...', { id: 'invoice' });
+      const response = await apiClient.get(`/api/invoices/${t._id}/pdf`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `facture-${t.description.replace(/\s+/g, '_')}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      toast.success('Facture PDF générée !', { id: 'invoice' });
+    } catch {
+      // Fallback: search for or create invoice model if it doesn't exist for this entry
+      toast.error('Erreur : Modèle de facture non trouvé pour cette entrée', { id: 'invoice' });
+    }
+  };
+
+
   const categories = form.type === 'recette' ? CATEGORIES_RECETTE : CATEGORIES_DEPENSE;
   const isProfit = kpis.monthProfit >= 0;
 
@@ -185,9 +221,14 @@ export default function ComptabilitePage() {
               className="p-2 bg-zinc-950 text-zinc-400 hover:text-emerald-400 hover:bg-zinc-900 transition-colors"
               title="Exporter Excel"
             >
-              XLS
+              <Download size={18} />
             </button>
+            <label className="p-2 bg-zinc-950 text-zinc-400 hover:text-blue-400 hover:bg-zinc-900 transition-colors cursor-pointer border-l border-zinc-900">
+               <Upload size={18} />
+               <input type="file" className="hidden" accept=".xlsx, .xls" onChange={handleExcelImport} />
+            </label>
           </div>
+
 
           <button
             onClick={() => openCreate('depense')}
@@ -289,7 +330,11 @@ export default function ComptabilitePage() {
                         {t.type === 'income' ? '+' : '-'}{format(t.debit || t.credit || 0)}
                       </td>
                       <td className="px-3 py-3">
-                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {t.type === 'income' && (
+                            <button onClick={() => generateInvoice(t)} className="p-1.5 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400" title="Facture PDF">
+                               <FileText size={13} />
+                            </button>
+                          )}
                           <button onClick={() => openEdit(t)} className="p-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white" title="Modifier">
                             <Edit2 size={13} />
                           </button>
@@ -299,6 +344,7 @@ export default function ComptabilitePage() {
                         </div>
                       </td>
                     </tr>
+
                   ))}
                 </tbody>
               </table>

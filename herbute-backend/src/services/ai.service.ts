@@ -11,20 +11,21 @@ const ollamaAgent = new OpenAI({
 });
 
 export class AIService {
-  public async generateChatResponse(userId: string, message: string, conversationId?: string) {
+  public async generateChatResponse(userId: string, organizationId: string, message: string, conversationId?: string) {
     let conversation;
 
     // 1. Récupération ou création du contexte de la discussion
     if (conversationId) {
-      conversation = await AIConversation.findById(conversationId);
-      if (!conversation) throw new Error('Conversation not found');
+      conversation = await AIConversation.findOne({ _id: conversationId, organizationId });
+      if (!conversation) throw new Error('Conversation introuvable ou accès refusé');
     } else {
       conversation = new AIConversation({
         userId,
-        title: message.substring(0, 30) + (message.length > 30 ? '...' : ''),
+        organizationId,
+        title: message.substring(0, 40) + (message.length > 40 ? '...' : ''),
         messages: [{ 
           role: 'system', 
-          content: "Tu es le nouvel assistant IA exclusif de direction de l'ERP Herbute. Tu aides les dirigeants à suivre l'entreprise en analysant rapidement la base de données. Sois toujours professionnel, concis, et base tes réponses uniquement sur les données renvoyées par tes appels de fonctions." 
+          content: "Tu es l'intelligence Herbute, assistant de direction agricole. Ton rôle est d'analyser les données (stocks, personnel, finances, cultures) pour aider le dirigeant. Sois précis, utilise des chiffres et base tes réponses sur les outils." 
         }],
       });
     }

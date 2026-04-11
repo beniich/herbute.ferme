@@ -5,6 +5,8 @@ import { authorize, Permission } from '../../middleware/authorize.js';
 import { validator } from '../../middleware/validator.js';
 import { cacheMiddleware, CACHE_TTL } from '../../middleware/cache.js';
 import { cropController } from './crops.controller.js';
+import { quotaGuard } from '../../middleware/quotaGuard.js';
+
 
 const router = Router();
 
@@ -50,6 +52,7 @@ router.get('/:id',
 // POST /api/crops
 router.post('/',
   authorize(Permission.CROPS_CREATE),
+  quotaGuard('crops'),
   cropCreate, validator,
   cropController.create.bind(cropController)
 );

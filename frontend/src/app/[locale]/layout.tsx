@@ -4,6 +4,7 @@ import { NotificationToast } from '@/components/NotificationToast';
 import { routing } from '@/i18n/routing';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { CallProvider } from '@/providers/CallProvider';
+import { NotificationProvider } from '@/providers/NotificationProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
 import '@/styles/globals.css';
 import '@/styles/agro-theme.css';
@@ -119,12 +120,14 @@ export default async function LocaleLayout({
                         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
                             <QueryProvider>
                                 <AuthProvider>
-                                    <CallProvider>
-                                        {children}
-                                        <NotificationToast />
-                                        <DebugWidget />
-                                        <MiniMcLarenLoader />
-                                    </CallProvider>
+                                    <NotificationProvider>
+                                        <CallProvider>
+                                            {children}
+                                            <NotificationToast />
+                                            <DebugWidget />
+                                            <MiniMcLarenLoader />
+                                        </CallProvider>
+                                    </NotificationProvider>
                                 </AuthProvider>
                             </QueryProvider>
                         </GoogleOAuthProvider>

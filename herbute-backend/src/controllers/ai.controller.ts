@@ -6,16 +6,17 @@ import AIPrediction from '../models/AIPrediction.js';
 // @desc    Send a message to AI assistant
 // @route   POST /api/ai/chat
 // @access  Private
-export const chat = async (req: Request, res: Response) => {
+export const chat = async (req: any, res: Response) => {
   try {
     const { message, conversationId } = req.body;
-    const userId = (req as any).user.id;
+    const userId = req.user.id || req.user._id;
+    const organizationId = req.organizationId || req.user.organizationId;
 
     if (!message) {
-      return res.status(400).json({ success: false, message: 'Message is required' });
+      return res.status(400).json({ success: false, message: 'Message requis' });
     }
 
-    const conversation = await aiService.generateChatResponse(userId, message, conversationId);
+    const conversation = await aiService.generateChatResponse(userId, organizationId, message, conversationId);
 
     res.status(200).json({
       success: true,
@@ -29,13 +30,15 @@ export const chat = async (req: Request, res: Response) => {
 // @desc    Get user's AI conversations
 // @route   GET /api/ai/conversations
 // @access  Private
-export const getConversations = async (req: Request, res: Response) => {
+export const getConversations = async (req: any, res: Response) => {
   try {
-    const userId = (req as any).user.id;
-    const conversations = await AIConversation.find({ userId })
+    const userId = req.user.id || req.user._id;
+    const organizationId = req.organizationId || req.user.organizationId;
+    
+    const conversations = await AIConversation.find({ userId, organizationId })
       .sort({ updatedAt: -1 })
-      .select('-messages') // Do not load all messages for the list
-      .limit(20);
+      .select('-messages')
+      .limit(30);
 
     res.status(200).json({ success: true, data: conversations });
   } catch (error: any) {
@@ -72,18 +75,38 @@ export const predict = async (req: Request, res: Response) => {
 // @desc    Get previous predictions 
 // @route   GET /api/ai/predictions
 // @access  Private
-export const getPredictions = async (req: Request, res: Response) => {
+export const getPredictions = async (req: any, res: Response) => {
   try {
+    const organizationId = req.organizationId || req.user.organizationId;
     const { domainId } = req.query;
     
-    const query: any = {};
+    const query: any = { organizationId };
     if (domainId) query.domainId = domainId;
 
     const predictions = await AIPrediction.find(query)
-      .sort({ generatedAt: -1 })
-      .limit(10);
+      .sort({ createdAt: -1 })
+      .limit(20);
 
     res.status(200).json({ success: true, data: predictions });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Run global dashboard predictive analysis
+// @route   POST /api/ai/analyze-global
+// @access  Private
+export const analyzeGlobal = async (req: any, res: Response) => {
+  try {
+    const organizationId = req.organizationId || req.user.organizationId;
+    const { predictiveService } = await import('../services/predictiveAnalysis.service.js');
+    
+    const result = await predictiveService.runGlobalAnalysis(organizationId);
+    
+    res.status(200).json({
+      success: true,
+      data: result
+    });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }
