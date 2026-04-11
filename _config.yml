@@ -1,0 +1,11 @@
+# Jekyll configuration
+# Exclude directories that contain code snippets with {{ }} that conflict with Liquid
+exclude:
+  - "dash calender"
+  - "herbute-backend"
+  - "frontend"
+  - "shared"
+  - "node_modules"
+  - "vendor"
+  - "package-lock.json"
+  - "package.json"
