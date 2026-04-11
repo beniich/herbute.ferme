@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "vercel-build": "npm run build -w @reclamtrack/shared && next build",
+    "vercel-build": "cd .. && npm run build -w @reclamtrack/shared && cd frontend && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
