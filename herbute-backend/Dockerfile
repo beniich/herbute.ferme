@@ -11,9 +11,9 @@ WORKDIR /app
 
 # Cache npm efficace : copier d'abord les manifestes
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production && \
+RUN npm install --legacy-peer-deps --only=production && \
     cp -R node_modules /prod_node_modules && \
-    npm ci
+    npm install --legacy-peer-deps
 
 # ── Stage 2: Build TypeScript ─────────────────
 FROM node:20-alpine AS builder
