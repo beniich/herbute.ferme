@@ -15,29 +15,64 @@ export class ExcelService {
       return Buffer.from(await workbook.xlsx.writeBuffer());
     }
 
-    // Define columns based on first object keys
-    const columns = Object.keys(data[0]).map(key => ({
-      header: key.charAt(0).toUpperCase() + key.slice(1),
-      key: key,
-      width: 20
-    }));
+    // Smart Column detection
+    const firstRow = data[0];
+    const columns = Object.keys(firstRow).map(key => {
+      // Basic formatting for headers
+      const header = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      
+      // Auto-formatting based on data type
+      let numFmt = undefined;
+      if (typeof firstRow[key] === 'number') {
+        if (key.toLowerCase().includes('amount') || key.toLowerCase().includes('total') || key.toLowerCase().includes('debit') || key.toLowerCase().includes('credit')) {
+          numFmt = '#,##0.00'
+        }
+      }
+
+      return {
+        header,
+        key: key,
+        width: 25,
+        style: { numFmt }
+      };
+    });
 
     worksheet.columns = columns;
 
-    // Add rows
-    worksheet.addRows(data);
+    // Add rows with date handling
+    data.forEach(item => {
+      const row: any = {};
+      Object.keys(item).forEach(k => {
+        // If it's an ISO date string, convert to Date object for Excel
+        if (typeof item[k] === 'string' && item[k].match(/^\d{4}-\d{2}-\d{2}T/)) {
+          row[k] = new Date(item[k]);
+        } else {
+          row[k] = item[k];
+        }
+      });
+      worksheet.addRow(row);
+    });
 
-    // Style header
-    worksheet.getRow(1).font = { bold: true };
-    worksheet.getRow(1).fill = {
+    // Style header (Emerald theme)
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+    headerRow.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FFD3D3D3' }
+      fgColor: { argb: 'FF10B981' } // Emerald-500
+    };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+    
+    // Enable auto-filters
+    worksheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: columns.length }
     };
 
     const buffer = await workbook.xlsx.writeBuffer();
     return Buffer.from(buffer);
   }
+
 
   /**
    * Universal import from Excel buffer

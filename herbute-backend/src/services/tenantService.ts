@@ -1,8 +1,8 @@
 import { Organization } from '../models/Organization.js';
 import mongoose from 'mongoose';
-import { Animal } from '../models/Animal.js'; // Note: Ensure correct model path, sometimes it's in modules/agro
+import { Animal } from '../modules/agro/animals.model.js';
 import { Crop } from '../modules/agro/crops.model.js';
-import User from '../models/User.js';
+import { User } from '../models/user.model.js';
 
 export class TenantService {
   /**

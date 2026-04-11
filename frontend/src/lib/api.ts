@@ -327,4 +327,12 @@ export const apiHelpers = {
     updateTicket: (id: number, data: any) => apiClient.patch(`/api/glpi/tickets/${id}`, data),
     sync: () => apiClient.post('/api/glpi/sync'),
   },
+  agroInventory: agroInventoryApi,
+  agroAccounting: agroAccountingApi,
+  agroBudgets: agroBudgetsApi,
+  agroKnowledge: agroKnowledgeApi,
+  agroReports: agroReportsApi,
+  animals: animalsApi,
+  crops: cropsApi,
+  finance: financeApi,
 };

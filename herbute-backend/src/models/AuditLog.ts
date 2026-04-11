@@ -9,7 +9,8 @@ export type AuditAction =
   | 'QUOTA_EXCEEDED'
   | 'MEMBER_INVITED' | 'MEMBER_REMOVED'
   | 'PASSWORD_CHANGED' | 'PERMISSION_CHANGED'
-  | 'WHATSAPP_SENT' | 'PDF_GENERATED';
+  | 'WHATSAPP_SENT' | 'PDF_GENERATED'
+  | 'EXECUTE_POWERSHELL';
 
 export interface IAuditLog extends Document {
   organizationId: mongoose.Types.ObjectId;
@@ -60,6 +61,7 @@ const AuditLogSchema: Schema = new Schema(
         'MEMBER_INVITED', 'MEMBER_REMOVED',
         'PASSWORD_CHANGED', 'PERMISSION_CHANGED',
         'WHATSAPP_SENT', 'PDF_GENERATED',
+        'EXECUTE_POWERSHELL',
       ],
     },
     resource:   { type: String, required: true, index: true },

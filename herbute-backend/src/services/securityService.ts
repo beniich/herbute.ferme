@@ -1,6 +1,6 @@
-﻿import { exec } from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
-import AuditLog from '../models/AuditLog.js';
+import { AuditLog } from '../models/AuditLog.js';
 import { User } from '../models/user.model.js';
 
 const execAsync = promisify(exec);
@@ -68,12 +68,20 @@ export class SecurityService {
     }
 
     try {
+      // Fetch user for audit details
+      const user = await User.findById(userId);
+      
       // Log execution attempt
       await AuditLog.create({
-        action: 'EXECUTE_POWERSHELL',
+        organizationId: user?.organizationId,
         userId,
-        details: { scriptName },
-        status: 'pending',
+        userEmail: user?.email || 'system',
+        action: 'EXECUTE_POWERSHELL',
+        resource: 'PowerShell',
+        resourceId: scriptName,
+        description: `Tentative d'exécution du script: ${scriptName}`,
+        metadata: { scriptName, status: 'pending' },
+        severity: 'warning'
       });
 
       // Execute PowerShell script
@@ -86,10 +94,15 @@ export class SecurityService {
 
       // Log successful execution
       await AuditLog.create({
-        action: 'EXECUTE_POWERSHELL',
+        organizationId: user?.organizationId,
         userId,
-        details: { scriptName, output: stdout.substring(0, 500) }, // Limit output size
-        status: 'success',
+        userEmail: user?.email || 'system',
+        action: 'EXECUTE_POWERSHELL',
+        resource: 'PowerShell',
+        resourceId: scriptName,
+        description: `Exécution réussie du script: ${scriptName}`,
+        metadata: { scriptName, status: 'success', output: stdout.substring(0, 500) },
+        severity: 'info'
       });
 
       return {
@@ -99,11 +112,17 @@ export class SecurityService {
       };
     } catch (error: any) {
       // Log failed execution
+      const user = await User.findById(userId);
       await AuditLog.create({
-        action: 'EXECUTE_POWERSHELL',
+        organizationId: user?.organizationId,
         userId,
-        details: { scriptName, error: error.message },
-        status: 'failed',
+        userEmail: user?.email || 'system',
+        action: 'EXECUTE_POWERSHELL',
+        resource: 'PowerShell',
+        resourceId: scriptName,
+        description: `Échec de l'exécution du script: ${scriptName}`,
+        metadata: { scriptName, error: error.message, status: 'failed' },
+        severity: 'critical'
       });
 
       throw new Error(`PowerShell execution failed: ${error.message}`);

@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     authors: [{ name: 'Herbute Tech', url: 'https://herbute.com' }],
     creator: 'Herbute',
     manifest: '/manifest.json',
-    themeColor: '#1a1209',
     appleWebApp: {
         capable: true,
         statusBarStyle: 'default',
@@ -58,6 +57,12 @@ export const metadata: Metadata = {
             'max-snippet': -1,
         },
     },
+};
+
+export const viewport = {
+    themeColor: '#1a1209',
+    width: 'device-width',
+    initialScale: 1,
 };
 
 const inter = Inter({
