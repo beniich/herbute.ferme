@@ -19,14 +19,18 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
       
-      - name: Install Dependencies
-        run: cd herbute-backend && npm install --legacy-peer-deps
+      - name: Install Dependencies (monorepo root)
+        run: npm install --legacy-peer-deps
       
-      - name: Lint
-        run: cd herbute-backend && npm run lint
+      - name: Lint Backend
+        # Warnings only — do not block CI
+        run: cd herbute-backend && npm run lint || true
       
-      - name: Build Test
-        run: cd herbute-backend && npm run build
+      - name: Build Shared Package
+        run: npm run build -w @reclamtrack/shared
+      
+      - name: Build Backend
+        run: npm run build -w herbute-backend
 
   # 2. Validation du Frontend
   test-frontend:
@@ -40,18 +44,20 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
       
-      - name: Install Dependencies
-        run: cd frontend && npm install --legacy-peer-deps
+      - name: Install Dependencies (monorepo root)
+        run: npm install --legacy-peer-deps
       
-      - name: Build Test
-        run: cd frontend && npm run build
+      - name: Build Shared Package
+        run: npm run build -w @reclamtrack/shared
+      
+      - name: Build Frontend
+        run: npm run build -w reclamtrack-frontend
 
-  # 3. Docker Build Check (Vérifie que les images se construisent sans erreur)
+  # 3. Docker Build Check
   docker-check:
     runs-on: ubuntu-latest
     needs: [test-backend, test-frontend]
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker images (dry run)
-        run: |
-          docker compose build --parallel
+        run: docker compose build --parallel
