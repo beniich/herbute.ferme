@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
-// @ts-expect-error - using server export as a test helper with non-typed shape
 import { app } from './server.js';
 import { generateToken } from './config/jwt.js';
 import { connectDB } from './config/db.js';

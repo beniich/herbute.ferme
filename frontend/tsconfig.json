@@ -18,7 +18,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@reclamtrack/shared": ["../shared/src/index.ts"]
     },
     "target": "ES2022"
   },
