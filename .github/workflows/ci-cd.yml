@@ -20,7 +20,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
       
       - name: Install Dependencies
-        run: cd herbute-backend && npm ci
+        run: cd herbute-backend && npm install --legacy-peer-deps
       
       - name: Lint
         run: cd herbute-backend && npm run lint
@@ -41,7 +41,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
       
       - name: Install Dependencies
-        run: cd frontend && npm ci
+        run: cd frontend && npm install --legacy-peer-deps
       
       - name: Build Test
         run: cd frontend && npm run build
