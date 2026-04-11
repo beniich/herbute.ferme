@@ -7,7 +7,7 @@
 
 import 'express';
 import type { Document } from 'mongoose';
-import type { JwtPayload } from '@reclamtrack/shared';
+import type { JwtPayload } from '@herbute/shared';
 
 declare global {
   namespace Express {

@@ -19,7 +19,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@reclamtrack/shared": ["../shared/src/index.ts"]
+      "@herbute/shared": ["../shared/src/index.ts"]
     },
     "target": "ES2022"
   },

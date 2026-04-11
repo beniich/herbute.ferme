@@ -22,7 +22,7 @@ import { User } from '../models/user.model.js';
 import { RefreshToken } from '../models/refresh-token.model.js';
 import { Organization } from '../models/Organization.js';
 import { Membership } from '../models/Membership.js';
-import { HERBUTE_ROUTES } from '@reclamtrack/shared';
+import { HERBUTE_ROUTES } from '@herbute/shared';
 import { adminAuth } from '../config/firebase-admin.js';
 
 const router = Router();

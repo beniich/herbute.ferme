@@ -24,8 +24,8 @@ COPY frontend ./frontend
 
 # Installation et Build
 RUN npm install --legacy-peer-deps
-RUN npm run build -w @reclamtrack/shared
-RUN npm run build -w reclamtrack-frontend
+RUN npm run build -w @herbute/shared
+RUN npm run build -w herbute-frontend
 
 # ── Production ────────────────────────────────
 FROM node:20-alpine AS production

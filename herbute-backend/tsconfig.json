@@ -13,7 +13,7 @@
         "noImplicitAny": false,
         "baseUrl": ".",
         "paths": {
-            "@reclamtrack/shared": ["../shared/src/index.ts"]
+            "@herbute/shared": ["../shared/src/index.ts"]
         }
     },
     "include": [

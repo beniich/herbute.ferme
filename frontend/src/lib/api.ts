@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import { HERBUTE_ROUTES } from '@reclamtrack/shared';
+import { HERBUTE_ROUTES } from '@herbute/shared';
 import { authEventBus } from './auth-event-bus';
 
 /**

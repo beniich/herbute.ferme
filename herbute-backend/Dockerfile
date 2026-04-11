@@ -17,7 +17,7 @@ COPY herbute-backend ./herbute-backend
 RUN npm install --legacy-peer-deps
 
 # Build du package shared puis du backend
-RUN npm run build -w @reclamtrack/shared
+RUN npm run build -w @herbute/shared
 RUN npm run build -w herbute-backend
 
 # ── Stage 2: Production ────────────────────────

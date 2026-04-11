@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════
- * @reclamtrack/shared — Source unique de vérité
+ * @herbute/shared — Source unique de vérité
  * ═══════════════════════════════════════════════════════
  *
  * Ce fichier centralise :
@@ -9,8 +9,8 @@
  *  3. Contrats d'API (Request/Response types)
  *
  * Usage :
- *  - Backend  : import { HERBUTE_ROUTES } from '@reclamtrack/shared'
- *  - Frontend : import { HERBUTE_ROUTES, type JwtPayload } from '@reclamtrack/shared'
+ *  - Backend  : import { HERBUTE_ROUTES } from '@herbute/shared'
+ *  - Frontend : import { HERBUTE_ROUTES, type JwtPayload } from '@herbute/shared'
  *
  * ⚠️  Toute modification d'URL backend DOIT passer par ce fichier.
  *      Une règle ESLint custom bloque les strings URI bruts dans le frontend.

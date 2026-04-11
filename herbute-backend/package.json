@@ -15,7 +15,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@reclamtrack/shared": "file:../shared",
+    "@herbute/shared": "file:../shared",
     "@supabase/supabase-js": "^2.48.5",
     "@types/pdfkit": "^0.17.5",
     "activedirectory2": "^2.2.0",

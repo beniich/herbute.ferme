@@ -21,7 +21,7 @@ import React, {
 import { useRouter } from 'next/navigation';
 import { authEventBus } from '@/lib/auth-event-bus';
 import { apiHelpers } from '@/lib/api';
-import type { LoginResponse, UserRole, SubscriptionPlan } from '@reclamtrack/shared';
+import type { LoginResponse, UserRole, SubscriptionPlan } from '@herbute/shared';
 
 // ─────────────────────────────────────────────
 // Types

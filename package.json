@@ -8,10 +8,10 @@
     "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev -w herbute-backend\" \"npm run dev -w reclamtrack-frontend\"",
-    "build": "npm run build -w @reclamtrack/shared && npm run build -w herbute-backend && npm run build -w reclamtrack-frontend",
-    "vercel-build": "npm run build -w @reclamtrack/shared && npm run build -w reclamtrack-frontend",
-    "type-check": "npm run type-check -w @reclamtrack/shared && npm run type-check -w herbute-backend && npm run type-check -w reclamtrack-frontend",
+    "dev": "concurrently \"npm run dev -w herbute-backend\" \"npm run dev -w herbute-frontend\"",
+    "build": "npm run build -w @herbute/shared && npm run build -w herbute-backend && npm run build -w herbute-frontend",
+    "vercel-build": "npm run build -w @herbute/shared && npm run build -w herbute-frontend",
+    "type-check": "npm run type-check -w @herbute/shared && npm run type-check -w herbute-backend && npm run type-check -w herbute-frontend",
     "generate-keys": "cd herbute-backend && bash generate-keys.sh",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",

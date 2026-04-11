@@ -11,7 +11,7 @@ const nextConfig = {
   reactStrictMode: false,
   output: 'standalone',
   outputFileTracingRoot: require('path').join(__dirname, '../'),
-  transpilePackages: ['@reclamtrack/shared'],
+  transpilePackages: ['@herbute/shared'],
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },

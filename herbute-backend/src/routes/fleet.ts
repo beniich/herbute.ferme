@@ -5,7 +5,7 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/authenticate.js';
 import { authorize, requireFarmAccess } from '../middleware/authorize.js';
-import { HERBUTE_ROUTES } from '@reclamtrack/shared';
+import { HERBUTE_ROUTES } from '@herbute/shared';
 
 const router = Router();
 router.use(authenticate);
