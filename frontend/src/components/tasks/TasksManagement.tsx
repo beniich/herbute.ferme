@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Clock, AlertCircle, PlayCircle, Plus, Search, Filter } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
 export default function TasksManagement() {
+  const t = useTranslations('Tasks');
   const [tasks, setTasks] = useState<any[]>([]);
   const [stats, setStats] = useState({
     pending: 0,
@@ -33,12 +35,12 @@ export default function TasksManagement() {
       }
     } catch (err) {
       console.error("Erreur tasks", err);
-      toast.error("Impossible de charger les tâches");
+      toast.error(t('toast.errorLoading'));
     }
   };
 
   const handleCreateTask = () => {
-    toast.success("Ouverture du formulaire de nouvelle tâche...");
+    toast.success(t('toast.newForm'));
     // TODO: Implémenter le modal ou la navigation
   };
 
@@ -85,43 +87,43 @@ export default function TasksManagement() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold font-inter text-gray-900 dark:text-white">Opérations & Tâches</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Gérez vos missions, interventions et opérations de maintenance.</p>
+          <h1 className="text-2xl font-bold font-inter text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('subtitle')}</p>
         </div>
         <button 
           onClick={handleCreateTask}
           className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-sm"
         >
           <Plus className="w-5 h-5 mr-2" />
-          Nouvelle Tâche
+          {t('newTask')}
         </button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">À FAIRE</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('stats.todo')}</p>
           <div className="flex items-center mt-2">
             <Clock className="w-6 h-6 text-gray-400 mr-2" />
             <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.pending}</span>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">EN COURS</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('stats.inProgress')}</p>
           <div className="flex items-center mt-2">
             <PlayCircle className="w-6 h-6 text-blue-500 mr-2" />
             <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.in_progress}</span>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">TERMINÉES</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('stats.completed')}</p>
           <div className="flex items-center mt-2">
             <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
             <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.completed}</span>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-           <p className="text-sm text-red-500 dark:text-red-400 font-medium">URGENTES</p>
+           <p className="text-sm text-red-500 dark:text-red-400 font-medium">{t('stats.urgent')}</p>
            <div className="flex items-center mt-2">
              <AlertCircle className="w-6 h-6 text-red-500 mr-2" />
              <span className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.urgent}</span>
@@ -135,7 +137,7 @@ export default function TasksManagement() {
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input 
             type="text" 
-            placeholder="Rechercher une tâche..." 
+            placeholder={t('searchPlaceholder')} 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm dark:text-white shadow-sm"
@@ -150,10 +152,10 @@ export default function TasksManagement() {
               value={filters.status}
               onChange={(e) => setFilters({...filters, status: e.target.value})}
             >
-              <option value="">Tous les statuts</option>
-              <option value="pending">À faire</option>
-              <option value="in_progress">En cours</option>
-              <option value="completed">Terminées</option>
+              <option value="">{t('filters.allStatus')}</option>
+              <option value="pending">{t('filters.todo')}</option>
+              <option value="in_progress">{t('filters.inProgress')}</option>
+              <option value="completed">{t('filters.completed')}</option>
             </select>
           </div>
           
@@ -162,11 +164,11 @@ export default function TasksManagement() {
             value={filters.priority}
             onChange={(e) => setFilters({...filters, priority: e.target.value})}
           >
-            <option value="">Toutes priorités</option>
-            <option value="urgent">Urgente</option>
-            <option value="high">Haute</option>
-            <option value="medium">Moyenne</option>
-            <option value="low">Basse</option>
+            <option value="">{t('filters.allPriorities')}</option>
+            <option value="urgent">{t('filters.urgent')}</option>
+            <option value="high">{t('filters.high')}</option>
+            <option value="medium">{t('filters.medium')}</option>
+            <option value="low">{t('filters.low')}</option>
           </select>
         </div>
       </div>
@@ -177,11 +179,11 @@ export default function TasksManagement() {
            <table className="w-full text-left border-collapse">
              <thead>
                <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tâche</th>
-                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
-                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priorité</th>
-                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assignation</th>
-                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Échéance</th>
+                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('table.task')}</th>
+                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('table.status')}</th>
+                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('table.priority')}</th>
+                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('table.assignment')}</th>
+                 <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('table.dueDate')}</th>
                </tr>
              </thead>
              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -210,7 +212,7 @@ export default function TasksManagement() {
                          </div>
                        ))}
                        {(!task.assignedTo || task.assignedTo.length === 0) && (
-                         <span className="text-sm text-gray-400 italic">Non assigné</span>
+                         <span className="text-sm text-gray-400 italic">{t('table.notAssigned')}</span>
                        )}
                      </div>
                    </td>
@@ -222,7 +224,7 @@ export default function TasksManagement() {
                {filteredTasks.length === 0 && (
                  <tr>
                    <td colSpan={5} className="py-8 text-center text-gray-500 dark:text-gray-400">
-                     Aucune tâche trouvée correspondant à vos critères.
+                     {t('table.noTasks')}
                    </td>
                  </tr>
                )}

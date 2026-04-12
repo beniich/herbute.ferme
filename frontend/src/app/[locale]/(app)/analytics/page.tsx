@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { StatCard } from '@/components/shared/StatCard';
 import { Skeleton } from '@/components/shared/Skeleton';
@@ -17,6 +18,8 @@ import {
 const PALETTE = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6'];
 
 export default function AnalyticsPage() {
+  const t = useTranslations('Analytics');
+  const tCommon = useTranslations('Common');
   const { agro, it, maintenance, loading, error, refresh } = useDashboardData();
 
   // Build chart data from real API data
@@ -37,7 +40,7 @@ export default function AnalyticsPage() {
     return agro.cultures.categories.map(c => ({ name: c._id, count: c.count }));
   }, [agro]);
 
-  if (error) return <ErrorFallback onRetry={refresh} message="Impossible de charger les données analytiques" />;
+  if (error) return <ErrorFallback onRetry={refresh} message={t('errorLoading')} />;
 
   return (
     <div className="page active p-6 lg:p-10 space-y-10" id="page-analytics">
@@ -45,28 +48,29 @@ export default function AnalyticsPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">Intelligence Opérationnelle · Temps Réel</div>
+          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{t('realTimeIntel')}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
-            <BarChart3 className="text-indigo-500" size={32} /> Analytics & KPIs
+            <BarChart3 className="text-indigo-500" size={32} /> {t('title')}
           </h1>
-          <p className="text-sm text-zinc-400">Vue consolidée des performances — IT, Agriculture & Maintenance.</p>
+          <p className="text-sm text-zinc-400">{t('subtitle')}</p>
         </div>
+        </button>
         <button onClick={refresh} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white text-sm transition-all">
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Actualiser
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> {tCommon('refresh')}
         </button>
       </div>
 
       {/* KPI GRID — IT */}
       <div>
         <h2 className="text-[10px] text-zinc-500 uppercase font-mono tracking-[3px] mb-4 flex items-center gap-2">
-          <Server size={12} /> Module IT & Helpdesk
+          <Server size={12} /> {t('itModule')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} type="card" />) : (
             <>
-              <StatCard label="Tickets Total" value={it?.total ?? 0} unit="tickets" icon={<Ticket size={20} />} color="blue" />
-              <StatCard label="En Attente" value={it?.byStatus.find(s => s._id === 'open')?.count ?? 0} unit="actifs" icon={<Activity size={20} />} color="amber" />
-              <StatCard label="Résolus" value={it?.byStatus.find(s => s._id === 'resolved')?.count ?? 0} unit="tickets" icon={<CheckCircle2 size={20} />} color="green" />
+              <StatCard label={tCommon('itTickets')} value={it?.total ?? 0} unit="tickets" icon={<Ticket size={20} />} color="blue" />
+              <StatCard label={tCommon('pendingReview')} value={it?.byStatus.find(s => s._id === 'open')?.count ?? 0} unit={t('active')} icon={<Activity size={20} />} color="amber" />
+              <StatCard label={tCommon('resolved')} value={it?.byStatus.find(s => s._id === 'resolved')?.count ?? 0} unit="tickets" icon={<CheckCircle2 size={20} />} color="green" />
               <StatCard label="SLA Breach" value={it?.slaBreach ?? 0} unit="tickets" icon={<AlertTriangle size={20} />} color="red" />
             </>
           )}
@@ -76,14 +80,14 @@ export default function AnalyticsPage() {
       {/* KPI GRID — AGRO */}
       <div>
         <h2 className="text-[10px] text-zinc-500 uppercase font-mono tracking-[3px] mb-4 flex items-center gap-2">
-          <TrendingUp size={12} /> Module Agricole
+          <TrendingUp size={12} /> {t('agroModule')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {loading ? Array(3).fill(0).map((_, i) => <Skeleton key={i} type="card" />) : (
             <>
-              <StatCard label="Cheptel Total" value={agro?.cheptel.total ?? 0} unit="têtes" icon={<Users size={20} />} color="amber" />
-              <StatCard label="Surface Cultivée" value={agro?.cultures.totalHa ?? 0} unit="ha" icon={<TrendingUp size={20} />} color="green" />
-              <StatCard label="Revenus Totaux" value={((agro?.financials.totalRevenue ?? 0) / 1000).toFixed(0)} unit="KDH" icon={<BarChart3 size={20} />} color="indigo" />
+              <StatCard label={tCommon('cheptelTotal')} value={agro?.cheptel.total ?? 0} unit={tCommon('heads')} icon={<Users size={20} />} color="amber" />
+              <StatCard label={tCommon('cultures')} value={agro?.cultures.totalHa ?? 0} unit={tCommon('ha')} icon={<TrendingUp size={20} />} color="green" />
+              <StatCard label={tCommon('revenue')} value={((agro?.financials.totalRevenue ?? 0) / 1000).toFixed(0)} unit={tCommon('kdh')} icon={<BarChart3 size={20} />} color="indigo" />
             </>
           )}
         </div>
@@ -92,14 +96,14 @@ export default function AnalyticsPage() {
       {/* KPI GRID — MAINTENANCE */}
       <div>
         <h2 className="text-[10px] text-zinc-500 uppercase font-mono tracking-[3px] mb-4 flex items-center gap-2">
-          <Wrench size={12} /> Module Maintenance
+          <Wrench size={12} /> {t('maintenanceModule')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {loading ? Array(3).fill(0).map((_, i) => <Skeleton key={i} type="card" />) : (
             <>
-              <StatCard label="Réclamations Total" value={maintenance?.total ?? 0} unit="total" icon={<AlertTriangle size={20} />} color="amber" />
-              <StatCard label="En Cours" value={maintenance?.byStatus?.['en_cours'] ?? 0} unit="actives" icon={<Activity size={20} />} color="blue" />
-              <StatCard label="Résolues" value={maintenance?.byStatus?.['resolue'] ?? 0} unit="total" icon={<CheckCircle2 size={20} />} color="green" />
+              <StatCard label={tCommon('maintenance')} value={maintenance?.total ?? 0} unit="total" icon={<AlertTriangle size={20} />} color="amber" />
+              <StatCard label={tCommon('in_progress')} value={maintenance?.byStatus?.['en_cours'] ?? 0} unit={t('active')} icon={<Activity size={20} />} color="blue" />
+              <StatCard label={tCommon('resolved')} value={maintenance?.byStatus?.['resolue'] ?? 0} unit="total" icon={<CheckCircle2 size={20} />} color="green" />
             </>
           )}
         </div>
@@ -112,11 +116,11 @@ export default function AnalyticsPage() {
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex items-center gap-3 bg-zinc-950/50">
             <BarChart3 className="text-emerald-500" size={18} />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Cultures par Catégorie</h3>
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{t('culturesByCategory')}</h3>
           </div>
           <div className="p-6">
             {loading ? <Skeleton type="list" /> : cultureGraph.length === 0 ? (
-              <div className="py-16 text-center text-zinc-500 italic">Aucune donnée de culture disponible.</div>
+              <div className="py-16 text-center text-zinc-500 italic">{t('noCultureData')}</div>
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={cultureGraph} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -145,11 +149,11 @@ export default function AnalyticsPage() {
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex items-center gap-3 bg-zinc-950/50">
             <PieChart className="text-indigo-500" size={18} />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Tickets IT par Statut</h3>
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{t('itTicketsByStatus')}</h3>
           </div>
           <div className="p-6">
             {loading ? <Skeleton type="list" /> : itByStatus.length === 0 ? (
-              <div className="py-16 text-center text-zinc-500 italic">Aucun ticket enregistré.</div>
+              <div className="py-16 text-center text-zinc-500 italic">{t('noTicketData')}</div>
             ) : (
               <div className="flex items-center gap-6">
                 <ResponsiveContainer width="50%" height={200}>
@@ -185,11 +189,11 @@ export default function AnalyticsPage() {
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex items-center gap-3 bg-zinc-950/50">
             <Wrench className="text-amber-500" size={18} />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Réclamations par Statut</h3>
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{t('complaintsByStatus')}</h3>
           </div>
           <div className="p-6 space-y-4">
             {loading ? <Skeleton type="list" /> : maintenanceByStatus.length === 0 ? (
-              <div className="py-12 text-center text-zinc-500 italic">Aucune réclamation.</div>
+              <div className="py-12 text-center text-zinc-500 italic">{t('noComplaintData')}</div>
             ) : maintenanceByStatus.map((item, i) => {
               const maxVal = Math.max(...maintenanceByStatus.map(x => x.value));
               const pct = maxVal > 0 ? (item.value / maxVal) * 100 : 0;
@@ -212,19 +216,19 @@ export default function AnalyticsPage() {
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex items-center gap-3 bg-zinc-950/50">
             <Users className="text-blue-500" size={18} />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Charge des Équipes</h3>
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{tCommon('teamLoad')}</h3>
           </div>
           <div className="p-6 space-y-4">
             {loading ? <Skeleton type="list" /> : !maintenance?.teamStats || maintenance.teamStats.length === 0 ? (
-              <div className="py-12 text-center text-zinc-500 italic">Aucune équipe disponible.</div>
+              <div className="py-12 text-center text-zinc-500 italic">{tCommon('noTeamData')}</div>
             ) : maintenance.teamStats.map((team, i) => {
               const maxAssign = Math.max(...maintenance.teamStats.map(t => t.activeAssignments), 1);
               const pct = (team.activeAssignments / maxAssign) * 100;
               return (
                 <div key={i}>
                   <div className="flex justify-between text-[11px] font-medium mb-1.5">
-                    <span className="text-zinc-400">{team.name}</span>
-                    <span className="text-white font-mono">{team.activeAssignments} tâches</span>
+                    <span className="text-zinc-400 font-bold uppercase tracking-wider">{team.name}</span>
+                    <span className="text-white font-mono">{team.activeAssignments} {tCommon('activeTasks')}</span>
                   </div>
                   <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden">
                     <div

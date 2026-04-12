@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, usePathname } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useOrgStore } from '@/store/orgStore';
 import { 
@@ -16,68 +18,72 @@ import {
 import { ThemeToggle } from './ThemeToggle';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
 
-const routeLabels: Record<string, string> = {
-  '/dashboard': 'Vue Générale',
+const getRouteLabels = (t: any): Record<string, string> => ({
+  '/dashboard': t('overview'),
   '/analytics': 'Analytics & KPIs',
-  '/map': 'Carte Interactive',
-  '/meteo': 'Météo & Environnement',
-  '/elevage': 'Élevage Bovin/Ovin',
-  '/volaille': 'Ferme Avicole',
-  '/parcelles': 'Parcelles & Cultures',
-  '/herbes': 'Herbes & Aromates',
-  '/legumes': 'Légumes & Fruits',
-  '/pepiniere': 'Pépinière',
-  '/irrigation': 'Irrigation & Eau',
-  '/foret': 'Gestion Forestière',
-  '/domaine': 'Domaine & Infrastructure',
-  '/fleet': 'Équipements & Flotte',
-  '/comptabilite': 'Comptabilité',
-  '/budget': 'Budget & Finance',
-  '/teams': 'Équipes',
-  '/roster': 'Planning RH',
-  '/tasks': 'Tâches',
-  '/planning': 'Calendrier',
-  '/messages': 'Messages',
-  '/reports': 'Rapports & Export',
-  '/inventory': 'Inventaire',
-  '/knowledge': 'Base de Connaissance',
-  '/complaints': 'Réclamations',
-  '/feedback': 'Feedback',
-  '/audit-logs': "Journaux d'Audit",
-  '/settings': 'Paramètres',
-  '/it-admin': 'Admin IT',
+  '/map': t('map'),
+  '/meteo': t('weather'),
+  '/elevage': t('livestock'),
+  '/volaille': t('poultry'),
+  '/parcelles': t('plots'),
+  '/herbes': t('herbs'),
+  '/legumes': t('vegetables'),
+  '/pepiniere': t('nursery'),
+  '/irrigation': t('irrigation'),
+  '/foret': t('forestry'),
+  '/domaine': t('domain'),
+  '/fleet': t('fleet'),
+  '/comptabilite': t('accounting'),
+  '/budget': t('finance'),
+  '/teams': t('teams'),
+  '/roster': t('hrPlanning'),
+  '/tasks': t('tasks'),
+  '/planning': t('calendar'),
+  '/messages': t('messages'),
+  '/reports': t('reports'),
+  '/inventory': t('inventory'),
+  '/knowledge': t('knowledgeBase'),
+  '/complaints': t('reclamations'),
+  '/feedback': t('feedback'),
+  '/audit-logs': t('auditLogs'),
+  '/settings': t('settings'),
+  '/it-admin': t('itAdmin'),
   '/admin': 'Administration',
   '/super-admin': 'Super Admin',
-  '/citizen': 'Citoyens',
-  '/technician': 'Techniciens',
-};
+  '/citizen': 'Citizens',
+  '/technician': 'Technicians',
+});
 
 export default function AgroTopBar() {
+  const t = useTranslations('Navbar');
+  const locale = useLocale();
   const { user, logout } = useAuth();
   const { activeOrganization } = useOrgStore();
   const pathname = usePathname();
   const [currentDate, setCurrentDate] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const routeLabels = getRouteLabels(t);
+
   useEffect(() => {
     setCurrentDate(
-      new Date().toLocaleDateString('fr-FR', {
+      new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       })
     );
-  }, []);
+  }, [locale]);
 
   const getBreadcrumb = () => {
-    if (!pathname) return 'Vue Générale';
+    if (!pathname) return t('overview');
     const segments = pathname.split('/').filter(Boolean);
     for (let i = segments.length - 1; i >= 0; i--) {
       const key = '/' + segments[i];
       if (routeLabels[key]) return routeLabels[key];
     }
-    return 'Vue Générale';
+    return t('overview');
   };
 
   const userInitials = user
@@ -114,7 +120,7 @@ export default function AgroTopBar() {
         </div>
         <div className="hidden sm:block">
           <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)', letterSpacing: '-0.02em' }}>AgroMaître</div>
-          <div style={{ fontSize: '9px', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Domaine Agricole</div>
+          <div style={{ fontSize: '9px', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('domain')}</div>
         </div>
       </div>
 
@@ -191,7 +197,7 @@ export default function AgroTopBar() {
             whiteSpace: 'nowrap'
           }}>
             <Plus size={14} />
-            <span>Tâche</span>
+            <span>{t('task')}</span>
           </button>
         </Link>
       </div>

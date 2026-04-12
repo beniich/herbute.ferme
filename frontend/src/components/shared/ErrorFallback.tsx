@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertOctagon, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export interface ErrorFallbackProps {
   error?: Error | null;
@@ -9,7 +10,8 @@ export interface ErrorFallbackProps {
 }
 
 export function ErrorFallback({ error, onRetry, message, compact = false }: ErrorFallbackProps) {
-  const displayMessage = message || error?.message || 'Une erreur est survenue';
+  const t = useTranslations('Common');
+  const displayMessage = message || error?.message || t('errorOccurred');
 
   if (compact) {
     return (
@@ -20,9 +22,9 @@ export function ErrorFallback({ error, onRetry, message, compact = false }: Erro
           <button
             onClick={onRetry}
             className="shrink-0 text-red-600 hover:text-red-800 underline text-xs font-medium"
-            aria-label="Réessayer"
+            aria-label={t('retry')}
           >
-            Réessayer
+            {t('retry')}
           </button>
         )}
       </div>
@@ -37,17 +39,17 @@ export function ErrorFallback({ error, onRetry, message, compact = false }: Erro
     >
       <div className="flex items-center gap-2 text-red-700">
         <AlertOctagon size={20} />
-        <h3 className="text-base font-semibold">Erreur</h3>
+        <h3 className="text-base font-semibold">{t('error')}</h3>
       </div>
       <p className="text-sm text-red-600">{displayMessage}</p>
       {onRetry && (
         <button
           onClick={onRetry}
           className="mt-1 inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
-          aria-label="Réessayer le chargement"
+          aria-label={t('retry')}
         >
           <RefreshCw size={14} />
-          Réessayer
+          {t('retry')}
         </button>
       )}
     </div>

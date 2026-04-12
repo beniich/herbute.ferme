@@ -47,7 +47,7 @@ export class APIClient {
         config.headers.Authorization = `Bearer ${this.authToken}`;
       }
       const orgId = typeof window !== 'undefined'
-        ? localStorage.getItem('organizationId')
+        ? localStorage.getItem('active_organization_id')
         : null;
       if (orgId) {
         config.headers['x-organization-id'] = orgId;
@@ -88,7 +88,7 @@ export class APIClient {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      localStorage.removeItem('organizationId');
+      localStorage.removeItem('active_organization_id');
     }
   }
 

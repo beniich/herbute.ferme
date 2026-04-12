@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
 import { useFinanceData } from '@/hooks/useDomainData';
+import { useTranslations, useLocale } from 'next-intl';
 import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast';
 import { StatCard } from '@/components/shared/StatCard';
@@ -31,11 +31,14 @@ const EMPTY_FORM: TransactionForm = {
   description: '', category: 'Ventes Animaux', sector: 'Général',
   type: 'recette', amount: '', date: new Date().toISOString().split('T')[0]
 };
-const CATEGORIES_RECETTE = ['Ventes Animaux', 'Ventes Cultures', 'Ventes Lait', 'Subventions', 'Prestations', 'Autre Recette'];
-const CATEGORIES_DEPENSE = ['Intrants Agricoles', 'Alimentation Animaux', 'Santé Vétérinaire', 'Carburant', "Main d'œuvre", 'Équipements', 'Engrais & Semences', 'Entretien', 'Charges Fixes', 'Autre Dépense'];
-const SECTORS = ['Élevage Bovin', 'Élevage Ovin', 'Volaille', 'Maraîchage', 'Herbes & Aromates', 'Pépinière', 'Forêt', 'Général'];
-
 export default function ComptabilitePage() {
+  const t = useTranslations('Finance');
+  const tCommon = useTranslations('Common');
+  const locale = useLocale();
+
+  const CATEGORIES_RECETTE = t.raw('categories.income');
+  const CATEGORIES_DEPENSE = t.raw('categories.expense');
+  const SECTORS = t.raw('sectors');
   const { data: rawData, isLoading, error, refresh } = useFinanceData();
   const { format } = useCurrencyStore();
 
@@ -108,15 +111,15 @@ export default function ComptabilitePage() {
       if (editingId) {
         // Update not yet in agroAccountingApi, using apiClient for now or handle in controller
         await apiClient.put(`/api/agro-accounting/entries/${editingId}`, payload);
-        toast.success('Transaction modifiée ✓');
+        toast.success(t('toast.successEdit'));
       } else {
         await agroAccountingApi.createEntry(payload);
-        toast.success('Transaction enregistrée ✓');
+        toast.success(t('toast.successSave'));
       }
       closeModal();
       refresh();
     } catch {
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error(t('toast.errorSave'));
     } finally {
       setSaving(false);
     }
@@ -125,17 +128,17 @@ export default function ComptabilitePage() {
   const handleDelete = async (id: string) => {
     try {
       await apiClient.delete(`/api/agro-accounting/entries/${id}`);
-      toast.success('Transaction supprimée');
+      toast.success(t('toast.successDelete'));
       setDeleteId(null);
       refresh();
     } catch {
-      toast.error('Erreur de suppression');
+      toast.error(t('toast.errorDelete'));
     }
   };
 
   const handleExport = async (format: 'pdf' | 'excel') => {
     try {
-      toast.loading(`Génération du rapport ${format.toUpperCase()}...`, { id: 'export' });
+      toast.loading(`${t('exporting')} ${format.toUpperCase()}...`, { id: 'export' });
       const response = await agroReportsApi.exportAccounting(format);
       const url = window.URL.createObjectURL(new Blob([response as any]));
       const link = document.createElement('a');
@@ -144,9 +147,9 @@ export default function ComptabilitePage() {
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
-      toast.success('Rapport prêt !', { id: 'export' });
+      toast.success(t('exportSuccess'), { id: 'export' });
     } catch {
-      toast.error('Erreur lors de l\'export', { id: 'export' });
+      toast.error(t('toast.errorExport'), { id: 'export' });
     }
   };
 
@@ -158,29 +161,29 @@ export default function ComptabilitePage() {
     formData.append('file', file);
     
     try {
-      toast.loading('Importation des données...', { id: 'import' });
+      toast.loading(t('importing'), { id: 'import' });
       await apiClient.post('/api/agro-accounting/import-excel', formData);
-      toast.success('Données importées avec succès !', { id: 'import' });
+      toast.success(t('importSuccess'), { id: 'import' });
       refresh();
     } catch {
-      toast.error('Erreur lors de l\'importation', { id: 'import' });
+      toast.error(t('toast.errorImport'), { id: 'import' });
     }
   };
 
-  const generateInvoice = async (t: any) => {
+  const generateInvoice = async (tEntry: any) => {
     try {
-      toast.loading('Génération de la facture...', { id: 'invoice' });
-      const response = await apiClient.get(`/api/invoices/${t._id}/pdf`, { responseType: 'blob' });
+      toast.loading(t('invoiceGenerating'), { id: 'invoice' });
+      const response = await apiClient.get(`/api/invoices/${tEntry._id}/pdf`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `facture-${t.description.replace(/\s+/g, '_')}.pdf`);
+      link.setAttribute('download', `facture-${tEntry.description.replace(/\s+/g, '_')}.pdf`);
       document.body.appendChild(link);
       link.click();
-      toast.success('Facture PDF générée !', { id: 'invoice' });
+      toast.success(t('invoiceSuccess'), { id: 'invoice' });
     } catch {
       // Fallback: search for or create invoice model if it doesn't exist for this entry
-      toast.error('Erreur : Modèle de facture non trouvé pour cette entrée', { id: 'invoice' });
+      toast.error(t('invoiceError'), { id: 'invoice' });
     }
   };
 
@@ -188,7 +191,7 @@ export default function ComptabilitePage() {
   const categories = form.type === 'recette' ? CATEGORIES_RECETTE : CATEGORIES_DEPENSE;
   const isProfit = kpis.monthProfit >= 0;
 
-  if (error) return <ErrorFallback onRetry={refresh} message="Impossible de charger les données financières" />;
+  if (error) return <ErrorFallback onRetry={refresh} message={t('errorLoading')} />;
 
   return (
     <div className="page active p-6 lg:p-10 space-y-10" id="page-comptabilite">
@@ -196,14 +199,14 @@ export default function ComptabilitePage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">Module Finance · Comptabilité</div>
+          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{t('moduleTitle')}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
-            <DollarSign className="text-amber-500" size={32} /> Comptabilité du Domaine
+            <DollarSign className="text-amber-500" size={32} /> {t('title')}
           </h1>
-          <p className="text-sm text-zinc-400">Recettes & dépenses · données réelles depuis la base de données.</p>
+          <p className="text-sm text-zinc-400">{t('subtitle')}</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={refresh} className="p-2 text-zinc-500 hover:text-white transition-colors" title="Actualiser">
+          <button onClick={refresh} className="p-2 text-zinc-500 hover:text-white transition-colors" title={tCommon('refresh')}>
             <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
           </button>
           
@@ -212,14 +215,14 @@ export default function ComptabilitePage() {
             <button 
               onClick={() => handleExport('pdf')}
               className="p-2 bg-zinc-950 text-zinc-400 hover:text-rose-400 hover:bg-zinc-900 transition-colors border-r border-zinc-900"
-              title="Exporter PDF"
+              title={t('exportPdf')}
             >
               PDF
             </button>
             <button 
               onClick={() => handleExport('excel')}
               className="p-2 bg-zinc-950 text-zinc-400 hover:text-emerald-400 hover:bg-zinc-900 transition-colors"
-              title="Exporter Excel"
+              title={t('exportExcel')}
             >
               <Download size={18} />
             </button>
@@ -234,13 +237,13 @@ export default function ComptabilitePage() {
             onClick={() => openCreate('depense')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500/20 text-sm font-bold transition-all"
           >
-            <Minus size={14} /> Dépense
+            <Minus size={14} /> {tCommon('expenses')}
           </button>
           <button
             onClick={() => openCreate('recette')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 text-sm font-bold transition-all"
           >
-            <Plus size={14} /> Recette
+            <Plus size={14} /> {tCommon('revenue')}
           </button>
         </div>
       </div>
@@ -248,10 +251,10 @@ export default function ComptabilitePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {isLoading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} type="card" />) : (
           <>
-            <StatCard label="Recettes (Mois)" value={format(kpis.monthRevenue, true)} icon={<TrendingUp size={20} />} color="green" />
-            <StatCard label="Dépenses (Mois)" value={format(kpis.monthExpenses, true)} icon={<TrendingDown size={20} />} color="red" />
-            <StatCard label="Bénéfice (Mois)" value={format(kpis.monthProfit, true)} trend={isProfit ? +2.4 : -1.8} icon={<Wallet size={20} />} color={isProfit ? 'green' : 'red'} />
-            <StatCard label="CA Annuel" value={format(kpis.yearRevenue, true)} icon={<BarChart3 size={20} />} color="amber" />
+            <StatCard label={t('revenueMois')} value={format(kpis.monthRevenue, true)} icon={<TrendingUp size={20} />} color="green" />
+            <StatCard label={t('expensesMois')} value={format(kpis.monthExpenses, true)} icon={<TrendingDown size={20} />} color="red" />
+            <StatCard label={t('profitMois')} value={format(kpis.monthProfit, true)} trend={isProfit ? +2.4 : -1.8} icon={<Wallet size={20} />} color={isProfit ? 'green' : 'red'} />
+            <StatCard label={t('annualRevenue')} value={format(kpis.yearRevenue, true)} icon={<BarChart3 size={20} />} color="amber" />
           </>
         )}
       </div>
@@ -263,14 +266,14 @@ export default function ComptabilitePage() {
           <div className="p-5 border-b border-zinc-900 bg-zinc-950/50 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex items-center gap-3">
               <Layers className="text-amber-500" size={18} />
-              <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Journal des Transactions</h3>
+              <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{t('journal')}</h3>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={13} />
                 <input
                   type="text"
-                  placeholder="Rechercher..."
+                  placeholder={t('search')}
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   className="pl-8 pr-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 w-44"
@@ -278,14 +281,14 @@ export default function ComptabilitePage() {
               </div>
               <div className="relative">
                 <select
-                  title="Filtrer par type"
+                  title={t('search')}
                   value={filterType}
                   onChange={e => setFilterType(e.target.value as typeof filterType)}
                   className="appearance-none pl-3 pr-8 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-300 focus:outline-none focus:border-amber-500/50 cursor-pointer"
                 >
-                  <option value="">Tous types</option>
-                  <option value="recette">Recettes</option>
-                  <option value="depense">Dépenses</option>
+                  <option value="">{t('allTypes')}</option>
+                  <option value="recette">{tCommon('revenue')}</option>
+                  <option value="depense">{tCommon('expenses')}</option>
                 </select>
                 <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={12} />
               </div>
@@ -297,33 +300,33 @@ export default function ComptabilitePage() {
             ) : filtered.length === 0 ? (
               <div className="py-20 text-center">
                 <DollarSign className="mx-auto mb-4 text-zinc-700" size={40} />
-                <p className="text-zinc-500 italic">Aucune transaction enregistrée.</p>
+                <p className="text-zinc-500 italic">{t('noTransactions')}</p>
                 <div className="flex gap-3 justify-center mt-6">
-                  <button onClick={() => openCreate('recette')} className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold">+ Recette</button>
-                  <button onClick={() => openCreate('depense')} className="px-4 py-2 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-xs font-bold">- Dépense</button>
+                  <button onClick={() => openCreate('recette')} className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold">{t('addIncome')}</button>
+                  <button onClick={() => openCreate('depense')} className="px-4 py-2 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-xs font-bold">{t('addExpense')}</button>
                 </div>
               </div>
             ) : (
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-zinc-900/30">
-                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Date</th>
-                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Description</th>
-                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Secteur</th>
+                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('date')}</th>
+                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('description')}</th>
+                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('sector')}</th>
                     <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Type</th>
-                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900 text-right">Montant</th>
+                    <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900 text-right">{t('amount')}</th>
                     <th className="px-3 py-3 border-b border-zinc-900"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-900/40">
                   {filtered.map((t: any) => (
-                    <tr key={t._id} className="hover:bg-zinc-900/30 transition-colors group">
-                      <td className="px-5 py-3 font-mono text-xs text-zinc-500 whitespace-nowrap">{new Date(t.date).toLocaleDateString('fr-FR')}</td>
+                    <tr key={t.id} className="hover:bg-zinc-900/30 transition-colors group">
+                      <td className="px-5 py-3 font-mono text-xs text-zinc-500 whitespace-nowrap">{new Date(t.date).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US')}</td>
                       <td className="px-5 py-3 text-zinc-200 font-medium truncate max-w-[180px]">{t.description}</td>
                       <td className="px-5 py-3 text-zinc-500 text-xs">{t.sector}</td>
                       <td className="px-5 py-3">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${t.type === 'income' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-                          {t.type === 'income' ? '↑ Recette' : '↓ Dépense'}
+                          {t.type === 'income' ? t('income') : t('expense')}
                         </span>
                       </td>
                       <td className={`px-5 py-3 text-right font-mono font-bold ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -336,10 +339,10 @@ export default function ComptabilitePage() {
                                <FileText size={13} />
                             </button>
                           )}
-                          <button onClick={() => openEdit(t)} className="p-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white" title="Modifier">
+                          <button onClick={() => openEdit(t)} className="p-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white" title={tCommon('details')}>
                             <Edit2 size={13} />
                           </button>
-                          <button onClick={() => setDeleteId(t._id)} className="p-1.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-500" title="Supprimer">
+                          <button onClick={() => setDeleteId(t._id)} className="p-1.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-500" title={tCommon('delete')}>
                             <Trash2 size={13} />
                           </button>
                         </div>
@@ -356,13 +359,13 @@ export default function ComptabilitePage() {
         {/* SECTOR PERFORMANCE */}
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-xl">
           <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <BarChart3 size={14} className="text-amber-500" /> Performance par Secteur
+            <BarChart3 size={14} className="text-amber-500" /> {t('performanceSector')}
           </h4>
           <div className="space-y-5">
             {isLoading ? (
               <Skeleton type="list" />
             ) : kpis.bySector.length === 0 ? (
-              <p className="text-zinc-600 text-sm italic text-center py-10">Aucune donnée sectorielle</p>
+              <p className="text-zinc-600 text-sm italic text-center py-10">{t('noSectorData')}</p>
             ) : kpis.bySector.map((s: any) => {
               const profit = s.revenue - s.expenses;
               const maxVal = Math.max(...kpis.bySector.map((x: any) => Math.abs(x.revenue)));
@@ -396,13 +399,13 @@ export default function ComptabilitePage() {
             <div className="flex justify-between items-center mb-8">
               <div>
                 <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-[2px] mb-1">
-                  {editingId ? 'Modification' : 'Nouvelle entrée'}
+                  {editingId ? t('editEntry') : t('newEntry')}
                 </div>
                 <h2 className="text-xl font-bold text-white">
-                  {editingId ? 'Modifier la Transaction' : form.type === 'recette' ? '↑ Nouvelle Recette' : '↓ Nouvelle Dépense'}
+                  {editingId ? t('modifyTransaction') : form.type === 'recette' ? t('newIncome') : t('newExpense')}
                 </h2>
               </div>
-              <button onClick={closeModal} title="Fermer" aria-label="Fermer" className="p-2 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={closeModal} title={tCommon('closed')} aria-label={tCommon('closed')} className="p-2 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -411,30 +414,30 @@ export default function ComptabilitePage() {
               {/* Toggle Type */}
               {!editingId && (
                 <div className="flex gap-2 p-1 bg-zinc-900 rounded-xl">
-                  <button
+                   <button
                     type="button"
-                    onClick={() => setForm(f => ({ ...f, type: 'recette', category: 'Ventes Animaux' }))}
+                    onClick={() => setForm(f => ({ ...f, type: 'recette', category: CATEGORIES_RECETTE[0] }))}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${form.type === 'recette' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
-                    <TrendingUp size={14} /> Recette
+                    <TrendingUp size={14} /> {tCommon('revenue')}
                   </button>
-                  <button
+                   <button
                     type="button"
-                    onClick={() => setForm(f => ({ ...f, type: 'depense', category: 'Intrants Agricoles' }))}
+                    onClick={() => setForm(f => ({ ...f, type: 'depense', category: CATEGORIES_DEPENSE[0] }))}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${form.type === 'depense' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
-                    <TrendingDown size={14} /> Dépense
+                    <TrendingDown size={14} /> {tCommon('expenses')}
                   </button>
                 </div>
               )}
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Description *</label>
+                <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{t('description')} *</label>
                 <input
                   value={form.description}
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  placeholder="Ex: Vente de lait à la coopérative…"
+                  placeholder="Ex: Vente de lait..."
                   required
                   className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 transition-colors"
                 />
@@ -443,9 +446,9 @@ export default function ComptabilitePage() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Catégorie */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Catégorie</label>
+                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{t('category')}</label>
                   <select
-                    title="Catégorie"
+                    title={t('category')}
                     value={form.category}
                     onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                     className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-amber-500/50 transition-colors"
@@ -456,9 +459,9 @@ export default function ComptabilitePage() {
 
                 {/* Secteur */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Secteur</label>
+                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{t('sector')}</label>
                   <select
-                    title="Secteur"
+                    title={t('sector')}
                     value={form.sector}
                     onChange={e => setForm(f => ({ ...f, sector: e.target.value }))}
                     className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-amber-500/50 transition-colors"
@@ -469,10 +472,10 @@ export default function ComptabilitePage() {
 
                 {/* Montant */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Montant (DH) *</label>
+                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{t('amount')} *</label>
                   <input
                     type="number"
-                    title="Montant"
+                    title={t('amount')}
                     value={form.amount}
                     onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                     min={0.01} step={0.01} placeholder="0.00" required
@@ -482,7 +485,7 @@ export default function ComptabilitePage() {
 
                 {/* Date */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Date</label>
+                  <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{t('date')}</label>
                   <input
                     type="date"
                     value={form.date}
@@ -495,14 +498,14 @@ export default function ComptabilitePage() {
               {/* Actions */}
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={closeModal} className="flex-1 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-400 hover:text-white font-bold transition-colors">
-                  Annuler
+                  {t('cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
                   className={`flex-[2] py-3 rounded-lg text-sm font-bold transition-all disabled:opacity-50 ${form.type === 'recette' ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30' : 'bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30'}`}
                 >
-                  {saving ? 'Enregistrement…' : editingId ? 'Enregistrer les modifications' : `Ajouter la ${form.type}`}
+                  {saving ? t('saving') : editingId ? t('saveChanges') : t('newEntry')}
                 </button>
               </div>
             </form>
@@ -517,11 +520,11 @@ export default function ComptabilitePage() {
             <div className="w-14 h-14 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-5">
               <Trash2 className="text-rose-500" size={24} />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Supprimer cette transaction ?</h3>
-            <p className="text-sm text-zinc-500 mb-8">Les KPIs seront recalculés automatiquement. Cette action est irréversible.</p>
+            <h3 className="text-lg font-bold text-white mb-2">{t('deleteTitle')}</h3>
+            <p className="text-sm text-zinc-500 mb-8">{t('deleteDesc')}</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteId(null)} className="flex-1 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-400 hover:text-white font-bold transition-colors">Annuler</button>
-              <button onClick={() => handleDelete(deleteId)} className="flex-1 py-3 bg-rose-500/20 border border-rose-500/30 rounded-lg text-sm text-rose-400 hover:bg-rose-500/30 font-bold transition-colors">Supprimer</button>
+              <button onClick={() => setDeleteId(null)} className="flex-1 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-400 hover:text-white font-bold transition-colors">{t('cancel')}</button>
+              <button onClick={() => handleDelete(deleteId)} className="flex-1 py-3 bg-rose-500/20 border border-rose-500/30 rounded-lg text-sm text-rose-400 hover:bg-rose-500/30 font-bold transition-colors">{tCommon('delete')}</button>
             </div>
           </div>
         </div>

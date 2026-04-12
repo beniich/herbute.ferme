@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
 import { useAnimalsData } from '@/hooks/useDomainData';
+import { useTranslations } from 'next-intl';
 import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast';
 import { StatCard } from '@/components/shared/StatCard';
@@ -57,15 +57,6 @@ const EMPTY_FORM: AnimalForm = {
   notes: ''
 };
 
-const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  PRODUCTION: { label: 'En production', color: 'bg-emerald-500/10 text-emerald-500', icon: <Activity size={12} /> },
-  ACTIVE:     { label: 'Actif',         color: 'bg-emerald-500/10 text-emerald-500', icon: <CheckCircle2 size={12} /> },
-  GROWING:    { label: 'Croissance',    color: 'bg-amber-500/10 text-amber-500', icon: <TrendingUp size={12} /> },
-  LAYING:     { label: 'En ponte',      color: 'bg-blue-500/10 text-blue-500', icon: <Layers size={12} /> },
-  SICK:       { label: 'Malade',        color: 'bg-rose-500/10 text-rose-500', icon: <AlertCircle size={12} /> },
-  SOLD:       { label: 'Vendu',         color: 'bg-zinc-500/10 text-zinc-500', icon: <ArrowRight size={12} /> },
-};
-
 interface ElevagePageProps {
   category?: string;
   pageTitle?: string;
@@ -74,6 +65,8 @@ interface ElevagePageProps {
 }
 
 export default function ElevagePage({ category: _category, pageTitle, pageLabel, pageIcon }: ElevagePageProps = {}) {
+  const t = useTranslations('Livestock');
+  const tCommon = useTranslations('Common');
   const { items: rawAnimals, stats: domainStats, isLoading, error, refresh } = useAnimalsData();
   const _ = domainStats; // suppress unused warning
   const [showModal, setShowModal] = useState(false);
@@ -82,6 +75,15 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+    PRODUCTION: { label: t('statusLabels.PRODUCTION'), color: 'bg-emerald-500/10 text-emerald-500', icon: <Activity size={12} /> },
+    ACTIVE:     { label: t('statusLabels.ACTIVE'),         color: 'bg-emerald-500/10 text-emerald-500', icon: <CheckCircle2 size={12} /> },
+    GROWING:    { label: t('statusLabels.GROWING'),    color: 'bg-amber-500/10 text-amber-500', icon: <TrendingUp size={12} /> },
+    LAYING:     { label: t('statusLabels.LAYING'),      color: 'bg-blue-500/10 text-blue-500', icon: <Layers size={12} /> },
+    SICK:       { label: t('statusLabels.SICK'),        color: 'bg-rose-500/10 text-rose-500', icon: <AlertCircle size={12} /> },
+    SOLD:       { label: t('statusLabels.SOLD'),         color: 'bg-zinc-500/10 text-zinc-500', icon: <ArrowRight size={12} /> },
+  };
 
   const animals = useMemo(() => {
     const list = (rawAnimals as unknown as Animal[]) || [];
@@ -143,15 +145,15 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
       
       if (editingId) {
         await apiClient.patch(`/api/animals/${editingId}`, payload);
-        toast.success('Animal mis à jour avec succès');
+        toast.success(tCommon('toast.successUpdate'));
       } else {
         await apiClient.post('/api/animals', payload);
-        toast.success('Nouvel enregistrement ajouté');
+        toast.success(tCommon('toast.successAdd'));
       }
       closeModal();
       refresh();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Erreur lors de la sauvegarde');
+      toast.error(err.response?.data?.error || tCommon('toast.errorSave'));
     } finally {
       setSaving(false);
     }
@@ -160,15 +162,15 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
   const handleDelete = async (id: string) => {
     try {
       await apiClient.delete(`/api/animals/${id}`);
-      toast.success('Enregistrement supprimé');
+      toast.success(tCommon('toast.successDelete'));
       setDeleteId(null);
       refresh();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Erreur lors de la suppression');
+      toast.error(err.response?.data?.error || tCommon('toast.errorDelete'));
     }
   };
 
-  if (error) return <ErrorFallback onRetry={refresh} message="Impossible de charger le cheptel" />;
+  if (error) return <ErrorFallback onRetry={refresh} message={tCommon('errorLoading')} />;
 
   return (
     <div className="page active p-6 lg:p-10 space-y-8" id="page-elevage">
@@ -176,7 +178,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{pageLabel || 'Module Agriculture · Élevage'}</div>
+          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{pageLabel || t('moduleTitle')}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
             {pageIcon ? (
               <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 text-2xl">
@@ -185,16 +187,16 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
             ) : (
               <Beef className="text-amber-500" size={32} />
             )} 
-            {pageTitle || 'Gestion du Cheptel'}
+            {pageTitle || t('title')}
           </h1>
-          <p className="text-sm text-zinc-400">Suivi inventaire, santé et valorisation du bétail.</p>
+          <p className="text-sm text-zinc-400">{t('subtitle')}</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
             <input 
               type="text" 
-              placeholder="Rechercher..."
+              placeholder={tCommon('search')}
               className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 outline-none transition-all"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -204,7 +206,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
             onClick={openCreate}
             className="flex items-center gap-2 px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg text-sm font-bold transition-all shadow-lg shadow-amber-500/10"
           >
-            <Plus size={18} /> Nouveau Lot
+            <Plus size={18} /> {t('newLot')}
           </button>
         </div>
       </div>
@@ -216,30 +218,30 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
         ) : (
           <>
             <StatCard 
-              label="Effectif Total" 
+              label={t('totalCount')} 
               value={kpis.totalTetes} 
-              unit="têtes"
+              unit={t('heads')}
               icon={<Beef size={20} />}
               color="amber"
             />
             <StatCard 
-              label="Valeur Estimée" 
+              label={t('estimatedValue')} 
               value={kpis.totalVal.toFixed(0)} 
-              unit="KDH"
+              unit={t('kdh')}
               icon={<TrendingUp size={20} />}
               color="green"
             />
             <StatCard 
-              label="Groupes Actifs" 
+              label={t('activeGroups')} 
               value={kpis.groups} 
-              unit="lots"
+              unit={t('lots')}
               icon={<Layers size={20} />}
               color="blue"
             />
             <StatCard 
-              label="Alertes Santé" 
+              label={t('healthAlerts')} 
               value={kpis.sickCount} 
-              unit="lots"
+              unit={t('lots')}
               icon={<AlertCircle size={20} />}
               color="red"
             />
@@ -251,9 +253,9 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
       <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
         <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-zinc-950/50">
           <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></span> Inventaire Cheptel
+            <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></span> {t('inventory')}
           </h3>
-          <button onClick={refresh} className="text-zinc-500 hover:text-white transition-colors">
+          <button onClick={refresh} className="text-zinc-500 hover:text-white transition-colors" title={tCommon('refresh')}>
             <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -264,23 +266,23 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
           ) : animals.length === 0 ? (
             <div className="py-20 text-center space-y-4">
               <Beef size={48} className="mx-auto text-zinc-800" />
-              <div className="text-zinc-500 font-medium italic">Aucun animal enregistré pour le moment.</div>
+              <div className="text-zinc-500 font-medium italic">{t('noAnimals')}</div>
               <button 
                 onClick={openCreate}
                 className="px-6 py-2 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-zinc-900 transition-all"
               >
-                Commencer l'inventaire
+                {t('startInventory')}
               </button>
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-zinc-900/40">
-                  <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Type & Race</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Effectif</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Âge Moyen</th>
-                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Statut</th>
-                  <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900 text-right">Valeur Estimée</th>
+                  <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('typeRace')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('count')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('averageAge')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('status')}</th>
+                  <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900 text-right">{t('estimatedValue')}</th>
                   <th className="px-8 py-4 text-zinc-500 border-b border-zinc-900"></th>
                 </tr>
               </thead>
@@ -318,10 +320,10 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                     </td>
                     <td className="px-8 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="flex justify-end gap-2">
-                        <button onClick={() => openEdit(a)} className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-all">
+                        <button onClick={() => openEdit(a)} className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-all" title={t('editLot')}>
                           <Edit2 size={14} />
                         </button>
-                        <button onClick={() => setDeleteId(a._id)} className="p-2 text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all">
+                        <button onClick={() => setDeleteId(a._id)} className="p-2 text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all" title={tCommon('delete')}>
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -341,7 +343,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
             <div className="p-6 border-b border-zinc-900 flex justify-between items-center">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 {editingId ? <Edit2 className="text-amber-500" size={20} /> : <Plus className="text-amber-500" size={20} />}
-                {editingId ? 'Modifier le lot' : 'Nouveau lot de cheptel'}
+                {editingId ? t('editLot') : t('newLotTitle')}
               </h2>
               <button onClick={closeModal} className="text-zinc-500 hover:text-white transition-colors">✕</button>
             </div>
@@ -349,7 +351,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
             <form onSubmit={handleSave} className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Type d'animal *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('animalType')} *</label>
                   <input 
                     type="text" 
                     value={form.type} 
@@ -361,7 +363,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Race *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('breed')} *</label>
                   <input 
                     type="text" 
                     value={form.breed} 
@@ -373,7 +375,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Effectif (têtes) *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('count')} *</label>
                   <input 
                     type="number" 
                     value={form.count} 
@@ -385,7 +387,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Âge moyen (mois)</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('averageAgeMonths')}</label>
                   <input 
                     type="number" 
                     value={form.averageAge} 
@@ -396,7 +398,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Statut</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('status')}</label>
                   <select 
                     value={form.status} 
                     onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
@@ -409,7 +411,7 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
 
                 <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Valeur estimée totale (DH)</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('estimatedValue')} ({t('dh')})</label>
                   <input 
                     type="number" 
                     value={form.estimatedValue} 
@@ -420,31 +422,31 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
                 </div>
 
                 <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Observations</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{t('observations')}</label>
                   <textarea 
                     value={form.notes} 
                     onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                     rows={3}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500/50 outline-none transition-all resize-none"
-                    placeholder="Traitements, alimentation, remarques..."
+                    placeholder={t('observationsPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className="flex gap-4 pt-4 border-t border-zinc-900">
-                <button 
+                 <button 
                   type="button" 
                   onClick={closeModal}
                   className="flex-1 px-6 py-3 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-all text-xs font-bold uppercase tracking-widest"
                 >
-                  Annuler
+                  {t('cancel')}
                 </button>
-                <button 
+                 <button 
                   type="submit" 
                   disabled={saving}
                   className="flex-[2] px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-widest transition-all disabled:opacity-50"
                 >
-                  {saving ? 'Enregistrement...' : editingId ? 'Mettre à jour' : 'Ajouter le lot'}
+                  {saving ? t('saving') : editingId ? t('update') : t('addLot')}
                 </button>
               </div>
             </form>
@@ -460,21 +462,21 @@ export default function ElevagePage({ category: _category, pageTitle, pageLabel,
               <Trash2 size={32} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-2">Supprimer ce lot ?</h3>
-              <p className="text-sm text-zinc-500">Cette action est définitive et supprimera toutes les données liées à ce lot d'animaux.</p>
+              <h3 className="text-xl font-bold text-white mb-2">{t('deleteTitle')}</h3>
+              <p className="text-sm text-zinc-500">{t('deleteDesc')}</p>
             </div>
             <div className="flex gap-4">
-              <button 
+               <button 
                 onClick={() => setDeleteId(null)}
                 className="flex-1 px-4 py-3 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white transition-all text-xs font-bold"
               >
-                Annuler
+                {t('cancel')}
               </button>
-              <button 
+               <button 
                 onClick={() => handleDelete(deleteId)}
                 className="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-all"
               >
-                Supprimer
+                {tCommon('delete')}
               </button>
             </div>
           </div>

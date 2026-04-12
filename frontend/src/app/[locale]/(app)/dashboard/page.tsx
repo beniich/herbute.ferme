@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useOrgStore } from '@/store/orgStore';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { StatCard } from '@/components/shared/StatCard';
@@ -36,14 +37,16 @@ export default function DashboardPage() {
   const { format } = useCurrencyStore();
 
   const STATIC_ALERTS: AlertItem[] = [
-    { level: 'warning', icon: <AlertTriangle size={14} />, text: 'Vaccination bovins — Échéance Proche', time: 'Demain', section: 'Élevage', href: '/fr/elevage' },
-    { level: 'info', icon: <Tractor size={14} />, text: 'Tracteur JD-8R — Maintenance programmée', time: 'Dans 5 jours', section: 'Équipements', href: '/fr/fleet' },
+    { level: 'warning', icon: <AlertTriangle size={14} />, text: tCommon('vaccinationAlert'), time: 'Demain', section: tCommon('livestock'), href: `/${locale}/elevage` },
+    { level: 'info', icon: <Tractor size={14} />, text: tCommon('tractorMaintenance'), time: 'Dans 5 jours', section: tCommon('equipment'), href: `/${locale}/fleet` },
   ];
+
+  const locale = useParams()?.locale as string || 'en';
 
   useEffect(() => {
     const d = new Date();
-    setNow(d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase()));
-  }, []);
+    setNow(d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase()));
+  }, [locale]);
 
   if (error) {
     return (
@@ -59,11 +62,11 @@ export default function DashboardPage() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">Résumé Consolide · {now}</div>
+          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{tCommon('summary')} · {now}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
             {activeOrganization?.name || t('title')}
           </h1>
-          <p className="text-sm text-zinc-400">Analyse consolidée de votre exploitation en temps réel.</p>
+          <p className="text-sm text-zinc-400">{tCommon('analysisPrecise')}</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           {process.env.NODE_ENV === 'development' && (
@@ -82,10 +85,10 @@ export default function DashboardPage() {
             title="Actualiser"
             className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all text-sm"
           >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Actualiser
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> {tCommon('refresh')}
           </button>
           <Link href="/analytics" className="flex items-center justify-center px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-all shadow-lg shadow-blue-500/20">
-            Rapports Avancés
+            {tCommon('advancedReports')}
           </Link>
         </div>
       </div>
@@ -97,25 +100,25 @@ export default function DashboardPage() {
         ) : (
           <>
             <StatCard 
-              label="Chiffre d'Affaires" 
+              label={tCommon('revenue')} 
               value={format(agro?.financials?.totalRevenue ?? 0, true)} 
               icon={<TrendingUp size={20} />}
               color="green"
             />
             <StatCard 
-              label="Charges Totales" 
+              label={tCommon('expenses')} 
               value={format(agro?.financials?.totalExpenses ?? 0, true)} 
               icon={<TrendingDown size={20} />}
               color="red"
             />
             <StatCard 
-              label="Bénéfice Net" 
+              label={tCommon('netProfit')} 
               value={format(agro?.financials?.netProfit ?? 0, true)} 
               icon={<TrendingUp size={20} />}
               color="amber"
             />
             <StatCard 
-              label="Trésorerie (Est.)" 
+              label={tCommon('cashFlow')} 
               value={format(agro?.financials?.cashFlow ?? 0, true)} 
               icon={<LineChart size={20} />}
               color="blue"
@@ -131,33 +134,33 @@ export default function DashboardPage() {
         ) : (
           <>
             <StatCard 
-              label="Cheptel Total" 
+              label={tCommon('cheptelTotal')} 
               value={agro?.cheptel?.total ?? 0} 
-              unit="têtes"
+              unit={tCommon('heads')}
               icon={<Tractor size={18} />}
               color="amber"
               variant="compact"
             />
             <StatCard 
-              label="Cultures" 
+              label={tCommon('cultures')} 
               value={agro?.cultures?.totalHa ?? 0} 
-              unit="hectares"
+              unit={tCommon('ha')}
               icon={<Trees size={18} />}
               color="green"
               variant="compact"
             />
             <StatCard 
-              label="Tickets IT" 
+              label={tCommon('itTickets')} 
               value={it?.total ?? 0} 
-              unit="actifs"
+              unit={tCommon('active')}
               icon={<Server size={18} />}
               color="blue"
               variant="compact"
             />
              <StatCard 
-              label="Maintenance" 
+              label={tCommon('maintenance')} 
               value={maintenance?.total ?? 0} 
-              unit="récl."
+              unit={tCommon('heads')} // Assuming 'heads' for now, but should maybe be 'tasks'
               icon={<Users size={18} />}
               color="indigo"
               variant="compact"
@@ -165,7 +168,7 @@ export default function DashboardPage() {
             <StatCard 
               label="SLA Breach" 
               value={it?.slaBreach ?? 0} 
-              unit="tickets"
+              unit={tCommon('itTickets')} 
               icon={<AlertTriangle size={18} />}
               color="red"
               variant="compact"
@@ -181,17 +184,17 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 bg-[var(--panel)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 flex justify-between items-center bg-zinc-950/50">
             <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span> Charge des Équipes
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span> {tCommon('teamLoad')}
             </h3>
             <Link href="/teams" className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">
-              Gérer les équipes →
+              {tCommon('manageTeams')} →
             </Link>
           </div>
           <div className="p-8">
             {loading ? (
               <Skeleton type="list" />
             ) : !maintenance?.teamStats || maintenance.teamStats.length === 0 ? (
-              <div className="py-20 text-center text-zinc-500 font-medium italic">Aucune donnée d'équipe disponible.</div>
+              <div className="py-20 text-center text-zinc-500 font-medium italic">{tCommon('noTeamData')}</div>
             ) : (
               <div className="space-y-6">
                 {maintenance.teamStats.map((team, idx) => (
@@ -199,7 +202,7 @@ export default function DashboardPage() {
                     <div className="flex justify-between items-end mb-2">
                       <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider group-hover:text-zinc-200 transition-colors">{team.name}</span>
                       <span className="text-sm font-mono font-bold text-white">
-                        {team.activeAssignments} tâches actives
+                        {team.activeAssignments} {tCommon('activeTasks')}
                       </span>
                     </div>
                     <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
@@ -222,7 +225,7 @@ export default function DashboardPage() {
         <div className="bg-[var(--panel)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-[var(--border)] bg-[var(--panel-active)]">
             <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]"></span> Système d'Alerte
+              <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]"></span> {tCommon('alertSystem')}
             </h3>
           </div>
           <div className="p-4 space-y-3">

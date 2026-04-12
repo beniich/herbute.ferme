@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useMemo } from 'react';
 import { useCropsData } from '@/hooks/useDomainData';
+import { useTranslations } from 'next-intl';
 import { StatCard } from '@/components/shared/StatCard';
 import { Skeleton } from '@/components/shared/Skeleton';
 import { ErrorFallback } from '@/components/shared/ErrorFallback';
@@ -29,14 +29,16 @@ interface Crop {
   surface?: number;
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  PLANTED:   { label: 'Planté',          color: 'bg-blue-500/10 text-blue-500' },
-  GROWING:   { label: 'En croissance',   color: 'bg-emerald-500/10 text-emerald-500' },
-  READY:     { label: 'Prêt à récolter', color: 'bg-amber-500/10 text-amber-500' },
-  HARVESTED: { label: 'Récolté',         color: 'bg-zinc-500/10 text-zinc-400' },
-};
-
 export default function ParcellesPage() {
+  const t = useTranslations('Plots');
+
+  const STATUS_MAP: Record<string, { label: string; color: string }> = {
+    PLANTED:   { label: t('statusLabels.PLANTED'),          color: 'bg-blue-500/10 text-blue-500' },
+    GROWING:   { label: t('statusLabels.GROWING'),   color: 'bg-emerald-500/10 text-emerald-500' },
+    READY:     { label: t('statusLabels.READY'), color: 'bg-amber-500/10 text-amber-500' },
+    HARVESTED: { label: t('statusLabels.HARVESTED'),         color: 'bg-zinc-500/10 text-zinc-400' },
+  };
+
   const { items: rawCrops, isLoading, error, refresh } = useCropsData();
 
   const crops = (rawCrops as unknown as Crop[]) || [];
@@ -50,7 +52,7 @@ export default function ParcellesPage() {
     return { uniquePlots, totalSurface, activeCrops, readyCrops };
   }, [crops]);
 
-  if (error) return <ErrorFallback onRetry={refresh} message="Impossible de charger les parcelles" />;
+  if (error) return <ErrorFallback onRetry={refresh} message={t('errorLoading')} />;
 
   return (
     <div className="page active p-6 lg:p-10 space-y-10" id="page-parcelles">
@@ -58,11 +60,11 @@ export default function ParcellesPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">Module Terres · Cartographie</div>
+          <div className="text-[10px] font-mono tracking-[3px] text-zinc-500 uppercase mb-1">{t('moduleTitle')}</div>
           <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
-            <Compass className="text-emerald-500" size={32} /> Parcelles & Cultures
+            <Compass className="text-emerald-500" size={32} /> {t('title')}
           </h1>
-          <p className="text-sm text-zinc-400">Registre parcellaire, suivi des cycles de culture et imagerie satellite.</p>
+          <p className="text-sm text-zinc-400">{t('subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -81,30 +83,30 @@ export default function ParcellesPage() {
         ) : (
           <>
             <StatCard 
-              label="Nb Parcelles" 
+              label={t('plotCount')} 
               value={kpis.uniquePlots} 
-              unit="unités"
+              unit={t('units')}
               icon={<Map size={20} />}
               color="emerald"
             />
             <StatCard 
-              label="Surface Cultivée" 
+              label={t('cultivatedSurface')} 
               value={kpis.totalSurface.toFixed(1)} 
-              unit="ha"
+              unit={t('ha')}
               icon={<Maximize size={20} />}
               color="emerald"
             />
             <StatCard 
-              label="Cultures Actives" 
+              label={t('activeCrops')} 
               value={kpis.activeCrops} 
-              unit="parc."
+              unit={t('plotAbbr')}
               icon={<Sprout size={20} />}
               color="teal"
             />
             <StatCard 
-              label="Prêt à Récolter" 
+              label={t('readyToHarvest')} 
               value={kpis.readyCrops} 
-              unit="parc."
+              unit={t('plotAbbr')}
               icon={<Zap size={20} />}
               color="amber"
             />
@@ -118,19 +120,19 @@ export default function ParcellesPage() {
         <div className="lg:col-span-2 bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-6 border-b border-zinc-900 bg-zinc-950/50 flex items-center gap-3">
             <Layers className="text-emerald-500" size={18} />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Registre des Parcelles</h3>
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{t('plotRegistry')}</h3>
           </div>
           <div className="overflow-x-auto text-sm">
             {isLoading ? <div className="p-8"><Skeleton type="table" /></div> : crops.length === 0 ? (
-              <div className="p-20 text-center text-zinc-500 italic">Aucune parcelle enregistrée.</div>
+              <div className="p-20 text-center text-zinc-500 italic">{t('noPlots')}</div>
             ) : (
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-zinc-900/30">
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Parcelle</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Culture</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Surface (ha)</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">Statut</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('plot')}</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('crop')}</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('surface')} ({t('ha')})</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 border-b border-zinc-900">{t('status')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-900/50">
@@ -158,14 +160,14 @@ export default function ParcellesPage() {
           {/* REPARTITION PANELS */}
           <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-xl">
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-              <LayoutGrid size={14} className="text-emerald-500" /> Répartition
+              <LayoutGrid size={14} className="text-emerald-500" /> {t('repartition')}
             </h4>
             <div className="space-y-5">
               {[
-                { label: 'Céréales', val: 45, color: 'bg-amber-500' },
-                { label: 'P.A.M', val: 25, color: 'bg-emerald-500' },
-                { label: 'Arboriculture', val: 20, color: 'bg-teal-500' },
-                { label: 'Maraîchage', val: 10, color: 'bg-sky-500' },
+                { label: t('categories.cereals'), val: 45, color: 'bg-amber-500' },
+                { label: t('categories.pam'), val: 25, color: 'bg-emerald-500' },
+                { label: t('categories.arboriculture'), val: 20, color: 'bg-teal-500' },
+                { label: t('categories.marketGardening'), val: 10, color: 'bg-sky-500' },
               ].map((item, idx) => (
                 <div key={idx} className="space-y-1.5">
                   <div className="flex justify-between text-[11px] font-medium">
@@ -186,7 +188,7 @@ export default function ParcellesPage() {
               <Satellite size={80} />
             </div>
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-              <Activity size={14} className="text-emerald-500" /> Santé Végétale
+              <Activity size={14} className="text-emerald-500" /> {t('plantHealth')}
             </h4>
             <div className="text-center py-4 relative z-10">
               <div className="text-5xl font-black text-white tracking-tighter mb-1 font-display">0.78</div>
@@ -197,7 +199,7 @@ export default function ParcellesPage() {
             </div>
             <div className="mt-6 pt-6 border-t border-zinc-900">
               <p className="text-[10px] text-zinc-500 leading-relaxed">
-                Analyse satellite multispectrale. La vigueur est optimale sur les parcelles P1 et P4. Vigilance modérée sur Zone Sud (P7).
+                {t('satelliteAnalysis')}
               </p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * routes/auth.routes.ts â€” IAM complet (migrÃ© depuis ReclamTrack)
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -80,7 +80,7 @@ const clearAuthCookies = (res: Response): void => {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 router.post('/register', authLimiter as any, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password, nom, prenom, telephone, farmName, role = 'employe' } = req.body;
+    const { email, password, nom, prenom, telephone, farmName, role = 'admin' } = req.body;
 
     // Validation basique
     if (!email || !password || !nom || !prenom) {
@@ -576,7 +576,7 @@ router.post('/firebase', authLimiter as any, async (req: Request, res: Response,
         passwordHash,
         nom,
         prenom,
-        role: 'employe',
+        role: 'admin',
         emailVerified: true, // Garanti par Google
         firebaseUid: uid,
         googleId: uid, // Historique
